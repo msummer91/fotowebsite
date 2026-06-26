@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>été collectif</title>
+  <title>Collectif — été collectif</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
@@ -60,7 +60,6 @@
       display: block;
       object-fit: contain;
     }
-    /* Fallback if logo.png isn't saved yet */
     .logo-text {
       display: none;
       font-family: var(--serif);
@@ -70,7 +69,6 @@
       letter-spacing: 0.04em;
       color: var(--crimson);
     }
-    .logo-wrap img.broken + .logo-text { display: block; }
 
     nav {
       position: absolute;
@@ -90,6 +88,7 @@
       transition: color 0.2s;
     }
     nav a:hover { color: var(--crimson); }
+    nav a.active { color: var(--crimson); }
 
     .cart-trigger {
       display: flex;
@@ -121,27 +120,48 @@
     }
     .cart-num.on { opacity: 1; }
 
-    /* ── GRID ── */
+    /* ── PAGE CONTENT ── */
     main { padding-top: var(--hh); }
 
-    /* Editorial flowing layout — 10-column base */
-    .gallery {
-      padding: 72px 52px 120px;
+    /* ── WORK PAGE HEADER ── */
+    .work-header {
+      padding: 64px 52px 40px;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+    .work-title {
+      font-family: var(--serif);
+      font-size: clamp(32px, 3.5vw, 52px);
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      color: var(--dark);
+    }
+    .work-count {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* ── WORK GRID ── */
+    .work-grid {
+      padding: 0 52px 120px;
       display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      grid-template-rows: auto;
-      column-gap: 18px;
-      row-gap: 0;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px 28px;
     }
 
-    .g-item {
-      position: relative;
-      overflow: hidden;
+    .w-item {
       cursor: pointer;
-      background: var(--bg-off);
     }
 
-    .g-item img {
+    .w-img-wrap {
+      overflow: hidden;
+      background: var(--bg-off);
+      position: relative;
+    }
+    .w-img-wrap img {
       display: block;
       width: 100%;
       height: 100%;
@@ -149,40 +169,26 @@
       object-position: center;
       transition: transform 0.75s cubic-bezier(0.25,0.46,0.45,0.94);
     }
-    .g-item:hover img { transform: scale(1.03); }
+    .w-item:hover .w-img-wrap img { transform: scale(1.04); }
 
-    /* Hover overlay — price only */
-    .g-hover {
+    /* Fixed aspect ratio for uniform grid */
+    .w-img-wrap {
+      aspect-ratio: 4 / 3;
+    }
+
+    /* Hover overlay */
+    .w-hover {
       position: absolute;
       inset: 0;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding-bottom: 28px;
-      gap: 6px;
+      align-items: flex-end;
+      padding: 20px;
       opacity: 0;
       transition: opacity 0.3s ease;
-      background: linear-gradient(to top, rgba(26,25,22,0.58) 0%, transparent 55%);
+      background: linear-gradient(to top, rgba(26,25,22,0.52) 0%, transparent 50%);
     }
-    .g-item:hover .g-hover { opacity: 1; }
-
-    .g-hover-name {
-      font-family: var(--serif);
-      font-size: 17px;
-      font-weight: 300;
-      font-style: italic;
-      color: #fff;
-      letter-spacing: 0.02em;
-    }
-    .g-hover-price {
-      font-size: 12px;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.78);
-    }
-    .g-hover-cta {
-      margin-top: 8px;
+    .w-item:hover .w-hover { opacity: 1; }
+    .w-hover-cta {
       font-size: 10px;
       font-weight: 400;
       letter-spacing: 0.18em;
@@ -192,89 +198,23 @@
       padding-bottom: 2px;
     }
 
-    /*
-      Editorial placement — each image has its own column span, row, height and margin.
-      This creates an art-directed "breathing" layout rather than a mechanical grid.
-    */
-
-    /* Row 1: Large left image + smaller right, offset lower */
-    .g-item:nth-child(1) {
-      grid-column: 1 / 7; grid-row: 1;
-      height: 580px;
-      margin-top: 0;
-      margin-bottom: 64px;
+    /* Caption below image */
+    .w-caption {
+      padding: 14px 0 0;
     }
-    .g-item:nth-child(2) {
-      grid-column: 7 / 11; grid-row: 1;
-      height: 400px;
-      margin-top: 140px;
-      margin-bottom: 0;
+    .w-name {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--dark);
+      margin-bottom: 4px;
     }
-
-    /* Row 2: Narrow image, pushed right — lots of empty left breathing room */
-    .g-item:nth-child(3) {
-      grid-column: 4 / 11; grid-row: 2;
-      height: 460px;
-      margin-top: 80px;
-      margin-bottom: 80px;
-    }
-
-    /* Row 3: Two images — left slightly wider, right offset up */
-    .g-item:nth-child(4) {
-      grid-column: 1 / 6; grid-row: 3;
-      height: 440px;
-      margin-top: 0;
-      margin-bottom: 56px;
-    }
-    .g-item:nth-child(5) {
-      grid-column: 6 / 11; grid-row: 3;
-      height: 360px;
-      margin-top: -80px;
-      margin-bottom: 0;
-    }
-
-    /* Row 4: Wide centred image — full-width feel with breathing edges */
-    .g-item:nth-child(6) {
-      grid-column: 2 / 10; grid-row: 4;
-      height: 500px;
-      margin-top: 80px;
-      margin-bottom: 80px;
-    }
-
-    /* Row 5: Small left, tall right */
-    .g-item:nth-child(7) {
-      grid-column: 1 / 5; grid-row: 5;
-      height: 420px;
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-    .g-item:nth-child(8) {
-      grid-column: 5 / 11; grid-row: 5;
-      height: 540px;
-      margin-top: -60px;
-      margin-bottom: 0;
-    }
-
-    /* Row 6: Wide centred */
-    .g-item:nth-child(9) {
-      grid-column: 2 / 9; grid-row: 6;
-      height: 480px;
-      margin-top: 80px;
-      margin-bottom: 60px;
-    }
-
-    /* Row 7: Two equal-ish images */
-    .g-item:nth-child(10) {
-      grid-column: 1 / 6; grid-row: 7;
-      height: 460px;
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-    .g-item:nth-child(11) {
-      grid-column: 6 / 11; grid-row: 7;
-      height: 380px;
-      margin-top: 100px;
-      margin-bottom: 0;
+    .w-price {
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: var(--muted);
     }
 
     /* ── PRODUCT MODAL ── */
@@ -329,7 +269,6 @@
     }
     .modal-frame-wrap img { display: block; width: 100%; height: auto; }
 
-    /* Zoom button (appears on hover over image col) */
     .modal-zoom-btn {
       position: absolute;
       bottom: 16px; right: 16px;
@@ -344,7 +283,6 @@
     .modal-img-col:hover .modal-zoom-btn { opacity: 1; }
     .modal-zoom-btn:hover { background: #fff; }
 
-    /* Full-screen zoom overlay */
     .zoom-overlay {
       position: fixed; inset: 0;
       background: rgba(10,9,8,0.94);
@@ -367,7 +305,6 @@
     }
     .zoom-close:hover { color: #fff; }
 
-    /* Frame type selector */
     .frame-types {
       display: flex; gap: 7px; flex-wrap: wrap;
     }
@@ -383,7 +320,6 @@
     .ftype-btn.on { border-color: var(--dark); background: var(--dark); color: #fff; }
     .ftype-btn:not(.on):hover { border-color: var(--dark); color: var(--dark); }
 
-    /* Frame colour swatches */
     .frame-colors {
       display: flex; gap: 9px; flex-wrap: wrap; margin-top: 12px;
     }
@@ -393,15 +329,10 @@
       border: 2px solid rgba(0,0,0,0.12);
       cursor: pointer;
       transition: transform 0.18s, box-shadow 0.18s;
-      position: relative;
     }
-    .fcolor-btn.on {
-      box-shadow: 0 0 0 2px var(--crimson);
-      transform: scale(1.18);
-    }
+    .fcolor-btn.on { box-shadow: 0 0 0 2px var(--crimson); transform: scale(1.18); }
     .fcolor-btn:not(.on):hover { transform: scale(1.1); }
 
-    /* Frame info text */
     .frame-desc {
       font-size: 11px; line-height: 1.7;
       color: var(--muted); margin-top: 10px;
@@ -442,7 +373,6 @@
       margin-top: 4px;
     }
 
-    /* Format tabs */
     .field-label {
       font-size: 10px;
       letter-spacing: 0.18em;
@@ -477,7 +407,6 @@
     }
     .frame-options-wrap.on { display: block; }
 
-    /* Sizes */
     .sizes {
       display: flex;
       gap: 8px;
@@ -498,7 +427,6 @@
     .schip.on { border-color: var(--crimson); background: var(--crimson); color: #fff; }
     .schip:not(.on):hover { border-color: var(--dark); }
 
-    /* Price */
     .modal-price {
       font-family: var(--serif);
       font-size: 30px;
@@ -511,7 +439,6 @@
       margin-top: 3px;
     }
 
-    /* Add btn */
     .btn-add {
       width: 100%;
       padding: 17px;
@@ -631,39 +558,6 @@
     }
     .btn-checkout:hover { background: var(--crimson); }
 
-    /* ── ABOUT ── */
-    #about {
-      background: #ffffff;
-      padding: 96px 52px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 72px;
-      align-items: center;
-    }
-    .about-img { overflow: hidden; }
-    .about-img img { width: 100%; display: block; transition: transform 0.7s ease; }
-    .about-img:hover img { transform: scale(1.03); }
-    .about-sup {
-      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 18px;
-    }
-    .about-h {
-      font-family: var(--serif);
-      font-size: clamp(26px, 2.8vw, 44px);
-      font-weight: 300; line-height: 1.25;
-      margin-bottom: 24px;
-    }
-    .about-p {
-      font-size: 13px; line-height: 1.9; color: var(--muted); margin-bottom: 18px;
-    }
-    .link-u {
-      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--dark); text-decoration: none;
-      border-bottom: 1px solid var(--dark); padding-bottom: 2px;
-      transition: color 0.2s, border-color 0.2s;
-    }
-    .link-u:hover { color: var(--crimson); border-color: var(--crimson); }
-
     /* ── FOOTER ── */
     footer {
       background: #ffffff;
@@ -703,7 +597,7 @@
     }
     .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* ── HAMBURGER BUTTON ── */
+    /* ── HAMBURGER ── */
     .hamburger {
       display: none;
       flex-direction: column;
@@ -767,18 +661,12 @@
       .hamburger { display: flex; }
       .mobile-menu { display: block; }
 
-      .gallery { padding: 40px 24px 64px; column-gap: 10px; }
-      .g-item:nth-child(1)  { height: 320px; margin-bottom: 40px; }
-      .g-item:nth-child(2)  { height: 260px; margin-top: 60px; }
-      .g-item:nth-child(3)  { height: 280px; margin-top: 40px; margin-bottom: 40px; }
-      .g-item:nth-child(4)  { height: 300px; margin-top: 0; margin-bottom: 32px; }
-      .g-item:nth-child(5)  { height: 240px; margin-top: -40px; }
-      .g-item:nth-child(6)  { height: 300px; margin-top: 48px; margin-bottom: 48px; }
-      .g-item:nth-child(7)  { height: 260px; margin-top: 0; }
-      .g-item:nth-child(8)  { height: 320px; margin-top: -30px; }
-      .g-item:nth-child(9)  { height: 280px; margin-top: 48px; margin-bottom: 48px; }
-      .g-item:nth-child(10) { height: 260px; margin-top: 0; }
-      .g-item:nth-child(11) { height: 220px; margin-top: 60px; }
+      .work-header { padding: 48px 24px 28px; }
+      .work-grid {
+        padding: 0 24px 64px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px 16px;
+      }
 
       .modal {
         grid-template-columns: 1fr;
@@ -805,7 +693,6 @@
         background: var(--bg);
       }
 
-      #about { grid-template-columns: 1fr; gap: 40px; padding: 64px 24px; }
       footer { flex-direction: column; gap: 24px; text-align: center; padding: 36px 24px; }
       .cart-panel { width: 100%; }
     }
@@ -815,19 +702,13 @@
       :root { --hh: 80px; }
       .logo-wrap img { height: 100%; }
 
-      .gallery {
+      .work-header { padding: 32px 16px 20px; }
+      .work-grid {
         grid-template-columns: 1fr;
-        padding: 20px 14px 48px;
-        column-gap: 0;
-      }
-      .g-item {
-        grid-column: 1 !important;
-        grid-row: auto !important;
-        height: 72vw !important;
-        margin: 0 0 10px 0 !important;
+        padding: 0 16px 48px;
+        gap: 24px;
       }
 
-      #about { padding: 48px 16px; }
       footer { padding: 28px 16px; }
       .modal-img-col { max-height: 30vh; padding: 16px; }
       .modal-info-col { padding: 16px 18px 32px; }
@@ -918,13 +799,13 @@
 
 <!-- HEADER -->
 <header>
-  <a class="logo-wrap" href="#" id="logoLink">
+  <a class="logo-wrap" href="index.html" id="logoLink">
     <img src="logo.png" alt="été collectif" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" />
     <span class="logo-text" style="display:none">été collectif</span>
   </a>
   <nav>
-    <a href="collectif.html">Collectif</a>
-    <a href="#about">About</a>
+    <a href="collectif.html" class="active">Collectif</a>
+    <a href="index.html#about">About</a>
     <a href="collectif.html">Shop</a>
   </nav>
   <div style="display:flex;align-items:center;gap:20px;">
@@ -932,50 +813,40 @@
       <span></span><span></span><span></span>
     </button>
     <button class="cart-trigger" onclick="openCart()">
-    <svg width="17" height="15" viewBox="0 0 17 15" fill="none">
-      <path d="M1 1h2l2.2 8h8L15 3H5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="7" cy="13.5" r="1.1" fill="currentColor"/>
-      <circle cx="13" cy="13.5" r="1.1" fill="currentColor"/>
-    </svg>
-    <span class="cart-num" id="cartNum">0</span>
-  </button>
+      <svg width="17" height="15" viewBox="0 0 17 15" fill="none">
+        <path d="M1 1h2l2.2 8h8L15 3H5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="7" cy="13.5" r="1.1" fill="currentColor"/>
+        <circle cx="13" cy="13.5" r="1.1" fill="currentColor"/>
+      </svg>
+      <span class="cart-num" id="cartNum">0</span>
+    </button>
   </div>
 </header>
 
 <!-- MOBILE DROPDOWN MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="collectif.html" onclick="toggleMenu()">Collectif</a>
-  <a href="#about"    onclick="toggleMenu()">About</a>
+  <a href="index.html#about" onclick="toggleMenu()">About</a>
   <a href="collectif.html" onclick="toggleMenu()">Shop</a>
 </div>
 
-<!-- GALLERY / SHOP -->
 <main>
-  <div class="gallery" id="gallery"></div>
+  <div class="work-header">
+    <h1 class="work-title">Collectif</h1>
+    <span class="work-count" id="workCount"></span>
+  </div>
 
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="about-img">
-      <img src="Images/sunset surf.jpeg" alt="été collectif" loading="lazy" />
-    </div>
-    <div>
-      <p class="about-sup">About</p>
-      <h2 class="about-h">We photograph the feeling of being alive in the world.</h2>
-      <p class="about-p">We photograph the daily worlds, hustle, tranquility, people, nature, sports and what we love — living on this planet.</p>
-      <p class="about-p">été collectif was born out of the idea to share what we see with our eyes, captured through a lens (analog to digital).</p>
-      <a href="mailto:hello@etecollectif.com" class="link-u">hello@etecollectif.com</a>
-    </div>
-  </section>
+  <div class="work-grid" id="workGrid"></div>
 </main>
 
 <footer>
-  <a href="#" class="foot-logo">
+  <a href="index.html" class="foot-logo">
     <img src="logo.png" alt="été collectif" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" />
     <span class="foot-logo-text" style="display:none">été collectif</span>
   </a>
   <ul class="foot-links">
     <li><a href="collectif.html">Collectif</a></li>
-    <li><a href="#about">About</a></li>
+    <li><a href="index.html#about">About</a></li>
     <li><a href="#">Instagram</a></li>
   </ul>
   <span class="foot-copy">© 2026 été collectif</span>
@@ -999,24 +870,54 @@ const products = [
   { id:11, name:'Tokyo Nights',         basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/tokyo nights.jpeg',           desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
 ];
 
-// shuffle
-function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+// ── FIXED RANDOM ORDER (stable per session, new each visit) ──
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
 
-// render gallery
-const gallery = document.getElementById('gallery');
-shuffle(products).forEach(p => {
+function getOrderedProducts() {
+  const KEY = 'ete_work_order';
+  try {
+    const stored = sessionStorage.getItem(KEY);
+    if (stored) {
+      const ids = JSON.parse(stored);
+      // Reconstruct array in stored order
+      return ids.map(id => products.find(p => p.id === id)).filter(Boolean);
+    }
+  } catch(e) {}
+  // First visit this session — shuffle and save
+  const shuffled = shuffle(products);
+  try {
+    sessionStorage.setItem(KEY, JSON.stringify(shuffled.map(p => p.id)));
+  } catch(e) {}
+  return shuffled;
+}
+
+// ── RENDER WORK GRID ──
+const ordered = getOrderedProducts();
+document.getElementById('workCount').textContent = ordered.length + ' works';
+
+const grid = document.getElementById('workGrid');
+ordered.forEach(p => {
   const el = document.createElement('div');
-  el.className = 'g-item';
+  el.className = 'w-item';
   el.dataset.id = p.id;
   el.innerHTML = `
-    <img src="${p.img}" alt="${p.name}" loading="lazy" />
-    <div class="g-hover">
-      <span class="g-hover-name">${p.name}</span>
-      <span class="g-hover-price">From €${p.basePrice}</span>
-      <span class="g-hover-cta">View print</span>
+    <div class="w-img-wrap">
+      <img src="${p.img}" alt="${p.name}" loading="lazy" />
+      <div class="w-hover"><span class="w-hover-cta">View print</span></div>
+    </div>
+    <div class="w-caption">
+      <div class="w-name">${p.name}</div>
+      <div class="w-price">From €${p.basePrice}</div>
     </div>`;
   el.addEventListener('click', () => openModal(p.id));
-  gallery.appendChild(el);
+  grid.appendChild(el);
 });
 
 // ── FRAME DATA (Prodigi options) ──
@@ -1201,21 +1102,21 @@ function refreshCart() {
 function openCart() { document.getElementById('cartPanel').classList.add('on'); document.getElementById('cartVeil').classList.add('on'); document.body.style.overflow = 'hidden'; }
 function closeCart() { document.getElementById('cartPanel').classList.remove('on'); document.getElementById('cartVeil').classList.remove('on'); document.body.style.overflow = ''; }
 
-// toast
+// ── TOAST ──
 let tt;
 function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('on'), 2600); }
 
-// esc
+// ── ESC KEY ──
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeZoom(); closeModal(); closeCart(); closeMenu(); } });
 
-// hamburger menu
-function toggleMenu(){
-  const btn=document.getElementById('hamburger');
-  const menu=document.getElementById('mobileMenu');
-  const open=menu.classList.toggle('open');
-  btn.classList.toggle('open',open);
+// ── HAMBURGER ──
+function toggleMenu() {
+  const btn = document.getElementById('hamburger');
+  const menu = document.getElementById('mobileMenu');
+  const open = menu.classList.toggle('open');
+  btn.classList.toggle('open', open);
 }
-function closeMenu(){
+function closeMenu() {
   document.getElementById('hamburger').classList.remove('open');
   document.getElementById('mobileMenu').classList.remove('open');
 }
