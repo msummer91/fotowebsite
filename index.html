@@ -316,29 +316,23 @@
       background: transparent;
       flex: 1;
       min-width: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      align-self: stretch;
       position: relative;
       overflow: hidden;
+      padding: 0;
     }
     .modal-frame-wrap {
       position: relative;
       width: 100%;
       height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       overflow: hidden;
     }
     .modal-frame-wrap img {
       display: block;
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
       transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
     }
     .modal-frame-wrap:hover img { transform: scale(1.04); }
