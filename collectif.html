@@ -235,8 +235,8 @@
       position: fixed;
       top: 50%; left: 50%;
       transform: translate(-50%,-50%) scale(0.97);
-      width: min(1400px, 98vw);
-      height: min(880px, 94vh);
+      width: min(1500px, 98vw);
+      height: min(980px, 96vh);
       background: transparent;
       border-radius: 16px;
       z-index: 210;
@@ -283,19 +283,6 @@
     }
     .modal-frame-wrap:hover img { transform: scale(1.04); }
 
-    .modal-zoom-btn {
-      position: absolute;
-      bottom: 16px; right: 16px;
-      width: 34px; height: 34px;
-      background: rgba(255,255,255,0.9);
-      border: none; border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; opacity: 0;
-      transition: opacity 0.25s, background 0.2s;
-      backdrop-filter: blur(4px);
-    }
-    .modal-img-col:hover .modal-zoom-btn { opacity: 1; }
-    .modal-zoom-btn:hover { background: #fff; }
 
     .zoom-overlay {
       position: fixed; inset: 0;
@@ -774,11 +761,6 @@
     <div class="modal-frame-wrap" id="mFrameWrap">
       <img id="mImg" src="" alt="" />
     </div>
-    <button class="modal-zoom-btn" onclick="openZoom()" aria-label="Zoom image">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M1 1h4M1 1v4M13 1h-4M13 1v4M1 13h4M1 13v-4M13 13h-4M13 13v-4" stroke="#1a1916" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-    </button>
   </div>
   <div class="modal-info-col">
     <button class="modal-x" onclick="closeModal()">×</button>
