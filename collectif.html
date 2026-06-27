@@ -235,13 +235,13 @@
       position: fixed;
       top: 50%; left: 50%;
       transform: translate(-50%,-50%) scale(0.97);
-      width: min(920px, 92vw);
+      width: min(1020px, 94vw);
       max-height: 88vh;
       background: transparent;
       border-radius: 16px;
       z-index: 210;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.6fr 1fr;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s, transform 0.3s;
@@ -258,16 +258,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 52px 40px;
+      padding: 40px 36px;
       position: relative;
+      overflow: hidden;
     }
     .modal-frame-wrap {
       position: relative;
       width: 100%;
-      max-width: 320px;
-      transition: padding 0.4s ease, border 0.4s ease, box-shadow 0.4s ease;
+      max-width: 100%;
+      overflow: hidden;
     }
-    .modal-frame-wrap img { display: block; width: 100%; height: auto; }
+    .modal-frame-wrap img {
+      display: block; width: 100%; height: auto;
+      transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .modal-frame-wrap:hover img { transform: scale(1.07); }
 
     .modal-zoom-btn {
       position: absolute;
@@ -341,10 +346,10 @@
     .modal-info-col {
       background: var(--bg);
       border-radius: 0 16px 16px 0;
-      padding: 44px 40px 44px;
+      padding: 28px 28px 28px;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 14px;
       overflow-y: auto;
       position: relative;
     }
@@ -360,7 +365,7 @@
 
     .modal-title {
       font-family: var(--serif);
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 300;
       line-height: 1.2;
       padding-right: 24px;
