@@ -235,8 +235,8 @@
       position: fixed;
       top: 50%; left: 50%;
       transform: translate(-50%,-50%) scale(0.97);
-      width: min(1020px, 94vw);
-      max-height: 88vh;
+      width: min(1160px, 96vw);
+      height: min(720px, 90vh);
       background: transparent;
       border-radius: 16px;
       z-index: 210;
@@ -259,20 +259,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 36px;
+      padding: 20px;
       position: relative;
       overflow: hidden;
     }
     .modal-frame-wrap {
       position: relative;
       width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
     }
     .modal-frame-wrap img {
-      display: block; width: 100%; height: auto;
-      transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
     }
-    .modal-frame-wrap:hover img { transform: scale(2); }
+    .modal-frame-wrap:hover img { transform: scale(1.04); }
 
     .modal-zoom-btn {
       position: absolute;
@@ -362,11 +371,9 @@
                   padding 0.5s ease;
     }
     .modal:has(.modal-img-col:hover) .modal-info-col {
-      flex-basis: 0px;
-      width: 0px;
-      opacity: 0;
-      padding-left: 0;
-      padding-right: 0;
+      flex-basis: 180px;
+      width: 180px;
+      opacity: 0.6;
     }
     .modal-x {
       position: absolute;
