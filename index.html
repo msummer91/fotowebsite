@@ -300,8 +300,7 @@
       background: transparent;
       border-radius: 16px;
       z-index: 210;
-      display: grid;
-      grid-template-columns: 1.6fr 1fr;
+      display: flex;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s, transform 0.3s;
@@ -315,6 +314,8 @@
 
     .modal-img-col {
       background: transparent;
+      flex: 1;
+      min-width: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -325,14 +326,13 @@
     .modal-frame-wrap {
       position: relative;
       width: 100%;
-      max-width: 100%;
       overflow: hidden;
     }
     .modal-frame-wrap img {
       display: block; width: 100%; height: auto;
-      transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+      transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);
     }
-    .modal-frame-wrap:hover img { transform: scale(1.07); }
+    .modal-frame-wrap:hover img { transform: scale(1.08); }
 
     /* Zoom button (appears on hover over image col) */
     .modal-zoom-btn {
@@ -415,12 +415,21 @@
     .modal-info-col {
       background: var(--bg);
       border-radius: 0 16px 16px 0;
-      padding: 28px 28px 28px;
+      padding: 28px 24px;
       display: flex;
       flex-direction: column;
       gap: 14px;
       overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
+      flex: 0 0 310px;
+      width: 310px;
+      transition: flex-basis 0.5s cubic-bezier(0.25,0.46,0.45,0.94),
+                  width 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .modal:has(.modal-img-col:hover) .modal-info-col {
+      flex-basis: 220px;
+      width: 220px;
     }
     .modal-x {
       position: absolute;
