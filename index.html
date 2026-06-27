@@ -424,12 +424,18 @@
       position: relative;
       flex: 0 0 310px;
       width: 310px;
+      opacity: 1;
       transition: flex-basis 0.5s cubic-bezier(0.25,0.46,0.45,0.94),
-                  width 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+                  width 0.5s cubic-bezier(0.25,0.46,0.45,0.94),
+                  opacity 0.35s ease,
+                  padding 0.5s ease;
     }
     .modal:has(.modal-img-col:hover) .modal-info-col {
-      flex-basis: 220px;
-      width: 220px;
+      flex-basis: 0px;
+      width: 0px;
+      opacity: 0;
+      padding-left: 0;
+      padding-right: 0;
     }
     .modal-x {
       position: absolute;
