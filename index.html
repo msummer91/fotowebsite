@@ -1132,14 +1132,12 @@ function renderFrameColors() {
 function applyFramePreview() {
   const wrap = document.getElementById('mFrameWrap');
   const color = frameData[frameType].colors[frameColorIdx];
-  const thickness = frameType === 'aluminium' ? '7px' : frameType === 'box' ? '20px' : '13px';
-  const mat = frameType === 'box' ? '10px' : frameType === 'aluminium' ? '0px' : '8px';
-  wrap.style.cssText = `max-width:320px; padding:${mat}; background:#fff; border:${thickness} solid ${color.hex}; box-shadow:6px 10px 32px rgba(0,0,0,0.28); transition:all 0.35s ease;`;
+  const thickness = frameType === 'aluminium' ? '5px' : frameType === 'box' ? '18px' : '11px';
+  wrap.style.cssText = `max-width:320px; outline:${thickness} solid ${color.hex}; box-shadow:4px 8px 28px rgba(0,0,0,0.45);`;
 }
 
 function clearFramePreview() {
-  const wrap = document.getElementById('mFrameWrap');
-  wrap.style.cssText = 'max-width:320px; transition:all 0.35s ease;';
+  document.getElementById('mFrameWrap').style.cssText = 'max-width:320px;';
 }
 
 function renderSizes() {
