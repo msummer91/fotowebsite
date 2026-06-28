@@ -258,23 +258,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 40px;
       position: relative;
       overflow: hidden;
     }
     .modal-frame-wrap {
       position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      display: inline-block;
+      line-height: 0;
+      max-width: 100%;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
     }
     .modal-frame-wrap img {
       display: block;
       max-width: 100%;
-      max-height: 100%;
+      max-height: calc(min(830px, 96vh) - 80px);
       width: auto;
       height: auto;
       object-fit: contain;
@@ -1044,12 +1042,20 @@ function renderFrameColors() {
 function applyFramePreview() {
   const wrap = document.getElementById('mFrameWrap');
   const color = frameData[frameType].colors[frameColorIdx];
-  const thickness = frameType === 'aluminium' ? '5px' : frameType === 'box' ? '18px' : '11px';
-  wrap.style.cssText = `outline:${thickness} solid ${color.hex}; box-shadow:4px 8px 28px rgba(0,0,0,0.45);`;
+  const thickness = frameType === 'aluminium' ? '8px' : frameType === 'box' ? '24px' : '14px';
+  const inset = frameType === 'aluminium'
+    ? 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.3)'
+    : frameType === 'box'
+    ? 'inset 2px 4px 8px rgba(0,0,0,0.35), inset -2px -2px 6px rgba(0,0,0,0.2)'
+    : 'inset 1px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(0,0,0,0.1)';
+  wrap.style.border = `${thickness} solid ${color.hex}`;
+  wrap.style.boxShadow = `${inset}, 6px 14px 40px rgba(0,0,0,0.55)`;
 }
 
 function clearFramePreview() {
-  document.getElementById('mFrameWrap').style.cssText = '';
+  const wrap = document.getElementById('mFrameWrap');
+  wrap.style.border = '';
+  wrap.style.boxShadow = '';
 }
 
 function renderSizes() {
