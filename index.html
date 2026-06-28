@@ -1141,11 +1141,14 @@ function applyFramePreview() {
   const wrap = document.getElementById('mFrameWrap');
   const color = frameData[frameType].colors[frameColorIdx];
   const thickness = frameType === 'aluminium' ? '5px' : frameType === 'box' ? '18px' : '11px';
-  wrap.style.cssText = `max-width:320px; outline:${thickness} solid ${color.hex}; box-shadow:4px 8px 28px rgba(0,0,0,0.45);`;
+  wrap.style.outline = `${thickness} solid ${color.hex}`;
+  wrap.style.boxShadow = '4px 8px 28px rgba(0,0,0,0.45)';
 }
 
 function clearFramePreview() {
-  document.getElementById('mFrameWrap').style.cssText = 'max-width:320px;';
+  const wrap = document.getElementById('mFrameWrap');
+  wrap.style.outline = '';
+  wrap.style.boxShadow = '';
 }
 
 function renderSizes() {
