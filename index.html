@@ -1072,7 +1072,9 @@ function price() {
 function openModal(id) {
   cur = products.find(p => p.id === id);
   fmt = 'print'; sIdx = 0; frameType = 'classic'; frameColorIdx = 0;
-  document.getElementById('mImg').src = cur.img;
+  const img = document.getElementById('mImg');
+  img.src = cur.img;
+  img.style.maxHeight = cur.id === 11 ? '72%' : '';
   document.getElementById('mTitle').textContent = cur.name;
   document.getElementById('mDesc').textContent = cur.desc;
   setFmt('print', true);
@@ -1085,6 +1087,7 @@ function openModal(id) {
 function closeModal() {
   document.getElementById('modal').classList.remove('on');
   document.getElementById('overlay').classList.remove('on');
+  document.getElementById('mImg').style.maxHeight = '';
   document.body.style.overflow = '';
 }
 
