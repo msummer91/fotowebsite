@@ -130,7 +130,7 @@
       display: grid;
       grid-template-columns: repeat(10, 1fr);
       grid-template-rows: auto;
-      column-gap: 18px;
+      column-gap: 40px;
       row-gap: 0;
     }
 
@@ -200,43 +200,43 @@
       grid-column: 1 / 7; grid-row: 1;
       height: 580px;
       margin-top: 0;
-      margin-bottom: 64px;
+      margin-bottom: 80px;
     }
     .g-item:nth-child(2) {
       grid-column: 7 / 11; grid-row: 1;
       height: 400px;
       margin-top: 140px;
-      margin-bottom: 0;
-    }
-
-    /* Row 2: Narrow image, pushed right — lots of empty left breathing room */
-    .g-item:nth-child(3) {
-      grid-column: 4 / 11; grid-row: 2;
-      height: 460px;
-      margin-top: 80px;
       margin-bottom: 80px;
     }
 
-    /* Row 3: Two images — left slightly wider, right offset up */
+    /* Row 2: Narrow image, pushed right */
+    .g-item:nth-child(3) {
+      grid-column: 4 / 11; grid-row: 2;
+      height: 460px;
+      margin-top: 0;
+      margin-bottom: 100px;
+    }
+
+    /* Row 3: Two images — left wider, right lower */
     .g-item:nth-child(4) {
       grid-column: 1 / 6; grid-row: 3;
       height: 440px;
       margin-top: 0;
-      margin-bottom: 56px;
+      margin-bottom: 80px;
     }
     .g-item:nth-child(5) {
       grid-column: 6 / 11; grid-row: 3;
       height: 360px;
-      margin-top: -80px;
-      margin-bottom: 0;
+      margin-top: 120px;
+      margin-bottom: 60px;
     }
 
-    /* Row 4: Wide centred image — full-width feel with breathing edges */
+    /* Row 4: Wide centred image */
     .g-item:nth-child(6) {
       grid-column: 2 / 10; grid-row: 4;
       height: 500px;
-      margin-top: 80px;
-      margin-bottom: 80px;
+      margin-top: 0;
+      margin-bottom: 100px;
     }
 
     /* Row 5: Small left, tall right */
@@ -244,21 +244,21 @@
       grid-column: 1 / 5; grid-row: 5;
       height: 420px;
       margin-top: 0;
-      margin-bottom: 0;
+      margin-bottom: 80px;
     }
     .g-item:nth-child(8) {
       grid-column: 5 / 11; grid-row: 5;
-      height: 540px;
-      margin-top: -60px;
-      margin-bottom: 0;
+      height: 520px;
+      margin-top: 60px;
+      margin-bottom: 60px;
     }
 
     /* Row 6: Wide centred */
     .g-item:nth-child(9) {
       grid-column: 2 / 9; grid-row: 6;
       height: 480px;
-      margin-top: 80px;
-      margin-bottom: 60px;
+      margin-top: 0;
+      margin-bottom: 100px;
     }
 
     /* Row 7: Two equal-ish images */
