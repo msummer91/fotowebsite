@@ -316,11 +316,18 @@
       min-width: 0;
       align-self: stretch;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
+      flex-direction: column;
       position: relative;
       overflow: hidden;
+    }
+    .modal-img-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 40px 20px;
+      overflow: hidden;
+      min-height: 0;
     }
     .modal-frame-wrap {
       position: relative;
@@ -329,10 +336,73 @@
       max-width: 100%;
       transition: border 0.3s ease, box-shadow 0.3s ease;
     }
+
+    /* Room preview strip */
+    .room-previews {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 0 28px 24px;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    .room-previews::-webkit-scrollbar { display: none; }
+    .room-card {
+      flex: 0 0 180px;
+      height: 120px;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      cursor: default;
+      position: relative;
+    }
+    .room-scene {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 14px 14px 0;
+    }
+    .room-card-1 .room-scene { background: linear-gradient(170deg, #f0ece6 55%, #e2ddd6 100%); }
+    .room-card-2 .room-scene { background: linear-gradient(170deg, #c8a882 50%, #b5916b 100%); }
+    .room-card-3 .room-scene { background: linear-gradient(170deg, #2b3c3c 50%, #1a2828 100%); }
+    .room-floor {
+      height: 12px;
+    }
+    .room-card-1 .room-floor { background: linear-gradient(to bottom, #d4cfc8, #c8c2ba); }
+    .room-card-2 .room-floor { background: linear-gradient(to bottom, #8a6340, #7a5533); }
+    .room-card-3 .room-floor { background: linear-gradient(to bottom, #111c1c, #0d1515); }
+    .room-label {
+      position: absolute;
+      bottom: 14px;
+      left: 0; right: 0;
+      text-align: center;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+    .room-card-1 .room-label { color: rgba(60,50,40,0.5); }
+    .room-card-2 .room-label { color: rgba(255,240,220,0.6); }
+    .room-card-3 .room-label { color: rgba(200,220,220,0.5); }
+    .room-mini-frame {
+      display: inline-block;
+      line-height: 0;
+      margin-bottom: -1px;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
+    .room-mini-frame img {
+      display: block;
+      max-height: 72px;
+      max-width: 130px;
+      width: auto;
+      height: auto;
+    }
     .modal-frame-wrap img {
       display: block;
       max-width: 100%;
-      max-height: calc(min(830px, 96vh) - 80px);
+      max-height: calc(min(830px, 96vh) - 220px);
       width: auto;
       height: auto;
       object-fit: contain;
@@ -873,7 +943,10 @@
 
       #about { padding: 48px 16px; }
       footer { padding: 28px 16px; }
-      .modal-img-col { max-height: 30vh; padding: 16px; }
+      .modal-img-col { max-height: 40vh; }
+      .modal-img-main { padding: 16px 16px 8px; }
+      .room-previews { padding: 0 12px 12px; gap: 8px; }
+      .room-card { flex: 0 0 140px; height: 90px; }
       .modal-info-col { padding: 16px 18px 32px; }
     }
   </style>
@@ -907,8 +980,33 @@
 <!-- product modal -->
 <div class="modal" id="modal">
   <div class="modal-img-col">
-    <div class="modal-frame-wrap" id="mFrameWrap">
-      <img id="mImg" src="" alt="" />
+    <div class="modal-img-main">
+      <div class="modal-frame-wrap" id="mFrameWrap">
+        <img id="mImg" src="" alt="" />
+      </div>
+    </div>
+    <div class="room-previews">
+      <div class="room-card room-card-1">
+        <div class="room-scene">
+          <div class="room-mini-frame" id="roomMini1"><img class="room-mini-img" src="" alt="" /></div>
+        </div>
+        <div class="room-floor"></div>
+        <span class="room-label">Nordic</span>
+      </div>
+      <div class="room-card room-card-2">
+        <div class="room-scene">
+          <div class="room-mini-frame" id="roomMini2"><img class="room-mini-img" src="" alt="" /></div>
+        </div>
+        <div class="room-floor"></div>
+        <span class="room-label">Warm</span>
+      </div>
+      <div class="room-card room-card-3">
+        <div class="room-scene">
+          <div class="room-mini-frame" id="roomMini3"><img class="room-mini-img" src="" alt="" /></div>
+        </div>
+        <div class="room-floor"></div>
+        <span class="room-label">Moody</span>
+      </div>
     </div>
   </div>
   <div class="modal-info-col">
@@ -1128,6 +1226,7 @@ function openModal(id) {
   };
   img.src = cur.img;
   document.getElementById('wallImg').src = cur.img;
+  document.querySelectorAll('.room-mini-img').forEach(i => i.src = cur.img);
   document.getElementById('mTitle').textContent = cur.name;
   document.getElementById('mDesc').textContent = cur.desc;
   setFmt('print', true);
@@ -1195,7 +1294,7 @@ function renderFrameColors() {
 function applyFramePreview() {
   const color = frameData[frameType].colors[frameColorIdx];
   const thickness = frameType === 'aluminium' ? '8px' : frameType === 'box' ? '24px' : '14px';
-  const miniThickness = frameType === 'aluminium' ? '3px' : frameType === 'box' ? '8px' : '5px';
+  const miniThickness = frameType === 'aluminium' ? '2px' : frameType === 'box' ? '6px' : '4px';
   const inset = frameType === 'aluminium'
     ? 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.3)'
     : frameType === 'box'
@@ -1205,8 +1304,11 @@ function applyFramePreview() {
   wrap.style.border = `${thickness} solid ${color.hex}`;
   wrap.style.boxShadow = `${inset}, 6px 14px 40px rgba(0,0,0,0.55)`;
   const mini = document.getElementById('wallPrintMini');
-  mini.style.border = `${miniThickness} solid ${color.hex}`;
-  mini.style.boxShadow = `1px 4px 12px rgba(0,0,0,0.4)`;
+  if (mini) { mini.style.border = `${miniThickness} solid ${color.hex}`; mini.style.boxShadow = `1px 4px 12px rgba(0,0,0,0.4)`; }
+  document.querySelectorAll('.room-mini-frame').forEach(m => {
+    m.style.border = `${miniThickness} solid ${color.hex}`;
+    m.style.boxShadow = `1px 5px 14px rgba(0,0,0,0.45)`;
+  });
 }
 
 function clearFramePreview() {
@@ -1214,8 +1316,11 @@ function clearFramePreview() {
   wrap.style.border = '';
   wrap.style.boxShadow = '';
   const mini = document.getElementById('wallPrintMini');
-  mini.style.border = '';
-  mini.style.boxShadow = '';
+  if (mini) { mini.style.border = ''; mini.style.boxShadow = ''; }
+  document.querySelectorAll('.room-mini-frame').forEach(m => {
+    m.style.border = '';
+    m.style.boxShadow = '2px 5px 14px rgba(0,0,0,0.35)';
+  });
 }
 
 function renderSizes() {
