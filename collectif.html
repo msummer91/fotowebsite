@@ -418,6 +418,39 @@
     }
     .frame-options-wrap.on { display: block; }
 
+    .wall-preview {
+      margin-top: 18px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .wall-bg {
+      background: linear-gradient(160deg, #ede8e1 60%, #ddd8d0 100%);
+      padding: 28px 20px 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      min-height: 140px;
+    }
+    .wall-floor {
+      height: 14px;
+      background: linear-gradient(to bottom, #ccc7bf, #bbb6ad);
+      box-shadow: inset 0 3px 6px rgba(0,0,0,0.12);
+    }
+    .wall-print-mini {
+      position: relative;
+      display: inline-block;
+      line-height: 0;
+      margin-bottom: -2px;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
+    .wall-print-mini img {
+      display: block;
+      max-height: 88px;
+      max-width: 160px;
+      width: auto;
+      height: auto;
+    }
+
     .sizes {
       display: flex;
       gap: 8px;
@@ -778,6 +811,14 @@
         <div class="field-label" style="margin-bottom:6px;margin-top:14px;">Colour</div>
         <div class="frame-colors" id="frameColors"></div>
         <div class="frame-desc" id="frameDesc"></div>
+        <div class="wall-preview">
+          <div class="wall-bg">
+            <div class="wall-print-mini" id="wallPrintMini">
+              <img id="wallImg" src="" alt="" />
+            </div>
+          </div>
+          <div class="wall-floor"></div>
+        </div>
       </div>
     </div>
 
@@ -986,6 +1027,7 @@ function openModal(id) {
     }
   };
   img.src = cur.img;
+  document.getElementById('wallImg').src = cur.img;
   document.getElementById('mTitle').textContent = cur.name;
   document.getElementById('mDesc').textContent = cur.desc;
   setFmt('print', true);
@@ -1051,22 +1093,29 @@ function renderFrameColors() {
 }
 
 function applyFramePreview() {
-  const wrap = document.getElementById('mFrameWrap');
   const color = frameData[frameType].colors[frameColorIdx];
   const thickness = frameType === 'aluminium' ? '8px' : frameType === 'box' ? '24px' : '14px';
+  const miniThickness = frameType === 'aluminium' ? '3px' : frameType === 'box' ? '8px' : '5px';
   const inset = frameType === 'aluminium'
     ? 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.3)'
     : frameType === 'box'
     ? 'inset 2px 4px 8px rgba(0,0,0,0.35), inset -2px -2px 6px rgba(0,0,0,0.2)'
     : 'inset 1px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(0,0,0,0.1)';
+  const wrap = document.getElementById('mFrameWrap');
   wrap.style.border = `${thickness} solid ${color.hex}`;
   wrap.style.boxShadow = `${inset}, 6px 14px 40px rgba(0,0,0,0.55)`;
+  const mini = document.getElementById('wallPrintMini');
+  mini.style.border = `${miniThickness} solid ${color.hex}`;
+  mini.style.boxShadow = `1px 4px 12px rgba(0,0,0,0.4)`;
 }
 
 function clearFramePreview() {
   const wrap = document.getElementById('mFrameWrap');
   wrap.style.border = '';
   wrap.style.boxShadow = '';
+  const mini = document.getElementById('wallPrintMini');
+  mini.style.border = '';
+  mini.style.boxShadow = '';
 }
 
 function renderSizes() {
