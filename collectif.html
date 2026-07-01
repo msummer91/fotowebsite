@@ -1035,7 +1035,7 @@ const frameData = {
 };
 
 // ── MODAL STATE ──
-let cur = null, fmt = 'print', sIdx = 0, frameType = 'classic', frameColorIdx = 0;
+let cur = null, fmt = 'print', sIdx = 0, frameType = 'classic', frameColorIdx = 0, _modalOpen = false;
 
 function price() {
   let p = cur.basePrice + cur.sp[sIdx];
@@ -1065,8 +1065,10 @@ function openModal(id) {
   document.getElementById('modal').classList.add('on');
   document.getElementById('overlay').classList.add('on');
   document.body.style.overflow = 'hidden';
+  _modalOpen = true;
+  history.pushState({ modal: true }, '');
 }
-function closeModal() {
+function closeModal(fromPopstate) {
   const img = document.getElementById('mImg');
   img.style.maxHeight = '';
   img.style.maxWidth = '';
@@ -1074,6 +1076,8 @@ function closeModal() {
   document.getElementById('modal').classList.remove('on');
   document.getElementById('overlay').classList.remove('on');
   document.body.style.overflow = '';
+  if (_modalOpen && !fromPopstate) { _modalOpen = false; history.back(); }
+  else { _modalOpen = false; }
 }
 
 function setFmt(f, silent) {
@@ -1206,6 +1210,9 @@ function toast(msg) { const el = document.getElementById('toast'); el.textConten
 
 // ── ESC KEY ──
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeZoom(); closeModal(); closeCart(); closeMenu(); } });
+
+// ── BACK BUTTON closes modal instead of navigating ──
+window.addEventListener('popstate', () => { if (_modalOpen) closeModal(true); });
 
 // ── HAMBURGER ──
 function toggleMenu() {
