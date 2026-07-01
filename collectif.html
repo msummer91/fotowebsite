@@ -687,7 +687,7 @@
         gap: 28px 16px;
       }
 
-      /* One unified floating card — transparent top, white info below */
+      /* One unified floating card — scrolls as single unit */
       .modal {
         flex-direction: column;
         position: fixed;
@@ -697,7 +697,9 @@
         transform: translateY(calc(100% + 14px));
         max-height: 88vh;
         border-radius: 20px;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         background: transparent;
         transition: opacity 0.3s, transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94);
       }
@@ -729,9 +731,9 @@
         max-width: 100%;
       }
 
-      /* Info panel: white card, flush below image, shadow here only */
+      /* Info panel: white card, flush below image — card itself scrolls */
       .modal-info-col {
-        flex: 1 1 auto;
+        flex: 0 0 auto;
         width: auto;
         margin: 0;
         max-height: none;
@@ -739,9 +741,7 @@
         gap: 10px;
         border-radius: 0 0 20px 20px;
         background: var(--bg);
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        box-shadow: 0 12px 48px rgba(0,0,0,0.2);
+        overflow-y: visible;
       }
 
       /* Disable desktop hover-shrink on touch */
