@@ -702,13 +702,13 @@
       }
       .modal.on { transform: translateY(0); }
 
-      /* Image panel: top of sheet, warm bg */
+      /* Image panel: transparent bg, same as desktop */
       .modal-img-col {
         flex: 0 0 auto;
-        height: 44vh;
-        max-height: 44vh;
+        height: 52vh;
+        max-height: 52vh;
         padding: 0;
-        background: #f0ede9;
+        background: transparent;
         border-radius: 20px 20px 0 0;
         display: flex;
         align-items: center;
@@ -717,22 +717,23 @@
       .modal-img-main {
         width: 100%;
         height: 100%;
-        padding: 24px 28px 18px;
+        padding: 28px 32px 20px;
         display: flex;
         align-items: center;
         justify-content: center;
       }
       .modal-frame-wrap img {
-        max-height: calc(44vh - 56px);
+        max-height: calc(52vh - 60px);
         max-width: 100%;
       }
 
-      /* Info panel: scrollable below image */
+      /* Info panel: compact + scrollable */
       .modal-info-col {
         flex: 1 1 auto;
         width: 100%;
         max-height: none;
-        padding: 22px 24px 56px;
+        padding: 16px 20px 52px;
+        gap: 10px;
         border-radius: 0;
         background: var(--bg);
         overflow-y: auto;
@@ -746,11 +747,21 @@
         opacity: 1;
       }
 
-      /* Close button: top-right of info panel */
-      .modal-x {
-        top: 18px;
-        right: 20px;
-      }
+      /* Close button */
+      .modal-x { top: 14px; right: 18px; }
+
+      /* Compact type */
+      .modal-title { font-size: clamp(18px, 5vw, 26px); }
+      .modal-by { font-size: 9px; margin-top: 2px; }
+      .section-label { font-size: 9px; letter-spacing: 0.14em; margin-bottom: 5px; }
+      .ftab { padding: 8px 6px; font-size: 11px; }
+      .frame-options-wrap { margin-top: 8px; }
+      .ftype-btn { padding: 6px 10px; font-size: 11px; }
+      .schip { padding: 6px 10px; font-size: 11px; }
+      .modal-price { font-size: 26px; }
+      .modal-price-note { font-size: 10px; margin-top: 1px; }
+      .btn-add { padding: 14px; font-size: 11px; }
+      .modal-desc { font-size: 11px; line-height: 1.55; margin-top: 2px; }
 
       footer { flex-direction: column; gap: 24px; text-align: center; padding: 36px 24px; }
       .cart-panel { width: 100%; }
@@ -768,11 +779,11 @@
         gap: 24px;
       }
 
-      .modal { max-height: 94vh; }
-      .modal-img-col { height: 40vh; max-height: 40vh; }
-      .modal-img-main { padding: 18px 20px 14px; }
-      .modal-frame-wrap img { max-height: calc(40vh - 44px); }
-      .modal-info-col { padding: 18px 20px 64px; gap: 10px; }
+      .modal { max-height: 95vh; }
+      .modal-img-col { height: 48vh; max-height: 48vh; }
+      .modal-img-main { padding: 22px 24px 16px; }
+      .modal-frame-wrap img { max-height: calc(48vh - 48px); }
+      .modal-info-col { padding: 14px 18px 60px; gap: 9px; }
 
       footer { padding: 28px 16px; }
     }
