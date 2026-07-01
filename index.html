@@ -651,10 +651,7 @@
     #about {
       background: #ffffff;
       padding: 96px 52px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 72px;
-      align-items: center;
+      max-width: 640px;
     }
     .about-img { overflow: hidden; }
     .about-img img { width: 100%; display: block; transition: transform 0.7s ease; }
@@ -872,7 +869,7 @@
       .modal-price-note { font-size: 10px; margin-top: 1px; }
       .btn-add { padding: 14px; font-size: 11px; }
 
-      #about { grid-template-columns: 1fr; gap: 40px; padding: 64px 24px; }
+      #about { padding: 64px 24px; }
       footer { flex-direction: column; gap: 24px; text-align: center; padding: 36px 24px; }
       .cart-panel { width: 100%; }
     }
@@ -1031,9 +1028,6 @@
 
   <!-- ABOUT -->
   <section id="about">
-    <div class="about-img">
-      <img src="Images/sunset surf.jpeg" alt="été collectif" loading="lazy" />
-    </div>
     <div>
       <p class="about-sup">About</p>
       <h2 class="about-h">We photograph the feeling of being alive in the world.</h2>
