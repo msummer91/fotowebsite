@@ -830,22 +830,30 @@
       .logo-wrap img { height: 100%; }
 
       .gallery {
-        grid-template-columns: 1fr;
-        padding: 20px 14px 48px;
-        column-gap: 0;
+        grid-template-columns: 1fr 1fr;
+        padding: 16px 12px 48px;
+        column-gap: 8px;
+        row-gap: 8px;
+        align-items: start;
       }
-      .g-item {
-        grid-column: 1 !important;
-        grid-row: auto !important;
-        height: 72vw !important;
-        margin: 0 0 10px 0 !important;
-      }
+
+      /* Editorial 2-col stagger — pairs alternate dominance, full-width breakers */
+      .g-item:nth-child(1)  { grid-column: auto; grid-row: auto; height: 58vw; margin: 0; align-self: start; }
+      .g-item:nth-child(2)  { grid-column: auto; grid-row: auto; height: 38vw; margin: 0; align-self: end; }
+      .g-item:nth-child(3)  { grid-column: 1/3;  grid-row: auto; height: 52vw; margin: 0; }
+      .g-item:nth-child(4)  { grid-column: auto; grid-row: auto; height: 36vw; margin: 0; align-self: end; }
+      .g-item:nth-child(5)  { grid-column: auto; grid-row: auto; height: 54vw; margin: 0; align-self: start; }
+      .g-item:nth-child(6)  { grid-column: 1/3;  grid-row: auto; height: 54vw; margin: 0; }
+      .g-item:nth-child(7)  { grid-column: auto; grid-row: auto; height: 50vw; margin: 0; align-self: start; }
+      .g-item:nth-child(8)  { grid-column: auto; grid-row: auto; height: 62vw; margin: 0; align-self: start; }
+      .g-item:nth-child(9)  { grid-column: 1/3;  grid-row: auto; height: 48vw; margin: 0; }
+      .g-item:nth-child(10) { grid-column: auto; grid-row: auto; height: 50vw; margin: 0; align-self: start; }
+      .g-item:nth-child(11) { grid-column: auto; grid-row: auto; height: 38vw; margin: 0; align-self: end; }
 
       #about { padding: 48px 16px; }
       footer { padding: 28px 16px; }
       .modal-img-col { max-height: 40vh; }
       .modal-img-main { padding: 16px 16px 8px; }
-
       .modal-info-col { padding: 16px 18px 32px; }
     }
   </style>
