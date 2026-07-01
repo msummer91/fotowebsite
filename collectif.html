@@ -825,8 +825,8 @@
 <div class="modal" id="modal">
   <div class="modal-img-col" onclick="closeModal()">
     <button class="modal-x" onclick="closeModal()">×</button>
-    <div class="modal-img-main" onclick="event.stopPropagation()">
-      <div class="modal-frame-wrap" id="mFrameWrap">
+    <div class="modal-img-main">
+      <div class="modal-frame-wrap" id="mFrameWrap" onclick="event.stopPropagation()">
         <img id="mImg" src="" alt="" />
       </div>
     </div>
