@@ -434,11 +434,13 @@
       position: absolute;
       top: 18px; right: 22px;
       background: none; border: none;
-      font-size: 22px; cursor: pointer;
-      color: var(--muted); line-height: 1;
+      font-size: 26px; cursor: pointer;
+      color: rgba(255,255,255,0.8); line-height: 1;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
       transition: color 0.2s;
+      z-index: 2;
     }
-    .modal-x:hover { color: var(--dark); }
+    .modal-x:hover { color: #fff; }
 
     .modal-title {
       font-family: var(--serif);
@@ -856,7 +858,7 @@
         flex-basis: auto; width: auto; opacity: 1;
       }
 
-      /* Close button sits in top-right of info panel */
+      /* Close button sits in top-right of transparent image area */
       .modal-x { top: 14px; right: 18px; }
 
       /* Compact type */
@@ -939,15 +941,15 @@
 
 <!-- product modal -->
 <div class="modal" id="modal">
-  <div class="modal-img-col">
-    <div class="modal-img-main">
+  <div class="modal-img-col" onclick="closeModal()">
+    <button class="modal-x" onclick="closeModal()">×</button>
+    <div class="modal-img-main" onclick="event.stopPropagation()">
       <div class="modal-frame-wrap" id="mFrameWrap">
         <img id="mImg" src="" alt="" />
       </div>
     </div>
   </div>
   <div class="modal-info-col">
-    <button class="modal-x" onclick="closeModal()">×</button>
     <div>
       <div class="modal-title" id="mTitle"></div>
       <div class="modal-by">été collectif</div>
