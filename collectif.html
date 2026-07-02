@@ -588,6 +588,31 @@
       cursor: pointer; transition: background 0.25s;
     }
     .btn-checkout:hover { background: var(--crimson); }
+    .btn-checkout:disabled { opacity: 0.5; cursor: default; }
+
+    /* ── CHECKOUT FORM ── */
+    #cartMain    { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    #checkoutForm { display: none; flex-direction: column; flex: 1; min-height: 0; }
+    .cp-back {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--sans); font-size: 11px; letter-spacing: 0.1em;
+      color: var(--muted); padding: 0; transition: color 0.2s;
+    }
+    .cp-back:hover { color: var(--dark); }
+    .cf-gap { margin-bottom: 14px; }
+    .cf-label {
+      display: block; font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .cf-input {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid var(--border); background: none;
+      font-family: var(--sans); font-size: 13px; color: var(--text);
+      outline: none; transition: border-color 0.2s;
+      -webkit-appearance: none; border-radius: 0; box-sizing: border-box;
+    }
+    .cf-input:focus { border-color: var(--dark); }
+    .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
     /* ── FOOTER ── */
     footer {
@@ -812,20 +837,104 @@
 
 <!-- cart panel -->
 <div class="cart-panel" id="cartPanel">
-  <div class="cp-head">
-    <span class="cp-title">Your Selection</span>
-    <button class="cp-close" onclick="closeCart()">×</button>
-  </div>
-  <div class="cp-body" id="cpBody">
-    <div class="cp-empty"><p>Nothing yet</p><p>Add a print to begin your collection.</p></div>
-  </div>
-  <div class="cp-foot">
-    <div class="cp-total-row">
-      <span class="cp-total-label">Subtotal</span>
-      <span class="cp-total-val" id="cpTotal">€0</span>
+
+  <!-- View 1: Cart -->
+  <div id="cartMain">
+    <div class="cp-head">
+      <span class="cp-title">Your Selection</span>
+      <button class="cp-close" onclick="closeCart()">×</button>
     </div>
-    <button class="btn-checkout">Proceed to Checkout</button>
+    <div class="cp-body" id="cpBody">
+      <div class="cp-empty"><p>Nothing yet</p><p>Add a print to begin your collection.</p></div>
+    </div>
+    <div class="cp-foot">
+      <div class="cp-total-row">
+        <span class="cp-total-label">Subtotal</span>
+        <span class="cp-total-val" id="cpTotal">€0</span>
+      </div>
+      <button class="btn-checkout" onclick="showCheckout()">Proceed to Checkout</button>
+    </div>
   </div>
+
+  <!-- View 2: Shipping form -->
+  <div id="checkoutForm">
+    <div class="cp-head">
+      <button class="cp-back" onclick="showCart()">← Back</button>
+      <span class="cp-title">Shipping</span>
+      <button class="cp-close" onclick="closeCart()">×</button>
+    </div>
+    <div class="cp-body">
+      <div class="cf-gap">
+        <label class="cf-label">Full Name *</label>
+        <input class="cf-input" id="cfName" type="text" autocomplete="name" placeholder="Anna Müller" />
+      </div>
+      <div class="cf-gap">
+        <label class="cf-label">Email</label>
+        <input class="cf-input" id="cfEmail" type="email" autocomplete="email" placeholder="anna@example.com" />
+      </div>
+      <div class="cf-gap">
+        <label class="cf-label">Address *</label>
+        <input class="cf-input" id="cfLine1" type="text" autocomplete="address-line1" placeholder="Street and number" />
+      </div>
+      <div class="cf-gap">
+        <input class="cf-input" id="cfLine2" type="text" autocomplete="address-line2" placeholder="Apartment, suite (optional)" />
+      </div>
+      <div class="cf-row cf-gap">
+        <div>
+          <label class="cf-label">City *</label>
+          <input class="cf-input" id="cfCity" type="text" autocomplete="address-level2" />
+        </div>
+        <div>
+          <label class="cf-label">Post Code *</label>
+          <input class="cf-input" id="cfPostal" type="text" autocomplete="postal-code" />
+        </div>
+      </div>
+      <div class="cf-gap">
+        <label class="cf-label">Country</label>
+        <select class="cf-input" id="cfCountry" autocomplete="country">
+          <option value="DE">Germany</option>
+          <option value="CH">Switzerland</option>
+          <option value="AT">Austria</option>
+          <option value="FR">France</option>
+          <option value="NL">Netherlands</option>
+          <option value="BE">Belgium</option>
+          <option value="ES">Spain</option>
+          <option value="IT">Italy</option>
+          <option value="PT">Portugal</option>
+          <option value="GB">United Kingdom</option>
+          <option value="IE">Ireland</option>
+          <option value="SE">Sweden</option>
+          <option value="DK">Denmark</option>
+          <option value="NO">Norway</option>
+          <option value="FI">Finland</option>
+          <option value="PL">Poland</option>
+          <option value="CZ">Czech Republic</option>
+          <option value="LU">Luxembourg</option>
+          <option value="US">United States</option>
+          <option value="CA">Canada</option>
+          <option value="AU">Australia</option>
+          <option value="NZ">New Zealand</option>
+          <option value="JP">Japan</option>
+          <option value="SG">Singapore</option>
+        </select>
+      </div>
+      <div class="cf-gap">
+        <label class="cf-label">Shipping</label>
+        <select class="cf-input" id="cfShipping">
+          <option value="Standard">Standard</option>
+          <option value="Express">Express</option>
+        </select>
+      </div>
+    </div>
+    <div class="cp-foot">
+      <div class="cp-total-row">
+        <span class="cp-total-label">Subtotal (excl. shipping)</span>
+        <span class="cp-total-val" id="cpTotal2">€0</span>
+      </div>
+      <button class="btn-checkout" id="btnPlaceOrder" onclick="placeOrder()">Place Order</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- modal overlay -->
@@ -1257,7 +1366,108 @@ function refreshCart() {
     </div>`).join('');
 }
 function openCart() { document.getElementById('cartPanel').classList.add('on'); document.getElementById('cartVeil').classList.add('on'); document.body.style.overflow = 'hidden'; }
-function closeCart() { document.getElementById('cartPanel').classList.remove('on'); document.getElementById('cartVeil').classList.remove('on'); document.body.style.overflow = ''; }
+function closeCart() { document.getElementById('cartPanel').classList.remove('on'); document.getElementById('cartVeil').classList.remove('on'); document.body.style.overflow = ''; showCart(); }
+
+// ── PRODIGI CHECKOUT ──
+// Confirmed SKUs from prodigi.com/products catalogue (2025):
+//   Hahnemühle Photo Rag (GLOBAL-HPR): 12X16=30×40cm, 20X28=50×70cm, 28X40=70×100cm
+//   Classic Frame (GLOBAL-CFP):         12X16=30×40cm, 20X28=50×70cm, 28X40=70×100cm
+//   Frame colors attribute:  Black, White, Natural, Antique Silver, Antique Gold, Dark Grey
+const SKU_MAP = {
+  print: {
+    '30×40 cm': 'GLOBAL-HPR-12X16',
+    '50×70 cm': 'GLOBAL-HPR-20X28',
+    '70×100 cm': 'GLOBAL-HPR-28X40',
+  },
+  framed: {
+    '30×40 cm': 'GLOBAL-CFP-12X16',
+    '50×70 cm': 'GLOBAL-CFP-20X28',
+    '70×100 cm': 'GLOBAL-CFP-28X40',
+  }
+};
+const FRAME_COLOR_ATTR = {
+  'Black': 'Black', 'White': 'White', 'Oak': 'Natural',
+  'Antique Silver': 'Antique Silver', 'Antique Gold': 'Antique Gold',
+  'Dark Grey': 'Dark Grey', 'Light Grey': 'Light Grey', 'Brown': 'Brown',
+  'Silver': 'Antique Silver', 'Gold': 'Antique Gold',
+};
+
+function showCheckout() {
+  if (!cart.length) return;
+  document.getElementById('cartMain').style.display = 'none';
+  document.getElementById('checkoutForm').style.display = 'flex';
+  const t = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('cpTotal2').textContent = '€' + t;
+}
+function showCart() {
+  document.getElementById('cartMain').style.display = 'flex';
+  document.getElementById('checkoutForm').style.display = 'none';
+}
+
+function getAssetUrl(imgPath) {
+  return window.location.origin + '/' + imgPath.split('/').map(encodeURIComponent).join('/');
+}
+function getOrderSku(item) {
+  return (item.fmt === 'framed' ? SKU_MAP.framed : SKU_MAP.print)[item.size]
+      || (item.fmt === 'framed' ? 'GLOBAL-CFP-12X16' : 'GLOBAL-HPR-12X16');
+}
+function getOrderAttributes(item) {
+  if (item.fmt !== 'framed' || !item.frameLabel) return {};
+  const colorName = item.frameLabel.split(' – ')[1] || '';
+  const color = FRAME_COLOR_ATTR[colorName];
+  return color ? { color } : {};
+}
+
+async function placeOrder() {
+  const name     = document.getElementById('cfName').value.trim();
+  const email    = document.getElementById('cfEmail').value.trim();
+  const line1    = document.getElementById('cfLine1').value.trim();
+  const line2    = document.getElementById('cfLine2').value.trim();
+  const city     = document.getElementById('cfCity').value.trim();
+  const postal   = document.getElementById('cfPostal').value.trim();
+  const country  = document.getElementById('cfCountry').value;
+  const shipping = document.getElementById('cfShipping').value;
+
+  if (!name || !line1 || !city || !postal) { toast('Please fill in all required fields'); return; }
+
+  const btn = document.getElementById('btnPlaceOrder');
+  btn.textContent = 'Placing order…'; btn.disabled = true;
+
+  const orderItems = cart.map(item => ({
+    sku:        getOrderSku(item),
+    qty:        item.qty,
+    attributes: getOrderAttributes(item),
+    assetUrl:   getAssetUrl(item.img)
+  }));
+
+  try {
+    const res = await fetch('/api/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: orderItems,
+        recipient: {
+          name,
+          email: email || undefined,
+          address: { line1, line2: line2 || undefined, townOrCity: city, postalOrZipCode: postal, countryCode: country }
+        },
+        shippingMethod: shipping
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      toast('Order error: ' + (data.error || 'Please try again'));
+      btn.textContent = 'Place Order'; btn.disabled = false;
+      return;
+    }
+    // ✓ Success — clear cart and show confirmation
+    cart = []; saveCart(); refreshCart(); closeCart();
+    toast('Order placed! Ref: ' + (data.orderId || data.merchantReference));
+  } catch (e) {
+    toast('Connection error. Please try again.');
+    btn.textContent = 'Place Order'; btn.disabled = false;
+  }
+}
 
 // ── TOAST ──
 let tt;
