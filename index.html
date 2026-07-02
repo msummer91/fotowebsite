@@ -496,6 +496,8 @@
     .ftab.on { background: var(--dark); color: #fff; }
     .ftab:not(.on):hover { background: var(--border); color: var(--dark); }
 
+    .paper-options-wrap { display: block; margin-top: 14px; }
+    .paper-options-wrap.hidden { display: none; }
     .frame-options-wrap {
       margin-top: 14px;
       display: none;
@@ -1077,6 +1079,15 @@
         <button class="ftab on" id="tabPrint" onclick="setFmt('print')">Print — Unframed</button>
         <button class="ftab" id="tabFramed" onclick="setFmt('framed')">Framed</button>
       </div>
+      <!-- Paper type (shown when Print — Unframed is active) -->
+      <div class="paper-options-wrap" id="paperOptionsWrap">
+        <div class="field-label" style="margin-top:4px;margin-bottom:8px">Paper</div>
+        <div class="frame-types">
+          <button class="ftype-btn on" id="paperHpr" onclick="setPaper('hpr')">Hahnemühle Rag</button>
+          <button class="ftype-btn" id="paperPap" onclick="setPaper('pap')">Lustre</button>
+        </div>
+        <div class="frame-desc" id="paperDesc">308gsm · Cotton rag · Matte · Archival giclée</div>
+      </div>
       <div class="frame-options-wrap" id="frameOptionsWrap">
         <div class="field-label" style="margin-bottom:8px;margin-top:4px;">Frame style</div>
         <div class="frame-types" id="frameTypes"></div>
@@ -1219,42 +1230,24 @@ shuffle(products).forEach(p => {
 // ── FRAME DATA (Prodigi options) ──
 const frameData = {
   classic: {
-    label: 'Classic',
+    label: 'Classic Frame',
     extra: 0,
-    desc: 'Moulded frame with UV-protective acrylic glass. Ships ready to hang.',
+    desc: 'Satin-laminated wood frame · UV Perspex glass · Ships ready to hang.',
     colors: [
       { name: 'Black',          hex: '#1c1c1c' },
-      { name: 'White',          hex: '#f0ede9', border: '#ccc' },
-      { name: 'Oak',            hex: '#c4a882' },
-      { name: 'Antique Silver', hex: '#a8a8a8' },
+      { name: 'White',          hex: '#f2f0ed', border: '#ccc' },
+      { name: 'Natural',        hex: '#c09b6e' },
+      { name: 'Antique Silver', hex: '#9da3a3' },
+      { name: 'Brown',          hex: '#7a4929' },
       { name: 'Antique Gold',   hex: '#c9a84c' },
       { name: 'Dark Grey',      hex: '#4a4848' },
-    ]
-  },
-  aluminium: {
-    label: 'Aluminium',
-    extra: 25,
-    desc: 'Slim aluminium profile, acrylic glass. Clean, contemporary look.',
-    colors: [
-      { name: 'Black',  hex: '#1c1c1c' },
-      { name: 'Silver', hex: '#c0c2c3' },
-      { name: 'Gold',   hex: '#d4a843' },
-    ]
-  },
-  box: {
-    label: 'Box Frame',
-    extra: 15,
-    desc: 'Deep box frame — print floats with a gap shadow. Ships ready to hang.',
-    colors: [
-      { name: 'Black', hex: '#1c1c1c' },
-      { name: 'White', hex: '#f0ede9', border: '#ccc' },
-      { name: 'Oak',   hex: '#c4a882' },
+      { name: 'Light Grey',     hex: '#c0bfbd', border: '#aaa' },
     ]
   }
 };
 
 // ── MODAL STATE ──
-let cur = null, fmt = 'print', sIdx = 0, frameType = 'classic', frameColorIdx = 0, _modalOpen = false;
+let cur = null, fmt = 'print', sIdx = 0, frameType = 'classic', frameColorIdx = 0, paperType = 'hpr', _modalOpen = false;
 
 function price() {
   let p = cur.basePrice + cur.sp[sIdx];
@@ -1264,7 +1257,7 @@ function price() {
 
 function openModal(id) {
   cur = products.find(p => p.id === id);
-  fmt = 'print'; sIdx = 0; frameType = 'classic'; frameColorIdx = 0;
+  fmt = 'print'; sIdx = 0; frameType = 'classic'; frameColorIdx = 0; paperType = 'hpr';
   const img = document.getElementById('mImg');
   img.style.maxHeight = '';
   img.style.maxWidth = '';
@@ -1306,16 +1299,26 @@ function setFmt(f, silent) {
   fmt = f;
   document.getElementById('tabPrint').classList.toggle('on', f === 'print');
   document.getElementById('tabFramed').classList.toggle('on', f === 'framed');
-  const wrap = document.getElementById('frameOptionsWrap');
-  wrap.classList.toggle('on', f === 'framed');
+  document.getElementById('frameOptionsWrap').classList.toggle('on', f === 'framed');
+  document.getElementById('paperOptionsWrap').classList.toggle('hidden', f === 'framed');
   if (f === 'framed') {
     frameType = 'classic'; frameColorIdx = 0;
-    renderFrameTypes(); renderFrameColors();
-    applyFramePreview();
+    renderFrameTypes(); renderFrameColors(); applyFramePreview();
   } else {
     clearFramePreview();
+    setPaper(paperType);
   }
   if (!silent) updatePrice();
+}
+function setPaper(p) {
+  paperType = p;
+  document.getElementById('paperHpr').classList.toggle('on', p === 'hpr');
+  document.getElementById('paperPap').classList.toggle('on', p === 'pap');
+  const descs = {
+    hpr: '308gsm · Cotton rag · Matte · Archival giclée',
+    pap: '240gsm · Satin lustre · Archival giclée'
+  };
+  document.getElementById('paperDesc').textContent = descs[p] || '';
 }
 
 function renderFrameTypes() {
@@ -1349,14 +1352,12 @@ function renderFrameColors() {
 
 function applyFramePreview() {
   const color = frameData[frameType].colors[frameColorIdx];
-  const thickness = frameType === 'aluminium' ? 8 : frameType === 'box' ? 24 : 14;
-  const inset = frameType === 'aluminium'
-    ? 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.3)'
-    : frameType === 'box'
-    ? 'inset 2px 4px 8px rgba(0,0,0,0.35), inset -2px -2px 6px rgba(0,0,0,0.2)'
-    : 'inset 1px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(0,0,0,0.1)';
+  const thickness = 14;
+  const inset = 'inset 1px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(0,0,0,0.1)';
   const wrap = document.getElementById('mFrameWrap');
   wrap.style.border = `${thickness}px solid ${color.hex}`;
+  if (color.border) wrap.style.outline = `1px solid ${color.border}`;
+  else wrap.style.outline = '';
   wrap.style.boxShadow = `${inset}, 6px 14px 40px rgba(0,0,0,0.55)`;
   // Shrink img on mobile so frame fits inside the image panel
   const w = window.innerWidth;
@@ -1370,6 +1371,7 @@ function applyFramePreview() {
 function clearFramePreview() {
   const wrap = document.getElementById('mFrameWrap');
   wrap.style.border = '';
+  wrap.style.outline = '';
   wrap.style.boxShadow = '';
   // Restore default mobile max-height
   const w = window.innerWidth;
@@ -1426,14 +1428,15 @@ loadCart();
 function addToCart() {
   if (!cur) return;
   const frameKey = fmt === 'framed' ? `-${frameType}-${frameColorIdx}` : '';
-  const key = `${cur.id}-${cur.sizes[sIdx]}-${fmt}${frameKey}`;
+  const paperKey = fmt === 'print' ? `-${paperType}` : '';
+  const key = `${cur.id}-${cur.sizes[sIdx]}-${fmt}${frameKey}${paperKey}`;
   const ex = cart.find(i => i.key === key);
   if (ex) { ex.qty++; }
   else {
     const frameLabel = fmt === 'framed'
       ? `${frameData[frameType].label} – ${frameData[frameType].colors[frameColorIdx].name}`
       : null;
-    cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, frameLabel, price: price(), qty: 1, img: cur.img });
+    cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, paperType: fmt === 'print' ? paperType : null, frameLabel, price: price(), qty: 1, img: cur.img });
   }
   saveCart(); refreshCart(); closeModal(); toast(`"${cur.name}" added`); openCart();
 }
@@ -1451,7 +1454,7 @@ function refreshCart() {
       <img class="cp-item-img${i.fmt === 'framed' ? ' fr' : ''}" src="${i.img}" alt="${i.name}"/>
       <div>
         <div class="cp-item-name">${i.name}</div>
-        <div class="cp-item-meta">${i.size}<br>${i.frameLabel || 'Unframed print'} · Qty ${i.qty}</div>
+        <div class="cp-item-meta">${i.size}<br>${i.frameLabel || (i.paperType === 'pap' ? 'Lustre · Unframed' : 'Hahnemühle Rag · Unframed')} · Qty ${i.qty}</div>
         <button class="cp-item-rm" onclick="removeItem('${i.key}')">Remove</button>
       </div>
       <div class="cp-item-price">€${i.price * i.qty}</div>
@@ -1462,22 +1465,32 @@ function closeCart() { document.getElementById('cartPanel').classList.remove('on
 
 // ── PRODIGI CHECKOUT ──
 const SKU_MAP = {
-  print: {
+  hpr: { // Hahnemühle Photo Rag — matte cotton, 308gsm
     '30×40 cm': 'GLOBAL-HPR-12X16',
     '50×70 cm': 'GLOBAL-HPR-20X28',
     '70×100 cm': 'GLOBAL-HPR-28X40',
   },
-  framed: {
+  pap: { // Lustre Photo Paper — satin finish, 240gsm
+    '30×40 cm': 'GLOBAL-PAP-12X16',
+    '50×70 cm': 'GLOBAL-PAP-20X28',
+    '70×100 cm': 'GLOBAL-PAP-28X40',
+  },
+  framed: { // Classic Frame (GLOBAL-CFP) — 8 colors, wood moulding
     '30×40 cm': 'GLOBAL-CFP-12X16',
     '50×70 cm': 'GLOBAL-CFP-20X28',
     '70×100 cm': 'GLOBAL-CFP-28X40',
   }
 };
+// frameLabel color names → Prodigi Classic Frame API attribute values
 const FRAME_COLOR_ATTR = {
-  'Black': 'Black', 'White': 'White', 'Oak': 'Natural',
-  'Antique Silver': 'Antique Silver', 'Antique Gold': 'Antique Gold',
-  'Dark Grey': 'Dark Grey', 'Light Grey': 'Light Grey', 'Brown': 'Brown',
-  'Silver': 'Antique Silver', 'Gold': 'Antique Gold',
+  'Black':          'Black',
+  'White':          'White',
+  'Natural':        'Natural',
+  'Antique Silver': 'Antique Silver',
+  'Brown':          'Brown',
+  'Antique Gold':   'Antique Gold',
+  'Dark Grey':      'Dark Grey',
+  'Light Grey':     'Light Grey',
 };
 
 function showCheckout() {
@@ -1496,8 +1509,9 @@ function getAssetUrl(imgPath) {
   return window.location.origin + '/' + imgPath.split('/').map(encodeURIComponent).join('/');
 }
 function getOrderSku(item) {
-  return (item.fmt === 'framed' ? SKU_MAP.framed : SKU_MAP.print)[item.size]
-      || (item.fmt === 'framed' ? 'GLOBAL-CFP-12X16' : 'GLOBAL-HPR-12X16');
+  if (item.fmt === 'framed') return SKU_MAP.framed[item.size] || 'GLOBAL-CFP-12X16';
+  const paperKey = item.paperType || 'hpr';
+  return (SKU_MAP[paperKey] || SKU_MAP.hpr)[item.size] || 'GLOBAL-HPR-12X16';
 }
 function getOrderAttributes(item) {
   if (item.fmt !== 'framed' || !item.frameLabel) return {};
