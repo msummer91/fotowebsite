@@ -1185,6 +1185,25 @@ function closeZoom() { document.getElementById('zoomOverlay').classList.remove('
 
 // ── CART ──
 let cart = [];
+
+// Persist cart across pages — expires after 24h
+const _CART_KEY = 'ete_cart';
+const _CART_TTL = 24 * 60 * 60 * 1000;
+function saveCart() {
+  try { localStorage.setItem(_CART_KEY, JSON.stringify({ ts: Date.now(), items: cart })); } catch(e) {}
+}
+function loadCart() {
+  try {
+    const raw = localStorage.getItem(_CART_KEY);
+    if (!raw) return;
+    const { ts, items } = JSON.parse(raw);
+    if (Date.now() - ts > _CART_TTL) { localStorage.removeItem(_CART_KEY); return; }
+    cart = items;
+    refreshCart();
+  } catch(e) {}
+}
+loadCart();
+
 function addToCart() {
   if (!cur) return;
   const frameKey = fmt === 'framed' ? `-${frameType}-${frameColorIdx}` : '';
@@ -1197,9 +1216,9 @@ function addToCart() {
       : null;
     cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, frameLabel, price: price(), qty: 1, img: cur.img });
   }
-  refreshCart(); closeModal(); toast(`"${cur.name}" added`); openCart();
+  saveCart(); refreshCart(); closeModal(); toast(`"${cur.name}" added`); openCart();
 }
-function removeItem(key) { cart = cart.filter(i => i.key !== key); refreshCart(); }
+function removeItem(key) { cart = cart.filter(i => i.key !== key); saveCart(); refreshCart(); }
 function refreshCart() {
   const n = cart.reduce((s, i) => s + i.qty, 0);
   const t = cart.reduce((s, i) => s + i.price * i.qty, 0);
