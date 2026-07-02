@@ -830,8 +830,16 @@
 
       footer { padding: 28px 16px; }
     }
+    /* ── STRIPE CARD ELEMENT ── */
+    .stripe-wrap { margin-bottom: 14px; }
+    .stripe-wrap .cf-label { display: block; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    #stripeCardEl { padding: 11px 12px; border: 1px solid var(--border); transition: border-color 0.2s; }
+    #stripeCardEl.focused { border-color: var(--dark); }
+    #cardError { color: #c0392b; font-size: 12px; margin-top: 6px; display: none; }
+    .cf-section-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); padding: 14px 0 10px; border-top: 1px solid var(--border); margin-top: 4px; }
   </style>
 </head>
+<script src="https://js.stripe.com/v3/" async></script>
 <body>
 
 <!-- cart veil -->
@@ -927,13 +935,19 @@
           <option value="Express">Express</option>
         </select>
       </div>
+      <div class="cf-section-label">Payment</div>
+      <div class="stripe-wrap">
+        <label class="cf-label">Card Details *</label>
+        <div id="stripeCardEl" class="cf-input"></div>
+        <div id="cardError"></div>
+      </div>
     </div>
     <div class="cp-foot">
       <div class="cp-total-row">
-        <span class="cp-total-label">Subtotal (excl. shipping)</span>
+        <span class="cp-total-label">Total (excl. shipping)</span>
         <span class="cp-total-val" id="cpTotal2">€0</span>
       </div>
-      <button class="btn-checkout" id="btnPlaceOrder" onclick="placeOrder()">Place Order</button>
+      <button class="btn-checkout" id="btnPlaceOrder" onclick="placeOrder()">Pay €0</button>
     </div>
   </div>
 
@@ -1406,12 +1420,39 @@ const FRAME_COLOR_ATTR = {
   'Light Grey':     'Light Grey',
 };
 
+// ── STRIPE ──
+let _stripe = null, _cardEl = null, _cardMounted = false;
+function initStripe() {
+  if (_stripe) return;
+  if (typeof Stripe === 'undefined') { setTimeout(initStripe, 200); return; }
+  _stripe = Stripe('pk_test_51Tolhf0WnZlGFPbLr56HeXHvfGApj3OJQUTKCAkEZgZiiKjHFaKc3DoJr8luSJoAmYqvs9mts7dvLYx7ew5ifZUU00KXKymXc8');
+  const els = _stripe.elements();
+  _cardEl = els.create('card', {
+    style: {
+      base: { fontFamily: "'Helvetica Neue', Helvetica, sans-serif", fontSize: '13px', color: '#1a1a1a', letterSpacing: '0.02em', '::placeholder': { color: '#aaa' } },
+      invalid: { color: '#c0392b' }
+    }
+  });
+  _cardEl.on('focus', () => document.getElementById('stripeCardEl').classList.add('focused'));
+  _cardEl.on('blur',  () => document.getElementById('stripeCardEl').classList.remove('focused'));
+  _cardEl.on('change', e => {
+    const err = document.getElementById('cardError');
+    err.textContent = e.error ? e.error.message : '';
+    err.style.display = e.error ? 'block' : 'none';
+  });
+}
+initStripe();
+
 function showCheckout() {
   if (!cart.length) return;
   document.getElementById('cartMain').style.display = 'none';
   document.getElementById('checkoutForm').style.display = 'flex';
   const t = cart.reduce((s, i) => s + i.price * i.qty, 0);
   document.getElementById('cpTotal2').textContent = '€' + t;
+  document.getElementById('btnPlaceOrder').textContent = 'Pay €' + t;
+  document.getElementById('cardError').style.display = 'none';
+  if (!_cardMounted && _cardEl) { _cardEl.mount('#stripeCardEl'); _cardMounted = true; }
+  else if (!_cardEl) { setTimeout(showCheckout, 200); }
 }
 function showCart() {
   document.getElementById('cartMain').style.display = 'flex';
@@ -1444,43 +1485,76 @@ async function placeOrder() {
   const shipping = document.getElementById('cfShipping').value;
 
   if (!name || !line1 || !city || !postal) { toast('Please fill in all required fields'); return; }
+  if (!_stripe || !_cardEl) { toast('Payment not ready — please wait'); return; }
 
-  const btn = document.getElementById('btnPlaceOrder');
-  btn.textContent = 'Placing order…'; btn.disabled = true;
-
-  const orderItems = cart.map(item => ({
-    sku:        getOrderSku(item),
-    qty:        item.qty,
-    attributes: getOrderAttributes(item),
-    assetUrl:   getAssetUrl(item.img)
-  }));
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const btn   = document.getElementById('btnPlaceOrder');
+  const reset = () => { btn.textContent = 'Pay €' + total; btn.disabled = false; };
+  btn.textContent = 'Processing…'; btn.disabled = true;
+  document.getElementById('cardError').style.display = 'none';
 
   try {
-    const res = await fetch('/api/create-order', {
+    // Step 1: create PaymentIntent on the server
+    const piRes = await fetch('/api/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: total, currency: 'eur' })
+    });
+    const piData = await piRes.json();
+    if (!piRes.ok) { toast(piData.error || 'Payment setup failed'); reset(); return; }
+
+    // Step 2: confirm card payment via Stripe.js (handles 3DS etc.)
+    const { paymentIntent, error } = await _stripe.confirmCardPayment(piData.clientSecret, {
+      payment_method: {
+        card: _cardEl,
+        billing_details: { name, ...(email ? { email } : {}) }
+      }
+    });
+    if (error) {
+      const err = document.getElementById('cardError');
+      err.textContent = error.message; err.style.display = 'block';
+      reset(); return;
+    }
+    if (paymentIntent.status !== 'succeeded') {
+      toast('Payment incomplete — please try again'); reset(); return;
+    }
+
+    // Step 3: submit print order to Prodigi
+    btn.textContent = 'Placing order…';
+    const orderItems = cart.map(item => ({
+      sku:        getOrderSku(item),
+      qty:        item.qty,
+      attributes: getOrderAttributes(item),
+      assetUrl:   getAssetUrl(item.img)
+    }));
+    const orderRes = await fetch('/api/create-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         items: orderItems,
         recipient: {
-          name,
-          email: email || undefined,
+          name, email: email || undefined,
           address: { line1, line2: line2 || undefined, townOrCity: city, postalOrZipCode: postal, countryCode: country }
         },
-        shippingMethod: shipping
+        shippingMethod: shipping,
+        stripePaymentIntentId: paymentIntent.id
       })
     });
-    const data = await res.json();
-    if (!res.ok) {
-      toast('Order error: ' + (data.error || 'Please try again'));
-      btn.textContent = 'Place Order'; btn.disabled = false;
-      return;
+    const orderData = await orderRes.json();
+    if (!orderRes.ok) {
+      // Payment succeeded but print order failed — log for follow-up
+      console.error('Print order failed after payment:', paymentIntent.id, orderData);
+      toast('Payment taken ✓ — print order error, we will contact you');
+      cart = []; saveCart(); refreshCart(); closeCart(); return;
     }
-    // ✓ Success — clear cart and show confirmation
+
+    // ✓ All done
     cart = []; saveCart(); refreshCart(); closeCart();
-    toast('Order placed! Ref: ' + (data.orderId || data.merchantReference));
+    toast('Order confirmed! Thank you ✓');
+
   } catch (e) {
     toast('Connection error. Please try again.');
-    btn.textContent = 'Place Order'; btn.disabled = false;
+    reset();
   }
 }
 
