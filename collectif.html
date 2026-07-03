@@ -183,27 +183,7 @@
       aspect-ratio: 4 / 3;
     }
 
-    /* Hover overlay */
-    .w-hover {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: flex-end;
-      padding: 20px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      background: linear-gradient(to top, rgba(26,25,22,0.52) 0%, transparent 50%);
-    }
-    .w-item:hover .w-hover { opacity: 1; }
-    .w-hover-cta {
-      font-size: 10px;
-      font-weight: 400;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #fff;
-      border-bottom: 1px solid rgba(255,255,255,0.5);
-      padding-bottom: 2px;
-    }
+    .w-item:hover .w-img-wrap img { transform: scale(1.04); }
 
     /* Caption below image */
     .w-caption {
@@ -1139,7 +1119,6 @@ ordered.forEach(p => {
   el.innerHTML = `
     <div class="w-img-wrap">
       <img src="${p.img}" alt="${p.name}" loading="lazy" />
-      <div class="w-hover"><span class="w-hover-cta">View print</span></div>
     </div>
     <div class="w-caption">
       <div class="w-name">${p.name}</div>
