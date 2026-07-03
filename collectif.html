@@ -378,45 +378,28 @@
     .room-scene-view.on { display: flex; }
     .room-canvas {
       position: relative;
-      width: 88%; aspect-ratio: 16/9;
+      width: 92%; aspect-ratio: 3/2;
       overflow: hidden; border-radius: 2px;
       box-shadow: 0 12px 50px rgba(0,0,0,0.55);
     }
     @media (max-width: 860px) {
-      .room-canvas { width: auto; height: 82%; aspect-ratio: 16/9; }
+      .room-canvas { width: auto; height: 84%; aspect-ratio: 3/2; }
     }
-    .room-wall { position: absolute; inset: 0; bottom: 27%; }
-    .room-floor {
-      position: absolute; left: 0; right: 0; bottom: 0; height: 27%;
-      box-shadow: inset 0 3px 10px rgba(0,0,0,0.15);
+    .room-bg {
+      display: block; width: 100%; height: 100%; object-fit: cover;
     }
-    /* Room 1 — warm modern light */
-    .r1 .room-wall {
-      background:
-        radial-gradient(ellipse at 8% 25%, rgba(255,252,240,0.25) 0%, transparent 55%),
-        linear-gradient(155deg, #d9d5ce 0%, #eae6e1 40%, #e3dfd9 100%);
-    }
-    .r1 .room-floor { background: linear-gradient(to bottom, #ccc6be, #bbb4aa); }
-    /* Room 2 — concrete industrial */
-    .r2 .room-wall {
-      background:
-        radial-gradient(ellipse at 80% 18%, rgba(165,158,150,0.28) 0%, transparent 55%),
-        linear-gradient(165deg, #797673 0%, #9a9591 45%, #8c8986 100%);
-    }
-    .r2 .room-floor { background: linear-gradient(to bottom, #696663, #585553); }
-    /* Print mount on wall */
+    /* Product overlay — positioned to exactly cover the frame in each photo */
     .room-print-mount {
-      position: absolute;
-      left: 50%; top: 9%;
-      transform: translateX(-50%);
-      width: 57%; line-height: 0;
-      box-shadow: 2px 4px 8px rgba(0,0,0,0.12), 6px 14px 42px rgba(0,0,0,0.42);
-      transition: border 0.3s, outline 0.2s, box-shadow 0.3s;
+      position: absolute; line-height: 0;
+      transition: border 0.3s, outline 0.2s;
     }
     .room-print-mount img {
-      display: block; width: 100%;
-      aspect-ratio: 4/3; object-fit: cover;
+      display: block; width: 100%; height: 100%; object-fit: cover;
     }
+    /* Room 1 — modern (frame at left 21%, top 17%, w 56%, h 63%) */
+    .r1 .room-print-mount { left: 21%; top: 17%; width: 56%; height: 63%; }
+    /* Room 2 — industrial (frame at left 16%, top 9%, w 68%, h 74%) */
+    .r2 .room-print-mount { left: 16%; top: 9%; width: 68%; height: 74%; }
     /* View-selector dots */
     .modal-view-dots {
       position: absolute; bottom: 14px; left: 50%;
@@ -1009,11 +992,10 @@
         <img id="mImg" src="" alt="" />
       </div>
     </div>
-    <!-- Room scene 1: warm modern -->
+    <!-- Room scene 1: modern light interior -->
     <div class="room-scene-view" id="roomView1" onclick="event.stopPropagation()">
       <div class="room-canvas r1">
-        <div class="room-wall"></div>
-        <div class="room-floor"></div>
+        <img class="room-bg" src="Images/room-modern.jpg" alt="" />
         <div class="room-print-mount" id="roomMount1">
           <img id="roomImg1" src="" alt="" />
         </div>
@@ -1022,8 +1004,7 @@
     <!-- Room scene 2: concrete industrial -->
     <div class="room-scene-view" id="roomView2" onclick="event.stopPropagation()">
       <div class="room-canvas r2">
-        <div class="room-wall"></div>
-        <div class="room-floor"></div>
+        <img class="room-bg" src="Images/room-industrial.jpg" alt="" />
         <div class="room-print-mount" id="roomMount2">
           <img id="roomImg2" src="" alt="" />
         </div>
