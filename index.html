@@ -1290,7 +1290,7 @@ shuffle(products).forEach(p => {
     if (img.naturalWidth < img.naturalHeight) {
       el.classList.add('portrait');
       const h = el.offsetHeight;
-      if (h > 0) el.style.height = Math.round(h * 1.45) + 'px';
+      if (h > 0) el.style.height = Math.round(h * 1.20) + 'px';
     }
   }
   if (img.complete && img.naturalWidth) applyFit();
