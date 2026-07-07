@@ -157,7 +157,7 @@
       object-fit: cover;
       transition: transform 0.75s cubic-bezier(0.25,0.46,0.45,0.94);
     }
-    .g-item:hover img { transform: scale(1.03); }
+    .g-item:hover img { transform: scale(1); }
 
     /* Hover overlay — price only */
     .g-hover {
@@ -472,28 +472,31 @@
     .room-bg {
       display: block; width: 100%; height: 100%; object-fit: cover;
     }
+    /* Product overlay — centered on the blank wall, natural aspect ratio */
     .room-print-mount {
       position: absolute; line-height: 0;
-      transition: border 0.3s, outline 0.2s;
+      left: 50%; top: 44%;
+      transform: translate(-50%, -50%);
+      width: 26%;
+      transition: border 0.3s, outline 0.2s, box-shadow 0.3s;
+      box-shadow:
+        0 2px 6px rgba(0,0,0,0.18),
+        3px 10px 28px rgba(0,0,0,0.28),
+        5px 20px 55px rgba(0,0,0,0.20);
     }
-    .room-print-mount img {
-      display: block; width: 100%; height: 100%; object-fit: cover;
-    }
-    .r1 .room-print-mount { left: 21%; top: 17%; width: 56%; height: 63%; }
-    .r2 .room-print-mount { left: 16%; top: 9%; width: 68%; height: 74%; }
+    .room-print-mount img { display: block; width: 100%; height: auto; }
+    /* Swipe position indicator — non-clickable dots */
     .modal-view-dots {
-      position: absolute; bottom: 14px; left: 50%;
+      position: absolute; bottom: 12px; left: 50%;
       transform: translateX(-50%);
-      display: flex; gap: 10px; z-index: 5;
+      display: flex; gap: 8px; z-index: 5; pointer-events: none;
     }
     .mvd {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: rgba(255,255,255,0.42);
-      border: none; cursor: pointer; padding: 0;
-      transition: background 0.2s, transform 0.2s;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      transition: background 0.25s, transform 0.25s;
     }
     .mvd.on { background: rgba(255,255,255,0.92); transform: scale(1.3); }
-    .mvd:hover:not(.on) { background: rgba(255,255,255,0.68); }
 
     .modal-title {
       font-family: var(--serif);
@@ -1123,29 +1126,28 @@
         <img id="mImg" src="" alt="" />
       </div>
     </div>
-    <!-- Room scene 1: modern light interior -->
+    <!-- Room scene 1: framed -->
     <div class="room-scene-view" id="roomView1" onclick="event.stopPropagation()">
       <div class="room-canvas r1">
-        <img class="room-bg" src="Images/room-modern.jpg" alt="" />
+        <img class="room-bg" src="Images/room%20sample.jpeg" alt="" />
         <div class="room-print-mount" id="roomMount1">
           <img id="roomImg1" src="" alt="" />
         </div>
       </div>
     </div>
-    <!-- Room scene 2: concrete industrial -->
+    <!-- Room scene 2: unframed -->
     <div class="room-scene-view" id="roomView2" onclick="event.stopPropagation()">
       <div class="room-canvas r2">
-        <img class="room-bg" src="Images/room-industrial.jpg" alt="" />
+        <img class="room-bg" src="Images/room%20sample.jpeg" alt="" />
         <div class="room-print-mount" id="roomMount2">
           <img id="roomImg2" src="" alt="" />
         </div>
       </div>
     </div>
-    <!-- View selector dots -->
-    <div class="modal-view-dots">
-      <button class="mvd on"  onclick="setModalView('product'); event.stopPropagation()" title="Product view"></button>
-      <button class="mvd"     onclick="setModalView('room1');   event.stopPropagation()" title="Modern room"></button>
-      <button class="mvd"     onclick="setModalView('room2');   event.stopPropagation()" title="Industrial"></button>
+    <!-- Position indicator dots — swipe to navigate -->
+    <div class="modal-view-dots" id="modalViewDots">
+      <div class="mvd on"></div>
+      <div class="mvd"></div>
     </div>
   </div>
   <div class="modal-info-col">
@@ -1336,13 +1338,56 @@ function price() {
   return p;
 }
 
+const _views = ['room2', 'room1'];
+let _currentView = 'room2';
+
 function setModalView(view) {
-  document.getElementById('mImgMain').style.display  = view === 'product' ? '' : 'none';
+  _currentView = view;
+  document.getElementById('mImgMain').style.display = 'none';
   document.getElementById('roomView1').classList.toggle('on', view === 'room1');
   document.getElementById('roomView2').classList.toggle('on', view === 'room2');
-  const map = { product: 0, room1: 1, room2: 2 };
+  const map = { room2: 0, room1: 1 };
   document.querySelectorAll('.mvd').forEach((d, i) => d.classList.toggle('on', i === map[view]));
 }
+
+(function() {
+  let sx = 0, sy = 0, _dragging = false, _didSwipe = false;
+  let _wheelLocked = false;
+  function swipe(dx) {
+    const idx = _views.indexOf(_currentView);
+    if (dx < 0 && idx < _views.length - 1) setModalView(_views[idx + 1]);
+    else if (dx > 0 && idx > 0) setModalView(_views[idx - 1]);
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const col = document.querySelector('.modal-img-col');
+    if (!col) return;
+    // Touch (mobile)
+    col.addEventListener('touchstart', e => { sx = e.changedTouches[0].clientX; sy = e.changedTouches[0].clientY; }, { passive: true });
+    col.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - sx;
+      const dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) swipe(dx);
+    }, { passive: true });
+    // Mouse drag
+    col.addEventListener('mousedown', e => { sx = e.clientX; _dragging = true; _didSwipe = false; });
+    col.addEventListener('mouseup', e => {
+      if (!_dragging) return; _dragging = false;
+      const dx = e.clientX - sx;
+      if (Math.abs(dx) > 60) { _didSwipe = true; swipe(dx); }
+    });
+    col.addEventListener('click', e => { if (_didSwipe) { _didSwipe = false; e.stopImmediatePropagation(); } }, true);
+    // Trackpad horizontal swipe (wheel deltaX)
+    col.addEventListener('wheel', e => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 25) {
+        e.preventDefault();
+        if (_wheelLocked) return;
+        _wheelLocked = true;
+        swipe(-e.deltaX);
+        setTimeout(() => { _wheelLocked = false; }, 500);
+      }
+    }, { passive: false });
+  });
+})();
 
 function openModal(id) {
   cur = products.find(p => p.id === id);
@@ -1362,7 +1407,7 @@ function openModal(id) {
   img.src = cur.img;
   document.getElementById('roomImg1').src = cur.img;
   document.getElementById('roomImg2').src = cur.img;
-  setModalView('product');
+  setModalView('room2');
   document.getElementById('mTitle').textContent = cur.name;
   document.getElementById('mDesc').textContent = cur.desc;
   setFmt('print', true);
@@ -1456,12 +1501,13 @@ function applyFramePreview() {
     const pad = w <= 560 ? 48 : 60;
     document.getElementById('mImg').style.maxHeight = `calc(${vh}vh - ${pad + thickness * 2}px)`;
   }
-  ['roomMount1', 'roomMount2'].forEach(id => {
-    const m = document.getElementById(id);
-    m.style.border = `6px solid ${color.hex}`;
-    m.style.outline = color.border ? `1px solid ${color.border}` : '';
-    m.style.boxShadow = `${inset}, 6px 14px 42px rgba(0,0,0,0.45)`;
-  });
+  // Room 1 = framed preview (selected color), Room 2 = unframed (no border)
+  const _am1 = document.getElementById('roomMount1');
+  _am1.style.border = `8px solid ${color.hex}`;
+  _am1.style.outline = color.border ? `1px solid ${color.border}` : '';
+  const _am2 = document.getElementById('roomMount2');
+  _am2.style.border = '';
+  _am2.style.outline = '';
 }
 
 function clearFramePreview() {
@@ -1477,12 +1523,13 @@ function clearFramePreview() {
   } else {
     document.getElementById('mImg').style.maxHeight = '';
   }
-  ['roomMount1', 'roomMount2'].forEach(id => {
-    const m = document.getElementById(id);
-    m.style.border = '';
-    m.style.outline = '';
-    m.style.boxShadow = '2px 4px 8px rgba(0,0,0,0.12), 6px 14px 42px rgba(0,0,0,0.42)';
-  });
+  // Room 1 stays framed (default black), Room 2 stays unframed
+  const _cm1 = document.getElementById('roomMount1');
+  _cm1.style.border = '8px solid #1c1c1c';
+  _cm1.style.outline = '';
+  const _cm2 = document.getElementById('roomMount2');
+  _cm2.style.border = '';
+  _cm2.style.outline = '';
 }
 
 function renderSizes() {
