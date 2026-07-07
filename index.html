@@ -158,8 +158,10 @@
       transition: transform 0.75s cubic-bezier(0.25,0.46,0.45,0.94);
     }
     .g-item:hover img { transform: scale(1); }
-    /* Portrait images: show from top-centre, no letterboxing */
-    .g-item.portrait img { object-position: center 20%; }
+    /* Portrait images: show the full photo (no crop), white letterbox background, no dark hover overlay */
+    .g-item.portrait { background: var(--bg); }
+    .g-item.portrait img { object-fit: contain; object-position: center center; }
+    .g-item.portrait:hover .g-hover { opacity: 0; }
 
     /* Hover overlay — price only */
     .g-hover {
@@ -1289,8 +1291,7 @@ shuffle(products).forEach(p => {
   function applyFit() {
     if (img.naturalWidth < img.naturalHeight) {
       el.classList.add('portrait');
-      const h = el.offsetHeight;
-      if (h > 0) el.style.height = Math.round(h * 1.20) + 'px';
+      // height set by CSS; object-fit:contain shows full image without cropping
     }
   }
   if (img.complete && img.naturalWidth) applyFit();
