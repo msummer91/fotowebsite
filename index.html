@@ -1420,10 +1420,34 @@ function renderFrameColors() {
   document.getElementById('frameDesc').textContent = `${label} · ${frameData[frameType].desc}${extra}`;
 }
 
+// Client-side cache: keyed by "imgSrc|colorName" → generated mockup URL
+const _mockupCache = {};
+
+function _loadFramedMockup(colorName) {
+  const img = document.getElementById('roomImg2');
+  const rm  = document.getElementById('roomMount2');
+  const cacheKey = (cur.img) + '|' + colorName;
+  rm.style.border = '';
+  rm.style.outline = '';
+  if (_mockupCache[cacheKey]) {
+    img.src = _mockupCache[cacheKey];
+    return;
+  }
+  img.style.opacity = '0.45';
+  const fullUrl = window.location.origin + '/' + cur.img;
+  const mockupUrl = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(fullUrl)}&frameColor=${encodeURIComponent(colorName)}`;
+  _mockupCache[cacheKey] = mockupUrl;
+  const tmp = new Image();
+  tmp.onload  = () => { img.src = mockupUrl; img.style.opacity = '1'; };
+  tmp.onerror = () => { img.style.opacity = '1'; };
+  tmp.src = mockupUrl;
+}
+
 function applyFramePreview() {
   const color = frameData[frameType].colors[frameColorIdx];
   const thickness = 14;
   const inset = 'inset 1px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(0,0,0,0.1)';
+  // Main modal image — CSS border (instant)
   const wrap = document.getElementById('mFrameWrap');
   wrap.style.border = `${thickness}px solid ${color.hex}`;
   if (color.border) wrap.style.outline = `1px solid ${color.border}`;
@@ -1435,10 +1459,8 @@ function applyFramePreview() {
     const pad = w <= 560 ? 48 : 60;
     document.getElementById('mImg').style.maxHeight = `calc(${vh}vh - ${pad + thickness * 2}px)`;
   }
-  // Apply selected frame color to the single room preview
-  const rm = document.getElementById('roomMount2');
-  rm.style.border = `8px solid ${color.hex}`;
-  rm.style.outline = color.border ? `1px solid ${color.border}` : '';
+  // Room preview — server-rendered framed mockup
+  _loadFramedMockup(color.name);
 }
 
 function clearFramePreview() {
@@ -1454,10 +1476,13 @@ function clearFramePreview() {
   } else {
     document.getElementById('mImg').style.maxHeight = '';
   }
-  // Clear frame from room preview (unframed selected)
-  const _rm = document.getElementById('roomMount2');
-  _rm.style.border = '';
-  _rm.style.outline = '';
+  // Room preview — restore original unframed image
+  const img = document.getElementById('roomImg2');
+  const rm  = document.getElementById('roomMount2');
+  img.src = cur.img;
+  img.style.opacity = '1';
+  rm.style.border = '';
+  rm.style.outline = '';
 }
 
 function renderSizes() {
