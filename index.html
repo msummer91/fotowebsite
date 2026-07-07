@@ -110,12 +110,12 @@
     .insta-link {
       display: flex;
       align-items: center;
-      color: var(--muted);
+      color: var(--dark);
       text-decoration: none;
       transition: color 0.2s;
       line-height: 0;
     }
-    .insta-link:hover { color: var(--dark); }
+    .insta-link:hover { color: var(--crimson); }
     @media (max-width: 560px) { .insta-link svg { width: 16px; height: 16px; } }
     .cart-num {
       background: var(--crimson);
@@ -158,6 +158,8 @@
       transition: transform 0.75s cubic-bezier(0.25,0.46,0.45,0.94);
     }
     .g-item:hover img { transform: scale(1); }
+    /* Portrait images: show from top-centre, no letterboxing */
+    .g-item.portrait img { object-position: center 20%; }
 
     /* Hover overlay — price only */
     .g-hover {
@@ -1282,10 +1284,14 @@ shuffle(products).forEach(p => {
     </div>`;
   el.addEventListener('click', () => openModal(p.id));
   gallery.appendChild(el);
-  // Portrait images: show in full (no crop)
+  // Portrait images: taller container (less zoom) + top-biased crop, no letterboxing
   const img = el.querySelector('img');
   function applyFit() {
-    if (img.naturalWidth < img.naturalHeight) img.style.objectFit = 'contain';
+    if (img.naturalWidth < img.naturalHeight) {
+      el.classList.add('portrait');
+      const h = el.offsetHeight;
+      if (h > 0) el.style.height = Math.round(h * 1.45) + 'px';
+    }
   }
   if (img.complete && img.naturalWidth) applyFit();
   else img.addEventListener('load', applyFit);
