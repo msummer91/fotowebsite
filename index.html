@@ -159,8 +159,6 @@
     }
     .g-item:hover img { transform: scale(1); }
     /* Portrait images: show the full photo (no crop), white letterbox background */
-    .g-item.portrait { background: var(--bg); }
-    .g-item.portrait img { object-fit: contain; object-position: center center; }
 
     /* Hover overlay — price only */
     .g-hover {
@@ -328,8 +326,22 @@
       position: relative;
       overflow: hidden;
     }
-    .modal-img-main {
+    /* Horizontal scroll strip — two slides: photo | room */
+    .modal-img-scroll {
       flex: 1;
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      min-height: 0;
+    }
+    .modal-img-scroll::-webkit-scrollbar { display: none; }
+
+    .modal-img-main {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -337,6 +349,22 @@
       overflow: hidden;
       min-height: 0;
     }
+    /* Slide-dots navigation */
+    .img-dots {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 0 6px;
+      flex-shrink: 0;
+    }
+    .img-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.18);
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+    }
+    .img-dot.on { background: var(--dark); transform: scale(1.3); }
     .modal-frame-wrap {
       position: relative;
       display: inline-block;
@@ -455,14 +483,14 @@
     }
     .modal-x:hover { color: #fff; }
 
-    /* ── ROOM PREVIEW ── */
+    /* ── ROOM PREVIEW — slide 2 in the horizontal scroll strip ── */
     .room-scene-view {
-      position: absolute; inset: 0;
-      display: none;
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      display: flex;
       align-items: center; justify-content: center;
       cursor: default;
     }
-    .room-scene-view.on { display: flex; }
     .room-canvas {
       position: relative;
       width: 92%; aspect-ratio: 11/6;
@@ -1116,19 +1144,25 @@
 <div class="modal" id="modal">
   <div class="modal-img-col" onclick="closeModal()">
     <button class="modal-x" onclick="closeModal()">×</button>
-    <div class="modal-img-main" id="mImgMain">
-      <div class="modal-frame-wrap" id="mFrameWrap" onclick="event.stopPropagation()">
-        <img id="mImg" src="" alt="" />
-      </div>
-    </div>
-    <!-- Room preview — single view, frame applied dynamically -->
-    <div class="room-scene-view on" id="roomView2" onclick="event.stopPropagation()">
-      <div class="room-canvas">
-        <img class="room-bg" src="Images/room%20sample.png" alt="" />
-        <div class="room-print-mount" id="roomMount2">
-          <img id="roomImg2" src="" alt="" />
+    <!-- Horizontal scroll: slide 1 = photo, slide 2 = room -->
+    <div class="modal-img-scroll" id="modalImgScroll" onclick="event.stopPropagation()">
+      <div class="modal-img-main" id="mImgMain">
+        <div class="modal-frame-wrap" id="mFrameWrap">
+          <img id="mImg" src="" alt="" />
         </div>
       </div>
+      <div class="room-scene-view" id="roomView2">
+        <div class="room-canvas">
+          <img class="room-bg" src="Images/room%20sample.png" alt="" />
+          <div class="room-print-mount" id="roomMount2">
+            <img id="roomImg2" src="" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="img-dots" onclick="event.stopPropagation()">
+      <span class="img-dot on" id="imgDot0" onclick="document.getElementById('modalImgScroll').scrollTo({left:0,behavior:'smooth'})"></span>
+      <span class="img-dot" id="imgDot1" onclick="document.getElementById('modalImgScroll').scrollTo({left:document.getElementById('modalImgScroll').offsetWidth,behavior:'smooth'})"></span>
     </div>
   </div>
   <div class="modal-info-col">
@@ -1340,8 +1374,9 @@ function price() {
 }
 
 function setModalView() {
-  // Single room view — always shown; frame applied dynamically via applyFramePreview
-  document.getElementById('mImgMain').style.display = 'none';
+  // Always start on slide 1 (full photo)
+  const s = document.getElementById('modalImgScroll');
+  if (s) s.scrollLeft = 0;
 }
 
 function openModal(id) {
@@ -1364,7 +1399,7 @@ function openModal(id) {
   setModalView();
   document.getElementById('mTitle').textContent = cur.name;
   document.getElementById('mDesc').textContent = cur.desc;
-  setFmt('print', true);
+  setFmt('framed', true);
   renderSizes();
   updatePrice();
   document.getElementById('modal').classList.add('on');
@@ -1763,6 +1798,13 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeZoom(
 
 // ── BACK BUTTON closes modal instead of navigating ──
 window.addEventListener('popstate', () => { if (_modalOpen) closeModal(true); });
+
+// ── MODAL SLIDE DOTS — update active dot on scroll ──
+document.getElementById('modalImgScroll').addEventListener('scroll', function() {
+  const idx = Math.round(this.scrollLeft / this.offsetWidth);
+  document.getElementById('imgDot0').classList.toggle('on', idx === 0);
+  document.getElementById('imgDot1').classList.toggle('on', idx === 1);
+}, { passive: true });
 
 // hamburger menu
 function toggleMenu(){
