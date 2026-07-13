@@ -1004,14 +1004,14 @@
 <div class="modal" id="modal">
   <div class="modal-img-col" onclick="closeModal()">
     <button class="modal-x" onclick="closeModal()">×</button>
-    <div class="modal-img-scroll" id="modalImgScroll" onclick="event.stopPropagation()">
+    <div class="modal-img-scroll" id="modalImgScroll">
       <div class="modal-img-main" id="mImgMain">
-        <div class="modal-frame-wrap" id="mFrameWrap">
+        <div class="modal-frame-wrap" id="mFrameWrap" onclick="event.stopPropagation()">
           <img id="mImg" src="" alt="" />
         </div>
       </div>
       <div class="room-scene-view" id="roomView2">
-        <div class="room-canvas">
+        <div class="room-canvas" onclick="event.stopPropagation()">
           <img class="room-bg" src="Images/room%20sample.png" alt="" />
           <div class="room-print-mount" id="roomMount2">
             <img id="roomImg2" src="" alt="" />
@@ -1024,49 +1024,51 @@
       <span class="img-dot" id="imgDot1" onclick="document.getElementById('modalImgScroll').scrollTo({left:document.getElementById('modalImgScroll').offsetWidth,behavior:'smooth'})"></span>
     </div>
   </div>
-  <div class="modal-info-col">
-    <div>
-      <div class="modal-title" id="mTitle"></div>
-      <div class="modal-by">été collectif</div>
-    </div>
-
-    <div>
-      <div class="field-label">Format</div>
-      <div class="format-tabs">
-        <button class="ftab on" id="tabPrint" onclick="setFmt('print')">Print — Unframed</button>
-        <button class="ftab" id="tabFramed" onclick="setFmt('framed')">Framed</button>
+  <div class="modal-info-col" onclick="closeModal()">
+    <div onclick="event.stopPropagation()">
+      <div>
+        <div class="modal-title" id="mTitle"></div>
+        <div class="modal-by">été collectif</div>
       </div>
-      <!-- Paper type (shown when Print — Unframed is active) -->
-      <div class="paper-options-wrap" id="paperOptionsWrap">
-        <div class="field-label" style="margin-top:4px;margin-bottom:8px">Paper</div>
-        <div class="frame-types">
-          <button class="ftype-btn on" id="paperHpr" onclick="setPaper('hpr')">Hahnemühle Rag</button>
-          <button class="ftype-btn" id="paperPap" onclick="setPaper('pap')">Lustre</button>
+
+      <div>
+        <div class="field-label">Format</div>
+        <div class="format-tabs">
+          <button class="ftab on" id="tabPrint" onclick="setFmt('print')">Print — Unframed</button>
+          <button class="ftab" id="tabFramed" onclick="setFmt('framed')">Framed</button>
         </div>
-        <div class="frame-desc" id="paperDesc">308gsm · Cotton rag · Matte · Archival giclée</div>
+        <!-- Paper type (shown when Print — Unframed is active) -->
+        <div class="paper-options-wrap" id="paperOptionsWrap">
+          <div class="field-label" style="margin-top:4px;margin-bottom:8px">Paper</div>
+          <div class="frame-types">
+            <button class="ftype-btn on" id="paperHpr" onclick="setPaper('hpr')">Hahnemühle Rag</button>
+            <button class="ftype-btn" id="paperPap" onclick="setPaper('pap')">Lustre</button>
+          </div>
+          <div class="frame-desc" id="paperDesc">308gsm · Cotton rag · Matte · Archival giclée</div>
+        </div>
+        <div class="frame-options-wrap" id="frameOptionsWrap">
+          <div class="field-label" style="margin-bottom:8px;margin-top:4px;">Frame style</div>
+          <div class="frame-types" id="frameTypes"></div>
+          <div class="field-label" style="margin-bottom:6px;margin-top:14px;">Colour</div>
+          <div class="frame-colors" id="frameColors"></div>
+          <div class="frame-desc" id="frameDesc"></div>
+        </div>
       </div>
-      <div class="frame-options-wrap" id="frameOptionsWrap">
-        <div class="field-label" style="margin-bottom:8px;margin-top:4px;">Frame style</div>
-        <div class="frame-types" id="frameTypes"></div>
-        <div class="field-label" style="margin-bottom:6px;margin-top:14px;">Colour</div>
-        <div class="frame-colors" id="frameColors"></div>
-        <div class="frame-desc" id="frameDesc"></div>
+
+      <div>
+        <div class="field-label">Size</div>
+        <div class="sizes" id="mSizes"></div>
       </div>
+
+      <div>
+        <div class="modal-price" id="mPrice"></div>
+        <div class="modal-price-note">incl. VAT · free shipping over €150</div>
+      </div>
+
+      <button class="btn-add" onclick="addToCart()">Add to selection</button>
+
+      <div class="modal-desc-text" id="mDesc"></div>
     </div>
-
-    <div>
-      <div class="field-label">Size</div>
-      <div class="sizes" id="mSizes"></div>
-    </div>
-
-    <div>
-      <div class="modal-price" id="mPrice"></div>
-      <div class="modal-price-note">incl. VAT · free shipping over €150</div>
-    </div>
-
-    <button class="btn-add" onclick="addToCart()">Add to selection</button>
-
-    <div class="modal-desc-text" id="mDesc"></div>
   </div>
 </div>
 
@@ -1684,13 +1686,17 @@ document.getElementById('modalImgScroll').addEventListener('scroll', function() 
 }, { passive: true });
 
 // ── HAMBURGER ──
+let _menuTimer = null;
 function toggleMenu() {
   const btn = document.getElementById('hamburger');
   const menu = document.getElementById('mobileMenu');
   const open = menu.classList.toggle('open');
   btn.classList.toggle('open', open);
+  clearTimeout(_menuTimer);
+  if (open) _menuTimer = setTimeout(closeMenu, 10000);
 }
 function closeMenu() {
+  clearTimeout(_menuTimer);
   document.getElementById('hamburger').classList.remove('open');
   document.getElementById('mobileMenu').classList.remove('open');
 }
