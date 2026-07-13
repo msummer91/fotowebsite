@@ -387,17 +387,18 @@
       .room-bg { object-position: 70% center; }
     }
     .room-bg { display: block; width: 100%; height: 100%; object-fit: cover; }
-    /* Product overlay — right-wall blank area above credenza (~70% left, 28% top) */
+    /* Product overlay — blank wall between vases and tree, perspective-matched */
     .room-print-mount {
       position: absolute; line-height: 0;
-      left: 70%; top: 28%;
-      transform: translate(-50%, -50%);
-      width: 22%;
+      left: 73%; top: 26%;
+      transform: translate(-50%, -50%) perspective(1400px) rotateY(-3deg) rotateX(1deg);
+      filter: brightness(0.88) saturate(0.94);
+      width: 20%;
       transition: box-shadow 0.3s;
       box-shadow:
-        0 2px 8px rgba(0,0,0,0.18),
-        2px 10px 30px rgba(0,0,0,0.24),
-        4px 20px 50px rgba(0,0,0,0.18);
+        3px 4px 10px rgba(0,0,0,0.22),
+        5px 14px 32px rgba(0,0,0,0.26),
+        8px 28px 55px rgba(0,0,0,0.18);
     }
     .room-print-mount img { display: block; width: 100%; height: auto; }
 
