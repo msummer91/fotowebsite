@@ -1318,6 +1318,16 @@ const frameData = {
       { name: 'Dark Grey',      hex: '#4a4848' },
       { name: 'Light Grey',     hex: '#c0bfbd', border: '#aaa' },
     ]
+  },
+  boxframe: {
+    label: 'Box Frame',
+    extra: 20,
+    desc: 'Deep shadow-box frame · Float-mounted print · UV Perspex glass · Ships ready to hang.',
+    colors: [
+      { name: 'Black',   hex: '#1c1c1c' },
+      { name: 'White',   hex: '#f2f0ed', border: '#ccc' },
+      { name: 'Natural', hex: '#c09b6e' },
+    ]
   }
 };
 
@@ -1434,10 +1444,10 @@ function renderFrameColors() {
 // Client-side cache: keyed by "imgSrc|colorName" → generated mockup URL
 const _mockupCache = {};
 
-function _loadFramedMockup(colorName) {
+function _loadFramedMockup(colorName, style) {
   const img = document.getElementById('roomImg2');
   const rm  = document.getElementById('roomMount2');
-  const cacheKey = (cur.img) + '|' + colorName;
+  const cacheKey = `${cur.img}|${colorName}|${style}`;
   rm.style.border = '';
   rm.style.outline = '';
   if (_mockupCache[cacheKey]) {
@@ -1446,7 +1456,7 @@ function _loadFramedMockup(colorName) {
   }
   img.style.opacity = '0.45';
   const fullUrl = window.location.origin + '/' + cur.img;
-  const mockupUrl = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(fullUrl)}&frameColor=${encodeURIComponent(colorName)}`;
+  const mockupUrl = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(fullUrl)}&frameColor=${encodeURIComponent(colorName)}&frameStyle=${encodeURIComponent(style)}`;
   _mockupCache[cacheKey] = mockupUrl;
   const tmp = new Image();
   tmp.onload  = () => { img.src = mockupUrl; img.style.opacity = '1'; };
@@ -1456,9 +1466,12 @@ function _loadFramedMockup(colorName) {
 
 function applyFramePreview() {
   const color = frameData[frameType].colors[frameColorIdx];
-  const thickness = 14;
-  const inset = 'inset 1px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(0,0,0,0.1)';
-  // Main modal image — CSS border (instant)
+  const isBox = frameType === 'boxframe';
+  const thickness = isBox ? 22 : 14;
+  const inset = isBox
+    ? 'inset 0 0 0 4px rgba(242,238,230,0.85), inset 1px 2px 6px rgba(0,0,0,0.25), inset -1px -1px 4px rgba(0,0,0,0.12)'
+    : 'inset 1px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(0,0,0,0.1)';
+  // Main modal image — CSS border (instant feedback)
   const wrap = document.getElementById('mFrameWrap');
   wrap.style.border = `${thickness}px solid ${color.hex}`;
   if (color.border) wrap.style.outline = `1px solid ${color.border}`;
@@ -1471,7 +1484,7 @@ function applyFramePreview() {
     document.getElementById('mImg').style.maxHeight = `calc(${vh}vh - ${pad + thickness * 2}px)`;
   }
   // Room preview — server-rendered framed mockup
-  _loadFramedMockup(color.name);
+  _loadFramedMockup(color.name, frameType);
 }
 
 function clearFramePreview() {
