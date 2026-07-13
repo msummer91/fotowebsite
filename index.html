@@ -159,6 +159,9 @@
     }
     .g-item:hover img { transform: scale(1); }
     /* Portrait images: show the full photo (no crop), white letterbox background */
+    .g-item.portrait { background: #ffffff; }
+    .g-item.portrait img { object-fit: contain; object-position: center center; }
+    .g-item.portrait:hover .g-hover { background: none; }
 
     /* Hover overlay — price only */
     .g-hover {
