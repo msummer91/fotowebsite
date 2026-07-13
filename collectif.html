@@ -378,25 +378,26 @@
     .room-scene-view.on { display: flex; }
     .room-canvas {
       position: relative;
-      width: 92%; aspect-ratio: 3/2;
+      width: 92%; aspect-ratio: 11/6;
       overflow: hidden; border-radius: 2px;
       box-shadow: 0 12px 50px rgba(0,0,0,0.55);
     }
     @media (max-width: 860px) {
-      .room-canvas { width: auto; height: 84%; aspect-ratio: 3/2; }
+      .room-canvas { width: 96%; height: auto; aspect-ratio: 3/2; }
+      .room-bg { object-position: 70% center; }
     }
     .room-bg { display: block; width: 100%; height: 100%; object-fit: cover; }
-    /* Product overlay — centered on the blank wall, natural aspect ratio */
+    /* Product overlay — right-wall blank area above credenza (~70% left, 28% top) */
     .room-print-mount {
       position: absolute; line-height: 0;
-      left: 50%; top: 44%;
+      left: 70%; top: 28%;
       transform: translate(-50%, -50%);
-      width: 26%;
-      transition: border 0.3s, outline 0.2s, box-shadow 0.3s;
+      width: 22%;
+      transition: box-shadow 0.3s;
       box-shadow:
-        0 2px 6px rgba(0,0,0,0.18),
-        3px 10px 28px rgba(0,0,0,0.28),
-        5px 20px 55px rgba(0,0,0,0.20);
+        0 2px 8px rgba(0,0,0,0.18),
+        2px 10px 30px rgba(0,0,0,0.24),
+        4px 20px 50px rgba(0,0,0,0.18);
     }
     .room-print-mount img { display: block; width: 100%; height: auto; }
 
@@ -980,7 +981,7 @@
     <!-- Room preview — single view, frame applied dynamically -->
     <div class="room-scene-view on" id="roomView2" onclick="event.stopPropagation()">
       <div class="room-canvas">
-        <img class="room-bg" src="Images/room%20sample.jpeg" alt="" />
+        <img class="room-bg" src="Images/room%20sample.png" alt="" />
         <div class="room-print-mount" id="roomMount2">
           <img id="roomImg2" src="" alt="" />
         </div>
