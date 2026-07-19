@@ -218,95 +218,56 @@
     }
     .overlay.on { opacity: 1; pointer-events: all; }
 
+    /* ── MODAL: fullscreen white product page ── */
     .modal {
       position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%,-50%) scale(0.97);
-      width: min(1350px, 98vw);
-      height: min(830px, 96vh);
-      background: transparent;
-      border-radius: 16px;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 0;
       z-index: 210;
       display: flex;
+      flex-direction: row;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s, transform 0.3s;
+      transition: opacity 0.35s;
       overflow: hidden;
     }
     .modal.on {
       opacity: 1;
       pointer-events: all;
-      transform: translate(-50%,-50%) scale(1);
     }
 
+    /* Left: sticky image panel */
     .modal-img-col {
-      background: transparent;
-      flex: 1;
-      min-width: 0;
-      align-self: stretch;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-    /* Horizontal scroll strip — two slides: photo | room */
-    .modal-img-scroll {
-      flex: 1;
-      display: flex;
-      flex-direction: row;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      min-height: 0;
-    }
-    .modal-img-scroll::-webkit-scrollbar { display: none; }
-
-    .modal-img-main {
-      flex: 0 0 100%;
-      scroll-snap-align: start;
+      flex: 0 0 58%;
+      background: #f7f6f4;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 40px 20px;
+      position: relative;
       overflow: hidden;
-      min-height: 0;
-    }
-    /* Slide-dots navigation */
-    .img-dots {
-      display: flex;
-      justify-content: center;
-      gap: 7px;
-      padding: 8px 0 6px;
-      flex-shrink: 0;
-    }
-    .img-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.18);
       cursor: pointer;
-      transition: background 0.25s, transform 0.25s;
     }
-    .img-dot.on { background: var(--dark); transform: scale(1.3); }
     .modal-frame-wrap {
       position: relative;
       display: inline-block;
       line-height: 0;
-      max-width: 100%;
-      transition: border 0.3s ease, box-shadow 0.3s ease;
+      max-width: calc(100% - 80px);
+      max-height: calc(100vh - 80px);
+      transition: box-shadow 0.3s ease;
     }
     .modal-frame-wrap img {
       display: block;
       max-width: 100%;
-      max-height: calc(min(830px, 96vh) - 220px);
+      max-height: calc(100vh - 80px);
       width: auto;
       height: auto;
       object-fit: contain;
       transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
     }
-    .modal-frame-wrap:hover img { transform: scale(1.04); }
-
-
+    .modal-frame-wrap:hover img { transform: scale(1.02); }
 
     .zoom-overlay {
       position: fixed; inset: 0;
@@ -363,61 +324,43 @@
       color: var(--muted); margin-top: 10px;
     }
 
+    /* Right: scrollable options panel */
     .modal-info-col {
-      background: var(--bg);
-      border-radius: 0 16px 16px 0;
-      padding: 28px 24px;
+      flex: 1;
+      background: #fff;
+      border-left: 1px solid var(--border);
+      padding: 44px 36px 60px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 18px;
       overflow-y: auto;
       overflow-x: hidden;
-      position: relative;
-      flex: 0 0 310px;
-      width: 310px;
-      opacity: 1;
-      transition: flex-basis 0.5s cubic-bezier(0.25,0.46,0.45,0.94),
-                  width 0.5s cubic-bezier(0.25,0.46,0.45,0.94),
-                  opacity 0.35s ease,
-                  padding 0.5s ease;
-    }
-    .modal:has(.modal-img-col:hover) .modal-info-col {
-      flex-basis: 180px;
-      width: 180px;
-      opacity: 0.6;
+      border-radius: 0;
     }
     .modal-x {
       position: absolute;
-      top: 18px; right: 22px;
+      top: 20px; right: 24px;
       background: none; border: none;
-      font-size: 26px; cursor: pointer;
-      color: rgba(255,255,255,0.8); line-height: 1;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+      font-size: 28px; cursor: pointer;
+      color: rgba(0,0,0,0.3); line-height: 1;
       transition: color 0.2s;
       z-index: 2;
     }
-    .modal-x:hover { color: #fff; }
+    .modal-x:hover { color: var(--dark); }
 
-    /* ── ROOM PREVIEW ── */
-    .room-scene-view {
-      flex: 0 0 100%;
-      scroll-snap-align: start;
-      display: flex;
-      align-items: center; justify-content: center;
-      cursor: default;
+    /* Room preview — inline at bottom of right panel */
+    .room-preview-section {
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
     }
     .room-canvas {
       position: relative;
-      width: 92%; aspect-ratio: 11/6;
-      overflow: hidden; border-radius: 2px;
-      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
-    }
-    @media (max-width: 860px) {
-      .room-canvas { width: 96%; height: auto; aspect-ratio: 3/2; }
-      .room-bg { object-position: 70% center; }
+      width: 100%; aspect-ratio: 11/6;
+      overflow: hidden; border-radius: 3px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      margin-top: 14px;
     }
     .room-bg { display: block; width: 100%; height: 100%; object-fit: cover; }
-    /* Product overlay — blank wall between vases and tree, perspective-matched */
     .room-print-mount {
       position: absolute; line-height: 0;
       left: 73%; top: 26%;
@@ -770,85 +713,43 @@
         gap: 28px 16px;
       }
 
-      /* One unified floating card — scrolls as single unit */
+      /* Mobile: stack image on top, options below */
       .modal {
         flex-direction: column;
-        position: fixed;
-        top: auto; bottom: 14px;
-        left: 10px; right: 10px;
-        width: auto; max-width: none;
-        transform: translateY(calc(100% + 14px));
-        max-height: 88vh;
-        border-radius: 20px;
-        overflow-x: hidden;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-        background: transparent;
-        transition: opacity 0.3s, transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94);
       }
-      .modal.on { transform: translateY(0); }
-
-      /* Image panel: fully transparent — blurred backdrop shows through */
       .modal-img-col {
-        flex: 0 0 auto;
-        height: 50vh;
-        max-height: 50vh;
-        padding: 0;
-        background: transparent;
-        border-radius: 0;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        flex: 0 0 44vh;
+        max-height: 44vh;
+        cursor: default;
       }
-      .modal-img-main {
-        width: 100%;
-        height: 100%;
-        padding: 28px 32px 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      .modal-frame-wrap {
+        max-width: calc(100% - 40px);
+        max-height: calc(44vh - 40px);
       }
       .modal-frame-wrap img {
-        max-height: calc(50vh - 60px);
-        max-width: 100%;
+        max-height: calc(44vh - 40px);
       }
-
-      /* Info panel: white card, flush below image — card itself scrolls */
       .modal-info-col {
         flex: 0 0 auto;
-        width: auto;
-        margin: 0;
-        max-height: none;
-        padding: 18px 22px 28px;
-        gap: 10px;
-        border-radius: 0 0 20px 20px;
-        background: var(--bg);
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding: 20px 22px 40px;
+        gap: 12px;
         overflow-y: visible;
       }
-
-      /* Disable desktop hover-shrink on touch */
-      .modal:has(.modal-img-col:hover) .modal-info-col {
-        flex-basis: auto;
-        width: auto;
-        opacity: 1;
-      }
-
-      /* Close button sits in top-right of transparent image area */
-      .modal-x { top: 14px; right: 18px; }
-
-      /* Compact type */
+      .modal-x { top: 14px; right: 16px; font-size: 24px; }
       .modal-title { font-size: clamp(18px, 5vw, 26px); }
       .modal-by { font-size: 9px; margin-top: 2px; }
-      .section-label { font-size: 9px; letter-spacing: 0.14em; margin-bottom: 5px; }
       .ftab { padding: 8px 6px; font-size: 11px; }
-      .frame-options-wrap { margin-top: 8px; }
       .ftype-btn { padding: 6px 10px; font-size: 11px; }
       .schip { padding: 6px 10px; font-size: 11px; }
       .modal-price { font-size: 26px; }
       .modal-price-note { font-size: 10px; margin-top: 1px; }
       .btn-add { padding: 14px; font-size: 11px; }
-      .modal-desc { font-size: 11px; line-height: 1.55; margin-top: 2px; }
+      .room-canvas { aspect-ratio: 3/2; }
+      .room-bg { object-position: 70% center; }
 
       footer { flex-direction: column; gap: 24px; text-align: center; padding: 36px 24px; }
       .cart-panel { width: 100%; }
@@ -866,11 +767,9 @@
         gap: 24px;
       }
 
-      .modal { bottom: 10px; left: 8px; right: 8px; max-height: 92vh; border-radius: 18px; }
-      .modal-img-col { height: 46vh; max-height: 46vh; }
-      .modal-img-main { padding: 22px 24px 16px; }
-      .modal-frame-wrap img { max-height: calc(46vh - 48px); }
-      .modal-info-col { padding: 14px 18px 24px; gap: 9px; }
+      .modal-img-col { flex: 0 0 38vh; max-height: 38vh; }
+      .modal-frame-wrap img { max-height: calc(38vh - 32px); }
+      .modal-info-col { padding: 14px 16px 32px; gap: 9px; }
 
       footer { padding: 28px 16px; }
     }
@@ -1002,28 +901,15 @@
 
 <!-- product modal -->
 <div class="modal" id="modal">
+  <!-- Left: large image (click empty area to close) -->
   <div class="modal-img-col" onclick="closeModal()">
     <button class="modal-x" onclick="closeModal()">×</button>
-    <div class="modal-img-scroll" id="modalImgScroll">
-      <div class="modal-img-main" id="mImgMain">
-        <div class="modal-frame-wrap" id="mFrameWrap" onclick="event.stopPropagation()">
-          <img id="mImg" src="" alt="" />
-        </div>
-      </div>
-      <div class="room-scene-view" id="roomView2">
-        <div class="room-canvas" onclick="event.stopPropagation()">
-          <img class="room-bg" src="Images/room%20sample.png" alt="" />
-          <div class="room-print-mount" id="roomMount2">
-            <img id="roomImg2" src="" alt="" />
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="img-dots" onclick="event.stopPropagation()">
-      <span class="img-dot on" id="imgDot0" onclick="document.getElementById('modalImgScroll').scrollTo({left:0,behavior:'smooth'})"></span>
-      <span class="img-dot" id="imgDot1" onclick="document.getElementById('modalImgScroll').scrollTo({left:document.getElementById('modalImgScroll').offsetWidth,behavior:'smooth'})"></span>
+    <div class="modal-frame-wrap" id="mFrameWrap" onclick="event.stopPropagation()">
+      <img id="mImg" src="" alt="" />
     </div>
   </div>
+
+  <!-- Right: scrollable options + room preview -->
   <div class="modal-info-col" onclick="closeModal()">
     <div onclick="event.stopPropagation()">
       <div>
@@ -1037,7 +923,6 @@
           <button class="ftab on" id="tabPrint" onclick="setFmt('print')">Print — Unframed</button>
           <button class="ftab" id="tabFramed" onclick="setFmt('framed')">Framed</button>
         </div>
-        <!-- Paper type (shown when Print — Unframed is active) -->
         <div class="paper-options-wrap" id="paperOptionsWrap">
           <div class="field-label" style="margin-top:4px;margin-bottom:8px">Paper</div>
           <div class="frame-types">
@@ -1066,8 +951,18 @@
       </div>
 
       <button class="btn-add" onclick="addToCart()">Add to selection</button>
-
       <div class="modal-desc-text" id="mDesc"></div>
+
+      <!-- Room preview — scroll down to see it on the wall -->
+      <div class="room-preview-section">
+        <div class="field-label">See it on your wall</div>
+        <div class="room-canvas">
+          <img class="room-bg" src="Images/room%20sample.png" alt="" />
+          <div class="room-print-mount" id="roomMount2">
+            <img id="roomImg2" src="" alt="" />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1248,9 +1143,8 @@ function price() {
 }
 
 function setModalView() {
-  // Always start on slide 1 (full photo)
-  const s = document.getElementById('modalImgScroll');
-  if (s) s.scrollLeft = 0;
+  const col = document.querySelector('.modal-info-col');
+  if (col) col.scrollTop = 0;
 }
 
 
@@ -1677,13 +1571,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeZoom(
 
 // ── BACK BUTTON closes modal instead of navigating ──
 window.addEventListener('popstate', () => { if (_modalOpen) closeModal(true); });
-
-// ── MODAL SLIDE DOTS — update active dot on scroll ──
-document.getElementById('modalImgScroll').addEventListener('scroll', function() {
-  const idx = Math.round(this.scrollLeft / this.offsetWidth);
-  document.getElementById('imgDot0').classList.toggle('on', idx === 0);
-  document.getElementById('imgDot1').classList.toggle('on', idx === 1);
-}, { passive: true });
 
 // ── HAMBURGER ──
 let _menuTimer = null;
