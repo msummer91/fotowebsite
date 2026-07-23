@@ -425,14 +425,51 @@
       overflow-x: hidden;
       border-radius: 0;
     }
-    .modal-x {
+    /* Modal top bar: nav + close button */
+    .modal-bar {
       position: absolute;
-      top: 20px; right: 24px;
+      top: 0; right: 0;
+      z-index: 220;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 20px 26px;
+    }
+    .mbar-nav {
+      display: flex;
+      gap: 24px;
+    }
+    .mbar-nav a {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .mbar-nav a:hover { color: var(--dark); }
+    .mbar-ham {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .mbar-ham span {
+      display: block;
+      width: 20px;
+      height: 1.5px;
+      background: var(--dark);
+    }
+    .modal-x {
       background: none; border: none;
-      font-size: 28px; cursor: pointer;
+      font-size: 24px; cursor: pointer;
       color: rgba(0,0,0,0.3); line-height: 1;
       transition: color 0.2s;
-      z-index: 2;
+      padding: 0;
     }
     .modal-x:hover { color: var(--dark); }
 
@@ -885,7 +922,7 @@
       left: 0; right: 0;
       background: #fff;
       border-top: 1px solid var(--border);
-      z-index: 98;
+      z-index: 250;
       opacity: 0;
       transform: translateY(-6px);
       transition: opacity 0.25s ease, transform 0.25s ease;
@@ -957,7 +994,7 @@
         gap: 12px;
         overflow-y: visible;
       }
-      .modal-x { top: 14px; right: 16px; font-size: 24px; }
+      .modal-bar { padding: 14px 18px; gap: 18px; }
       .modal-title { font-size: clamp(18px, 5vw, 26px); }
       .modal-by { font-size: 9px; margin-top: 2px; }
       .ftab { padding: 8px 6px; font-size: 11px; }
@@ -968,6 +1005,8 @@
       .btn-add { padding: 14px; font-size: 11px; }
       .room-canvas { aspect-ratio: 3/2; }
       .room-bg { object-position: 70% center; }
+      .mbar-nav { display: none; }
+      .mbar-ham { display: flex; }
 
       #about { padding: 64px 24px; }
       footer { flex-direction: column; gap: 24px; text-align: center; padding: 36px 24px; }
@@ -1134,9 +1173,19 @@
 
 <!-- product modal -->
 <div class="modal" id="modal">
+  <!-- Top-right bar: nav + close -->
+  <div class="modal-bar">
+    <nav class="mbar-nav">
+      <a href="collectif.html">Collectif</a>
+      <a href="#about" onclick="closeModal()">About</a>
+    </nav>
+    <button class="mbar-ham" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <button class="modal-x" onclick="closeModal()">×</button>
+  </div>
   <!-- Left: large image (click empty area to close) -->
   <div class="modal-img-col" onclick="closeModal()">
-    <button class="modal-x" onclick="closeModal()">×</button>
     <div class="modal-frame-wrap" id="mFrameWrap" onclick="event.stopPropagation(); openImgZoom()">
       <img id="mImg" src="" alt="" />
     </div>
