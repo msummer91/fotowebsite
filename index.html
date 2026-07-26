@@ -9,6 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Mobile: remove tap flash, no text selection on interactive elements */
+    a, button, [role="button"] { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    /* Touch devices: disable hover overlay (prevent it sticking after tap) */
+    @media (hover: none) { .g-hover { display: none; } }
 
     :root {
       --bg:       #ffffff;
@@ -401,6 +405,12 @@
       transition: transform 0.18s, box-shadow 0.18s;
       position: relative;
     }
+    /* Invisible tap-area extension — 44px minimum without changing visual */
+    .fcolor-btn::after {
+      content: '';
+      position: absolute;
+      inset: -9px;
+    }
     .fcolor-btn.on {
       box-shadow: 0 0 0 2px var(--crimson);
       transform: scale(1.18);
@@ -469,7 +479,8 @@
       font-size: 24px; cursor: pointer;
       color: rgba(0,0,0,0.3); line-height: 1;
       transition: color 0.2s;
-      padding: 0;
+      padding: 10px;
+      margin: -10px;
     }
     .modal-x:hover { color: var(--dark); }
 
@@ -503,10 +514,10 @@
     /* Expand button on room canvas */
     .room-expand-btn {
       position: absolute;
-      bottom: 10px; right: 10px;
+      bottom: 8px; right: 8px;
       background: rgba(255,255,255,0.88);
       border: none; border-radius: 4px;
-      width: 32px; height: 32px;
+      width: 44px; height: 44px;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; z-index: 5;
       transition: background 0.18s, transform 0.18s;
@@ -562,7 +573,7 @@
     }
     .img-nav-btn {
       pointer-events: all;
-      width: 40px; height: 40px;
+      width: 44px; height: 44px;
       border-radius: 50%;
       background: rgba(255,255,255,0.92);
       border: none;
