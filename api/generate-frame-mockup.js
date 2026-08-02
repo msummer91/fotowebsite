@@ -64,34 +64,41 @@ module.exports = async function handler(req, res) {
 
       const { W, H, frameL, frameT, frameR, frameB, matL, matT, matR, matB,
               artL, artT, artR, artB } = BOX_TMPL;
-      const artW = artR - artL; // 1013
-      const artH = artB - artT; // 724
 
-      // Resize user photo to fill the artwork area (cover crop, centered)
-      const artAspect = artW / artH;
+      // Expand the composite area by BLEED pixels beyond the measured artwork boundary.
+      // This ensures the old template image is fully covered at the edges where
+      // the wave painting and white mat transition gradually.
+      const BLEED = 25;
+      const compL = artL - BLEED;
+      const compT = artT - BLEED;
+      const compW = (artR - artL) + BLEED * 2; // 1063
+      const compH = (artB - artT) + BLEED * 2; // 774
+
+      // Resize user photo to fill the (expanded) composite area (cover crop, centered)
+      const artAspect = compW / compH;
       const imgAspect = imgW / imgH;
       let resizeW, resizeH, cropL = 0, cropT = 0;
 
       if (imgAspect > artAspect) {
         // Photo wider than art area — fit by height, crop sides
-        resizeH = artH;
-        resizeW = Math.round(artH * imgAspect);
-        cropL   = Math.round((resizeW - artW) / 2);
+        resizeH = compH;
+        resizeW = Math.round(compH * imgAspect);
+        cropL   = Math.round((resizeW - compW) / 2);
       } else {
         // Photo taller — fit by width, crop top/bottom
-        resizeW = artW;
-        resizeH = Math.round(artW / imgAspect);
-        cropT   = Math.round((resizeH - artH) / 2);
+        resizeW = compW;
+        resizeH = Math.round(compW / imgAspect);
+        cropT   = Math.round((resizeH - compH) / 2);
       }
 
       const photoResized = await sharp(srcBuffer)
         .resize(resizeW, resizeH)
-        .extract({ left: cropL, top: cropT, width: artW, height: artH })
+        .extract({ left: cropL, top: cropT, width: compW, height: compH })
         .toBuffer();
 
-      // Composite the photo into the template at the artwork position
+      // Composite the photo into the template (slightly overlapping mat edges)
       let result = await sharp(templateBuf)
-        .composite([{ input: photoResized, left: artL, top: artT }])
+        .composite([{ input: photoResized, left: compL, top: compT }])
         .toBuffer();
 
       // Tint the frame border ring for non-black colors
