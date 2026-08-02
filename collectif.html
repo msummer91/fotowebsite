@@ -1381,7 +1381,10 @@ function setFmt(f, silent) {
   updateImgNav();
 }
 function openImgZoom() {
-  const src = document.getElementById('mImg').src;
+  // When framed is selected, zoom shows the server-rendered framed mockup
+  const src = fmt === 'framed'
+    ? (document.getElementById('roomImg2').src || document.getElementById('mImg').src)
+    : document.getElementById('mImg').src;
   if (!src) return;
   document.getElementById('zoomImg').src = src;
   document.getElementById('zoomOverlay').classList.add('on');
