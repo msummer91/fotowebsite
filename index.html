@@ -1580,22 +1580,47 @@ function renderFrameColors() {
 const _mockupCache = {};
 
 function _loadFramedMockup(colorName, style) {
-  const img = document.getElementById('roomImg2');
-  const rm  = document.getElementById('roomMount2');
+  const roomImg = document.getElementById('roomImg2');
+  const mImg    = document.getElementById('mImg');
+  const rm      = document.getElementById('roomMount2');
+  const wrap    = document.getElementById('mFrameWrap');
   const cacheKey = `${cur.img}|${colorName}|${style}`;
   rm.style.border = '';
   rm.style.outline = '';
+
+  function applyMockup(url) {
+    if (fmt !== 'framed') return;
+    // Update room preview
+    roomImg.src = url;
+    roomImg.style.opacity = '1';
+    // Swap main left-panel image — frame is baked in, remove CSS border
+    mImg.src = url;
+    mImg.style.opacity = '1';
+    wrap.style.border = '';
+    wrap.style.outline = '';
+    wrap.style.boxShadow = '6px 14px 40px rgba(0,0,0,0.55)';
+    const w = window.innerWidth;
+    if (w <= 860) {
+      const vh = w <= 560 ? 46 : 50;
+      const pad = w <= 560 ? 48 : 60;
+      mImg.style.maxHeight = `calc(${vh}vh - ${pad}px)`;
+    } else {
+      mImg.style.maxHeight = '';
+    }
+  }
+
   if (_mockupCache[cacheKey]) {
-    img.src = _mockupCache[cacheKey];
+    applyMockup(_mockupCache[cacheKey]);
     return;
   }
-  img.style.opacity = '0.45';
+  roomImg.style.opacity = '0.45';
+  mImg.style.opacity = '0.5';
   const fullUrl = window.location.origin + '/' + cur.img;
   const mockupUrl = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(fullUrl)}&frameColor=${encodeURIComponent(colorName)}&frameStyle=${encodeURIComponent(style)}`;
   _mockupCache[cacheKey] = mockupUrl;
   const tmp = new Image();
-  tmp.onload  = () => { img.src = mockupUrl; img.style.opacity = '1'; };
-  tmp.onerror = () => { img.style.opacity = '1'; };
+  tmp.onload  = () => applyMockup(mockupUrl);
+  tmp.onerror = () => { roomImg.style.opacity = '1'; mImg.style.opacity = '1'; };
   tmp.src = mockupUrl;
 }
 
@@ -1606,7 +1631,7 @@ function applyFramePreview() {
   const inset = isBox
     ? 'inset 0 0 0 4px rgba(242,238,230,0.85), inset 1px 2px 6px rgba(0,0,0,0.25), inset -1px -1px 4px rgba(0,0,0,0.12)'
     : 'inset 1px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(0,0,0,0.1)';
-  // Main modal image — CSS border (instant feedback)
+  // Instant CSS border feedback while server mockup loads
   const wrap = document.getElementById('mFrameWrap');
   wrap.style.border = `${thickness}px solid ${color.hex}`;
   if (color.border) wrap.style.outline = `1px solid ${color.border}`;
@@ -1618,7 +1643,7 @@ function applyFramePreview() {
     const pad = w <= 560 ? 48 : 60;
     document.getElementById('mImg').style.maxHeight = `calc(${vh}vh - ${pad + thickness * 2}px)`;
   }
-  // Room preview — server-rendered framed mockup
+  // Load server-rendered mockup → updates both main image and room preview
   _loadFramedMockup(color.name, frameType);
 }
 
@@ -1627,19 +1652,23 @@ function clearFramePreview() {
   wrap.style.border = '';
   wrap.style.outline = '';
   wrap.style.boxShadow = '';
+  // Restore original photo in main image
+  const mImg = document.getElementById('mImg');
+  mImg.src = cur.img;
+  mImg.style.opacity = '1';
   const w = window.innerWidth;
   if (w <= 860) {
     const vh = w <= 560 ? 46 : 50;
     const pad = w <= 560 ? 48 : 60;
-    document.getElementById('mImg').style.maxHeight = `calc(${vh}vh - ${pad}px)`;
+    mImg.style.maxHeight = `calc(${vh}vh - ${pad}px)`;
   } else {
-    document.getElementById('mImg').style.maxHeight = '';
+    mImg.style.maxHeight = '';
   }
   // Room preview — restore original unframed image
-  const img = document.getElementById('roomImg2');
-  const rm  = document.getElementById('roomMount2');
-  img.src = cur.img;
-  img.style.opacity = '1';
+  const roomImg = document.getElementById('roomImg2');
+  const rm      = document.getElementById('roomMount2');
+  roomImg.src = cur.img;
+  roomImg.style.opacity = '1';
   rm.style.border = '';
   rm.style.outline = '';
 }
