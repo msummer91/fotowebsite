@@ -114,7 +114,15 @@ module.exports = async function handler(req, res) {
           .toBuffer();
       }
 
+      // Crop to just the outer frame boundary — removes surrounding background
+      // so the artwork fills the image more naturally (less wasted space)
       const finalBuf = await sharp(result)
+        .extract({
+          left:   frameL,
+          top:    frameT,
+          width:  frameR - frameL,
+          height: frameB - frameT,
+        })
         .jpeg({ quality: 88, mozjpeg: true })
         .toBuffer();
 
@@ -128,8 +136,8 @@ module.exports = async function handler(req, res) {
     // Visually: photo with inner-edge vignette → extend with coloured border
     // ─────────────────────────────────────────────────────────────────────────
 
-    // Frame thickness: ~7.5% of shorter dimension
-    const ft = Math.round(Math.min(imgW, imgH) * 0.075);
+    // Frame thickness: ~5% of shorter dimension (keeps proportions close to Prodigi samples)
+    const ft = Math.round(Math.min(imgW, imgH) * 0.05);
 
     // Step 1: subtle inner-edge shadow on the photo (vignette effect under frame)
     const shadowDepth = Math.round(Math.min(imgW, imgH) * 0.04);
