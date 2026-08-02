@@ -2,18 +2,29 @@
 // Accepts: ?imageUrl=<full URL>&frameColor=<name>&frameStyle=<classic|boxframe>
 // Returns: JPEG of the photo with a proportional solid frame border
 
+const path  = require('path');
+const fs    = require('fs');
 const sharp = require('sharp');
 
 // Must exactly match hex values used in frontend frameData
 const FRAME_COLORS = {
   'Black':          { r: 28,  g: 28,  b: 28  },
   'White':          { r: 242, g: 240, b: 237 },
+  'Brown':          { r: 122, g: 73,  b: 41  },
   'Natural':        { r: 192, g: 155, b: 110 },
   'Antique Silver': { r: 157, g: 163, b: 163 },
-  'Brown':          { r: 122, g: 73,  b: 41  },
   'Antique Gold':   { r: 201, g: 168, b: 76  },
   'Dark Grey':      { r: 74,  g: 72,  b: 72  },
   'Light Grey':     { r: 192, g: 191, b: 189 },
+};
+
+// Pixel positions measured from boxframesample.jpg (2000×2000 px)
+// Outer frame boundary, white mat boundary, inner artwork area
+const BOX_TMPL = {
+  W: 2000, H: 2000,
+  frameL: 256, frameT: 378, frameR: 1702, frameB: 1554,
+  matL:   311, matT:   433, matR:   1647, matB:   1500,
+  artL:   472, artT:   583, artR:   1485, artB:   1307,
 };
 
 module.exports = async function handler(req, res) {
@@ -44,110 +55,66 @@ module.exports = async function handler(req, res) {
     const imgW = meta.width;
     const imgH = meta.height;
 
-    // Frame thickness: classic ~7.5%, box frame ~11% of shorter dimension
-    const ft = Math.round(Math.min(imgW, imgH) * (isBox ? 0.11 : 0.075));
-
     // ─────────────────────────────────────────────────────────────────────────
-    // BOX FRAME PIPELINE
-    // Visually: [colored frame] → [box-wall shadow] → [cream reveal] → [photo float shadow] → [photo]
+    // BOX FRAME — composite into boxframesample.jpg template
     // ─────────────────────────────────────────────────────────────────────────
     if (isBox) {
-      // Step 1: add cream float-mount reveal (4.5% each side — clearly visible inner white box)
-      const reveal = Math.round(Math.min(imgW, imgH) * 0.045);
+      const templatePath = path.join(__dirname, '..', 'Images', 'boxframesample.jpg');
+      const templateBuf  = fs.readFileSync(templatePath);
 
-      const withReveal = await sharp(srcBuffer)
-        .extend({
-          top: reveal, bottom: reveal, left: reveal, right: reveal,
-          background: { r: 242, g: 237, b: 229, alpha: 1 },
-        })
+      const { W, H, frameL, frameT, frameR, frameB, matL, matT, matR, matB,
+              artL, artT, artR, artB } = BOX_TMPL;
+      const artW = artR - artL; // 1013
+      const artH = artB - artT; // 724
+
+      // Resize user photo to fill the artwork area (cover crop, centered)
+      const artAspect = artW / artH;
+      const imgAspect = imgW / imgH;
+      let resizeW, resizeH, cropL = 0, cropT = 0;
+
+      if (imgAspect > artAspect) {
+        // Photo wider than art area — fit by height, crop sides
+        resizeH = artH;
+        resizeW = Math.round(artH * imgAspect);
+        cropL   = Math.round((resizeW - artW) / 2);
+      } else {
+        // Photo taller — fit by width, crop top/bottom
+        resizeW = artW;
+        resizeH = Math.round(artW / imgAspect);
+        cropT   = Math.round((resizeH - artH) / 2);
+      }
+
+      const photoResized = await sharp(srcBuffer)
+        .resize(resizeW, resizeH)
+        .extract({ left: cropL, top: cropT, width: artW, height: artH })
         .toBuffer();
 
-      const workW = imgW + reveal * 2;
-      const workH = imgH + reveal * 2;
-
-      // Step 2: shadows on the reveal canvas
-      //   (a) Box-wall shadow: fades across the reveal from outer edge → photo boundary
-      //   (b) Photo float shadow: subtle shadow just inside photo edge (print elevation effect)
-      const floatDepth = Math.round(reveal * 0.7); // how far float shadow extends into photo
-
-      const shadowSvg = `<svg width="${workW}" height="${workH}" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <!-- Box-wall shadows (cover reveal only, zero at photo edge) -->
-          <linearGradient id="wt" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="black" stop-opacity="0.60"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="wb" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%"   stop-color="black" stop-opacity="0.45"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="wl" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%"   stop-color="black" stop-opacity="0.52"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="wr" x1="1" y1="0" x2="0" y2="0">
-            <stop offset="0%"   stop-color="black" stop-opacity="0.52"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0"/>
-          </linearGradient>
-          <!-- Photo float shadows (subtle inset shadow at photo edge) -->
-          <linearGradient id="ft" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="black" stop-opacity="0.22"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="fb" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%"   stop-color="black" stop-opacity="0.15"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="fl" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%"   stop-color="black" stop-opacity="0.18"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="fr" x1="1" y1="0" x2="0" y2="0">
-            <stop offset="0%"   stop-color="black" stop-opacity="0.18"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-
-        <!-- Box-wall shadows: constrained to the reveal band on each side -->
-        <rect x="0"                   y="0"                    width="${workW}"  height="${reveal}"  fill="url(#wt)"/>
-        <rect x="0"                   y="${workH - reveal}"     width="${workW}"  height="${reveal}"  fill="url(#wb)"/>
-        <rect x="0"                   y="0"                    width="${reveal}"  height="${workH}"   fill="url(#wl)"/>
-        <rect x="${workW - reveal}"    y="0"                    width="${reveal}"  height="${workH}"   fill="url(#wr)"/>
-
-        <!-- Photo float shadows: just inside the photo boundary -->
-        <rect x="${reveal}"            y="${reveal}"             width="${workW - reveal * 2}"  height="${floatDepth}" fill="url(#ft)"/>
-        <rect x="${reveal}"            y="${workH - reveal - floatDepth}" width="${workW - reveal * 2}" height="${floatDepth}" fill="url(#fb)"/>
-        <rect x="${reveal}"            y="${reveal}"             width="${floatDepth}"           height="${workH - reveal * 2}" fill="url(#fl)"/>
-        <rect x="${workW - reveal - floatDepth}" y="${reveal}"  width="${floatDepth}"           height="${workH - reveal * 2}" fill="url(#fr)"/>
-      </svg>`;
-
-      const withShadow = await sharp(withReveal)
-        .composite([{ input: Buffer.from(shadowSvg), top: 0, left: 0, blend: 'over' }])
+      // Composite the photo into the template at the artwork position
+      let result = await sharp(templateBuf)
+        .composite([{ input: photoResized, left: artL, top: artT }])
         .toBuffer();
 
-      // Step 3: add colored frame border
-      const finalW = workW + ft * 2;
-      const finalH = workH + ft * 2;
+      // Tint the frame border ring for non-black colors
+      // The template frame is black; we apply a hard-light colored overlay
+      // confined to the frame border (outer rect minus mat rect, evenodd rule)
+      if (frameColor !== 'Black') {
+        const { r: cr, g: cg, b: cb } = color;
+        // White needs higher opacity for an effective lightening; warm tones slightly less
+        const opacity = frameColor === 'White' ? 0.93 : 0.80;
 
-      const withFrame = await sharp(withShadow)
-        .extend({
-          top: ft, bottom: ft, left: ft, right: ft,
-          background: { r: color.r, g: color.g, b: color.b, alpha: 1 },
-        })
-        .toBuffer();
+        const tintSvg = `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+          <path d="M ${frameL},${frameT} L ${frameR},${frameT} L ${frameR},${frameB} L ${frameL},${frameB} Z
+                   M ${matL},${matT} L ${matR},${matT} L ${matR},${matB} L ${matL},${matB} Z"
+                fill-rule="evenodd"
+                fill="rgba(${cr},${cg},${cb},${opacity})"/>
+        </svg>`;
 
-      // Step 4: thin dark accent line at inner frame edge (visible box depth / wall edge)
-      // Draws a dark hairline right at the junction between the colored frame and the cream reveal
-      const wallLine = Math.max(3, Math.round(ft * 0.07));
-      const depthLineSvg = `<svg width="${finalW}" height="${finalH}" xmlns="http://www.w3.org/2000/svg">
-        <rect x="${ft}" y="${ft}" width="${workW}" height="${workH}"
-              fill="none"
-              stroke="rgba(0,0,0,0.55)"
-              stroke-width="${wallLine}"/>
-      </svg>`;
+        result = await sharp(result)
+          .composite([{ input: Buffer.from(tintSvg), top: 0, left: 0, blend: 'hard-light' }])
+          .toBuffer();
+      }
 
-      const finalBuf = await sharp(withFrame)
-        .composite([{ input: Buffer.from(depthLineSvg), top: 0, left: 0, blend: 'over' }])
+      const finalBuf = await sharp(result)
         .jpeg({ quality: 88, mozjpeg: true })
         .toBuffer();
 
@@ -158,7 +125,11 @@ module.exports = async function handler(req, res) {
 
     // ─────────────────────────────────────────────────────────────────────────
     // CLASSIC FRAME PIPELINE
+    // Visually: photo with inner-edge vignette → extend with coloured border
     // ─────────────────────────────────────────────────────────────────────────
+
+    // Frame thickness: ~7.5% of shorter dimension
+    const ft = Math.round(Math.min(imgW, imgH) * 0.075);
 
     // Step 1: subtle inner-edge shadow on the photo (vignette effect under frame)
     const shadowDepth = Math.round(Math.min(imgW, imgH) * 0.04);
