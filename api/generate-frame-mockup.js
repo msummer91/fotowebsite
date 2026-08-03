@@ -31,11 +31,12 @@ const BOX_TMPL = {
 };
 
 // Box frame border tint colors for non-black variants.
-// Applied as a hard-light overlay over the black frame border ring.
+// White uses normal 'over' compositing (hard-light can't lighten black to white).
+// Warm colors use 'hard-light' which tints the dark frame texture.
 const BOX_TINTS = {
-  'White':   { r: 242, g: 240, b: 237, opacity: 0.93 },
-  'Brown':   { r: 100, g: 60,  b: 35,  opacity: 0.80 },
-  'Natural': { r: 180, g: 145, b: 100, opacity: 0.78 },
+  'White':   { r: 240, g: 238, b: 235, opacity: 1.0,  blend: 'over'       },
+  'Brown':   { r: 100, g: 60,  b: 35,  opacity: 0.82, blend: 'hard-light' },
+  'Natural': { r: 180, g: 145, b: 100, opacity: 0.80, blend: 'hard-light' },
 };
 
 module.exports = async function handler(req, res) {
@@ -133,7 +134,7 @@ module.exports = async function handler(req, res) {
         .toBuffer();
 
       // 3. Tint the frame border for non-black colors
-      //    (evenodd path: outer rect minus mat rect = frame ring only)
+      //    evenodd path = outer rect minus mat rect → frame ring only
       if (frameColor !== 'Black') {
         const c = BOX_TINTS[frameColor] || BOX_TINTS['Natural'];
         const tintSvg = `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
@@ -142,7 +143,7 @@ module.exports = async function handler(req, res) {
                 fill-rule="evenodd" fill="rgba(${c.r},${c.g},${c.b},${c.opacity})"/>
         </svg>`;
         result = await sharp(result)
-          .composite([{ input: Buffer.from(tintSvg), blend: 'hard-light' }])
+          .composite([{ input: Buffer.from(tintSvg), blend: c.blend }])
           .toBuffer();
       }
 
