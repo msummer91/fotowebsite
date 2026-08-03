@@ -1617,9 +1617,8 @@ function _loadFramedMockup(colorName, style) {
   mImg.style.opacity = '0.5';
   const fullUrl = window.location.origin + '/' + cur.img;
   const mockupUrl = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(fullUrl)}&frameColor=${encodeURIComponent(colorName)}&frameStyle=${encodeURIComponent(style)}`;
-  _mockupCache[cacheKey] = mockupUrl;
   const tmp = new Image();
-  tmp.onload  = () => applyMockup(mockupUrl);
+  tmp.onload  = () => { _mockupCache[cacheKey] = mockupUrl; applyMockup(mockupUrl); };
   tmp.onerror = () => { roomImg.style.opacity = '1'; mImg.style.opacity = '1'; };
   tmp.src = mockupUrl;
 }
