@@ -1052,6 +1052,7 @@
     <div class="modal-frame-wrap" id="mFrameWrap" onclick="event.stopPropagation(); openImgZoom()">
       <img id="mImg" src="" alt="" />
     </div>
+    <div id="frameLoadHint" onclick="event.stopPropagation()" style="display:none;text-align:center;font-size:12px;color:#aaa;padding:6px 0;pointer-events:none;letter-spacing:0.03em;">Generating preview…</div>
     <div class="img-nav-arrows" onclick="event.stopPropagation()">
       <button class="img-nav-btn" id="imgNavPrev" onclick="navImgView(-1)" title="Original" disabled>
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 14L6 9l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1422,6 +1423,13 @@ function renderFrameTypes() {
     b.className = 'ftype-btn' + (key === frameType ? ' on' : '');
     b.textContent = data.label;
     b.onclick = () => { frameType = key; frameColorIdx = 0; renderFrameTypes(); renderFrameColors(); applyFramePreview(); updatePrice(); };
+    b.onmouseenter = () => {
+      if (!cur || fmt !== 'framed') return;
+      const fc = data.colors[0].name, pk = `${cur.img}|${fc}|${key}`;
+      if (_mockupCache[pk]) return;
+      const u = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(window.location.origin+'/'+cur.img)}&frameColor=${encodeURIComponent(fc)}&frameStyle=${encodeURIComponent(key)}`;
+      const p = new Image(); p.onload = () => { _mockupCache[pk] = u; }; p.src = u;
+    };
     el.appendChild(b);
   });
 }
@@ -1437,6 +1445,13 @@ function renderFrameColors() {
     b.title = c.name;
     b.setAttribute('aria-label', c.name);
     b.onclick = () => { frameColorIdx = i; renderFrameColors(); applyFramePreview(); };
+    b.onmouseenter = () => {
+      if (!cur || fmt !== 'framed') return;
+      const pk = `${cur.img}|${c.name}|${frameType}`;
+      if (_mockupCache[pk]) return;
+      const u = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(window.location.origin+'/'+cur.img)}&frameColor=${encodeURIComponent(c.name)}&frameStyle=${encodeURIComponent(frameType)}`;
+      const p = new Image(); p.onload = () => { _mockupCache[pk] = u; }; p.src = u;
+    };
     el.appendChild(b);
   });
   const label = colors[frameColorIdx].name;
@@ -1444,20 +1459,24 @@ function renderFrameColors() {
   document.getElementById('frameDesc').textContent = `${label} · ${frameData[frameType].desc}${extra}`;
 }
 
-// Client-side cache: keyed by "imgSrc|colorName" → generated mockup URL
+// Client-side cache: keyed by "imgSrc|colorName|style" → generated mockup URL
 const _mockupCache = {};
+// Stale-request guard: incremented on every new request; only the latest resolves
+let _mockupReqId = 0;
 
 function _loadFramedMockup(colorName, style) {
   const roomImg = document.getElementById('roomImg2');
   const mImg    = document.getElementById('mImg');
   const rm      = document.getElementById('roomMount2');
   const wrap    = document.getElementById('mFrameWrap');
+  const hint    = document.getElementById('frameLoadHint');
   const cacheKey = `${cur.img}|${colorName}|${style}`;
   rm.style.border = '';
   rm.style.outline = '';
 
   function applyMockup(url) {
     if (fmt !== 'framed') return;
+    if (hint) hint.style.display = 'none';
     roomImg.src = url;
     roomImg.style.opacity = '1';
     mImg.src = url;
@@ -1475,17 +1494,32 @@ function _loadFramedMockup(colorName, style) {
     }
   }
 
+  // Cache hit — apply instantly
   if (_mockupCache[cacheKey]) {
     applyMockup(_mockupCache[cacheKey]);
     return;
   }
+
+  // Cache miss — show original photo + CSS border while the server renders the mockup.
+  mImg.src = cur.img;
+  mImg.style.opacity = '1';
   roomImg.style.opacity = '0.45';
-  mImg.style.opacity = '0.5';
+  if (hint) hint.style.display = 'block';
+
+  const reqId = ++_mockupReqId;
   const fullUrl = window.location.origin + '/' + cur.img;
   const mockupUrl = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(fullUrl)}&frameColor=${encodeURIComponent(colorName)}&frameStyle=${encodeURIComponent(style)}`;
   const tmp = new Image();
-  tmp.onload  = () => { _mockupCache[cacheKey] = mockupUrl; applyMockup(mockupUrl); };
-  tmp.onerror = () => { roomImg.style.opacity = '1'; mImg.style.opacity = '1'; };
+  tmp.onload = () => {
+    if (reqId !== _mockupReqId) return; // user switched frame while this was loading — discard
+    _mockupCache[cacheKey] = mockupUrl;
+    applyMockup(mockupUrl);
+  };
+  tmp.onerror = () => {
+    if (reqId !== _mockupReqId) return;
+    roomImg.style.opacity = '1';
+    if (hint) hint.style.display = 'none';
+  };
   tmp.src = mockupUrl;
 }
 
