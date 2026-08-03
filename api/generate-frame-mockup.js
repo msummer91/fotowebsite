@@ -64,41 +64,80 @@ module.exports = async function handler(req, res) {
 
       const { W, H, frameL, frameT, frameR, frameB, matL, matT, matR, matB,
               artL, artT, artR, artB } = BOX_TMPL;
+      const artW = artR - artL; // 1013
+      const artH = artB - artT; // 724
 
-      // Expand the composite area by BLEED pixels beyond the measured artwork boundary.
-      // This ensures the old template image is fully covered at the edges where
-      // the wave painting and white mat transition gradually.
-      const BLEED = 25;
-      const compL = artL - BLEED;
-      const compT = artT - BLEED;
-      const compW = (artR - artL) + BLEED * 2; // 1063
-      const compH = (artB - artT) + BLEED * 2; // 774
+      // ── Step 1: Erase the template artwork completely ──────────────────────
+      // Paint the entire mat+art interior cream white so no wave painting bleeds
+      // through into the mat zone. Use the same cream tone as the template mat.
+      const interiorW = matR - matL; // 1336
+      const interiorH = matB - matT; // 1067
+      const creamBuf = await sharp({
+        create: {
+          width: interiorW, height: interiorH, channels: 3,
+          background: { r: 238, g: 235, b: 232 },
+        },
+      }).png().toBuffer();
 
-      // Resize user photo to fill the (expanded) composite area (cover crop, centered)
-      const artAspect = compW / compH;
+      let result = await sharp(templateBuf)
+        .composite([{ input: creamBuf, left: matL, top: matT }])
+        .toBuffer();
+
+      // ── Step 2: Resize & composite user photo into art area ────────────────
+      const artAspect = artW / artH;
       const imgAspect = imgW / imgH;
       let resizeW, resizeH, cropL = 0, cropT = 0;
 
       if (imgAspect > artAspect) {
-        // Photo wider than art area — fit by height, crop sides
-        resizeH = compH;
-        resizeW = Math.round(compH * imgAspect);
-        cropL   = Math.round((resizeW - compW) / 2);
+        // Photo wider — fit by height, crop sides
+        resizeH = artH;
+        resizeW = Math.round(artH * imgAspect);
+        cropL   = Math.round((resizeW - artW) / 2);
       } else {
         // Photo taller — fit by width, crop top/bottom
-        resizeW = compW;
-        resizeH = Math.round(compW / imgAspect);
-        cropT   = Math.round((resizeH - compH) / 2);
+        resizeW = artW;
+        resizeH = Math.round(artW / imgAspect);
+        cropT   = Math.round((resizeH - artH) / 2);
       }
 
       const photoResized = await sharp(srcBuffer)
         .resize(resizeW, resizeH)
-        .extract({ left: cropL, top: cropT, width: compW, height: compH })
+        .extract({ left: cropL, top: cropT, width: artW, height: artH })
         .toBuffer();
 
-      // Composite the photo into the template (slightly overlapping mat edges)
-      let result = await sharp(templateBuf)
-        .composite([{ input: photoResized, left: compL, top: compT }])
+      // Add subtle inset shadow on photo edges to recreate the float/depth effect
+      const shadowDepth = Math.round(Math.min(artW, artH) * 0.04);
+      const photoShadowSvg = `<svg width="${artW}" height="${artH}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="st" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="black" stop-opacity="0.28"/>
+            <stop offset="100%" stop-color="black" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="sb" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%"   stop-color="black" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="black" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="sl" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"   stop-color="black" stop-opacity="0.22"/>
+            <stop offset="100%" stop-color="black" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="sr" x1="1" y1="0" x2="0" y2="0">
+            <stop offset="0%"   stop-color="black" stop-opacity="0.22"/>
+            <stop offset="100%" stop-color="black" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="${artW}" height="${shadowDepth * 2}" fill="url(#st)"/>
+        <rect x="0" y="${artH - shadowDepth * 2}" width="${artW}" height="${shadowDepth * 2}" fill="url(#sb)"/>
+        <rect x="0" y="0" width="${shadowDepth * 2}" height="${artH}" fill="url(#sl)"/>
+        <rect x="${artW - shadowDepth * 2}" y="0" width="${shadowDepth * 2}" height="${artH}" fill="url(#sr)"/>
+      </svg>`;
+
+      const photoWithShadow = await sharp(photoResized)
+        .composite([{ input: Buffer.from(photoShadowSvg), top: 0, left: 0, blend: 'over' }])
+        .toBuffer();
+
+      result = await sharp(result)
+        .composite([{ input: photoWithShadow, left: artL, top: artT }])
         .toBuffer();
 
       // Tint the frame border ring for non-black colors
