@@ -8,16 +8,19 @@ const sharp = require('sharp');
 
 const FRAMES_DIR = path.join(__dirname, '..', 'Images', 'frames');
 
-// Classic frame blank templates with measured inner artwork areas (pixels, portrait orientation).
+// Classic frame templates — freshly measured coordinates (pixels, portrait orientation).
+// S = canvas size (all templates are square).
+// fL/fT/fR/fB = outer frame edge (background excluded).
+// artL/artT/artR/artB = inner artwork area.
 const CLASSIC_TEMPLATES = {
-  'Black':          { file: 'Black classic frame_blank.png',      artL: 568, artT: 284, artR: 1932, artB: 2215 },
-  'White':          { file: 'White classic frame_blank.png',      artL: 568, artT: 283, artR: 1933, artB: 2215 },
-  'Brown':          { file: 'Brown classic frame_blank.jpg',      artL: 494, artT: 306, artR: 1509, artB: 1655 },
-  'Natural':        { file: 'Natural classic frame_blank.png',    artL: 568, artT: 283, artR: 1933, artB: 2215 },
-  'Antique Silver': { file: 'Silver Classic Frame_blank.png',     artL: 506, artT: 328, artR: 1494, artB: 1671 },
-  'Antique Gold':   { file: 'Gold Classic Frame_blank.png',       artL: 508, artT: 332, artR: 1491, artB: 1620 },
-  'Dark Grey':      { file: 'Dark grey classic frame_blank.jpg',  artL: 462, artT: 281, artR: 1534, artB: 1719 },
-  'Light Grey':     { file: 'Light grey classic frame_blank.jpg', artL: 491, artT: 316, artR: 1510, artB: 1683 },
+  'Black':          { file: 'Black classic frame_blank.png',      S: 2500, fL: 474, fT: 189, fR: 2061, fB: 2351, artL: 564, artT: 280, artR: 1937, artB: 2220 },
+  'White':          { file: 'White classic frame_blank.png',      S: 2500, fL: 474, fT: 189, fR: 2061, fB: 2351, artL: 564, artT: 279, artR: 1938, artB: 2220 },
+  'Natural':        { file: 'Natural classic frame_blank.png',    S: 2500, fL: 474, fT: 189, fR: 2061, fB: 2351, artL: 564, artT: 279, artR: 1938, artB: 2220 },
+  'Brown':          { file: 'Brown classic frame_blank.jpg',      S: 2000, fL: 391, fT: 216, fR: 1590, fB: 1762, artL: 490, artT: 302, artR: 1507, artB: 1660 },
+  'Antique Silver': { file: 'Silver Classic Frame_blank.png',     S: 2000, fL: 412, fT: 235, fR: 1583, fB: 1762, artL: 502, artT: 324, artR: 1502, artB: 1676 },
+  'Antique Gold':   { file: 'Gold Classic Frame_blank.png',       S: 2000, fL: 432, fT: 269, fR: 1558, fB: 1698, artL: 504, artT: 328, artR: 1496, artB: 1625 },
+  'Dark Grey':      { file: 'Dark grey classic frame_blank.jpg',  S: 2000, fL: 356, fT: 195, fR: 1619, fB: 1818, artL: 458, artT: 277, artR: 1539, artB: 1724 },
+  'Light Grey':     { file: 'Light grey classic frame_blank.jpg', S: 2000, fL: 395, fT: 232, fR: 1591, fB: 1777, artL: 487, artT: 312, artR: 1515, artB: 1688 },
 };
 
 // Box frame template — "Box black framed print face on.jpg" (2000×2000 px), landscape art area.
@@ -187,16 +190,17 @@ module.exports = async function handler(req, res) {
     // ─────────────────────────────────────────────────────────────────────
     const tmpl = CLASSIC_TEMPLATES[frameColor] || CLASSIC_TEMPLATES['Black'];
     let rawTmplBuf = fs.readFileSync(path.join(FRAMES_DIR, tmpl.file));
-    let { artL, artT, artR, artB } = tmpl;
+    let { S, fL, fT, fR, fB, artL, artT, artR, artB } = tmpl;
 
     // Templates are square with a portrait art area (artH > artW).
-    // If photo is landscape, rotate the template 90° CW so art area becomes landscape.
+    // If photo is landscape, rotate 90° CW so art area becomes landscape.
+    // Both art and frame-boundary coordinates are transformed together.
     if (isLandscape) {
-      const tmplMeta = await sharp(rawTmplBuf).metadata();
-      const S = tmplMeta.width; // square template
       rawTmplBuf = await sharp(rawTmplBuf).rotate(90).toBuffer();
       const a = rotRect(artL, artT, artR, artB, S);
+      const f = rotRect(fL,   fT,   fR,   fB,   S);
       artL = a.L; artT = a.T; artR = a.R; artB = a.B;
+      fL   = f.L; fT   = f.T; fR   = f.R; fB   = f.B;
     }
 
     const artW = artR - artL;
@@ -206,12 +210,14 @@ module.exports = async function handler(req, res) {
     const photo = await addInsetShadow(await fitPhoto(artW, artH), artW, artH);
 
     // 2. Composite into the blank template
-    const result = await sharp(rawTmplBuf)
+    const composited = await sharp(rawTmplBuf)
       .composite([{ input: photo, left: artL, top: artT }])
       .toBuffer();
 
-    // 3. Resize for fast delivery (templates are 2000–2500px)
-    const finalBuf = await sharp(result)
+    // 3. Crop to the frame outer boundary (removes grey background, normalises all frames)
+    //    then resize for fast delivery
+    const finalBuf = await sharp(composited)
+      .extract({ left: fL, top: fT, width: fR - fL, height: fB - fT })
       .resize({ width: 1400, withoutEnlargement: true })
       .jpeg({ quality: 88, mozjpeg: true })
       .toBuffer();
