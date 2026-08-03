@@ -6,7 +6,7 @@ const path  = require('path');
 const fs    = require('fs');
 const sharp = require('sharp');
 
-const FRAMES_DIR = path.join(__dirname, '..', 'Images', 'Frames');
+const FRAMES_DIR = path.join(__dirname, '..', 'Images', 'frames');
 
 // Classic frame blank templates with measured inner artwork areas (pixels).
 // Each template has a light-grey outer background and a blank white inner rectangle.
