@@ -214,11 +214,16 @@ module.exports = async function handler(req, res) {
       .composite([{ input: photo, left: artL, top: artT }])
       .toBuffer();
 
-    // 3. Crop to the frame outer boundary (removes grey background, normalises all frames)
-    //    then resize for fast delivery
+    // 3. Crop to the frame outer boundary, then resize so the art area's long
+    //    dimension = TARGET_ART_PX in the output. This normalises all frames so
+    //    the photo always appears at the same size regardless of which template
+    //    was used (different templates were photographed at different scales).
+    const TARGET_ART_PX = 1200;
+    const artLong = Math.max(artW, artH);
+    const outW = Math.round((fR - fL) * TARGET_ART_PX / artLong);
     const finalBuf = await sharp(composited)
       .extract({ left: fL, top: fT, width: fR - fL, height: fB - fT })
-      .resize({ width: 1400, withoutEnlargement: true })
+      .resize({ width: outW, withoutEnlargement: true })
       .jpeg({ quality: 88, mozjpeg: true })
       .toBuffer();
 
