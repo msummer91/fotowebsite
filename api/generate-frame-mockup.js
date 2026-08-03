@@ -8,8 +8,7 @@ const sharp = require('sharp');
 
 const FRAMES_DIR = path.join(__dirname, '..', 'Images', 'frames');
 
-// Classic frame blank templates with measured inner artwork areas (pixels).
-// Each template has a light-grey outer background and a blank white inner rectangle.
+// Classic frame blank templates with measured inner artwork areas (pixels, portrait orientation).
 const CLASSIC_TEMPLATES = {
   'Black':          { file: 'Black classic frame_blank.png',      artL: 568, artT: 284, artR: 1932, artB: 2215 },
   'White':          { file: 'White classic frame_blank.png',      artL: 568, artT: 283, artR: 1933, artB: 2215 },
@@ -21,8 +20,7 @@ const CLASSIC_TEMPLATES = {
   'Light Grey':     { file: 'Light grey classic frame_blank.jpg', artL: 491, artT: 316, artR: 1510, artB: 1683 },
 };
 
-// Box frame template — "Box black framed print face on.jpg" (2000×2000 px)
-// Pixel positions measured from the image: frame outer edge, white mat, inner artwork area.
+// Box frame template — "Box black framed print face on.jpg" (2000×2000 px), landscape art area.
 const BOX_TMPL = {
   W: 2000, H: 2000,
   frameL: 256, frameT: 375, frameR: 1704, frameB: 1554,
@@ -31,13 +29,21 @@ const BOX_TMPL = {
 };
 
 // Box frame border tint colors for non-black variants.
-// White uses normal 'over' compositing (hard-light can't lighten black to white).
-// Warm colors use 'hard-light' which tints the dark frame texture.
+// White: 'difference' blend inverts near-black frame pixels to near-white,
+//        preserving the 3D texture/shading (unlike 'over' which paints a flat solid).
+// Warm colors: 'hard-light' tints the dark frame texture with color.
 const BOX_TINTS = {
-  'White':   { r: 240, g: 238, b: 235, opacity: 1.0,  blend: 'over'       },
+  'White':   { r: 255, g: 255, b: 255, opacity: 1.0,  blend: 'difference' },
   'Brown':   { r: 100, g: 60,  b: 35,  opacity: 0.82, blend: 'hard-light' },
   'Natural': { r: 180, g: 145, b: 100, opacity: 0.80, blend: 'hard-light' },
 };
+
+// Rotate a bounding box 90° CW inside a square canvas of size S.
+// Transform: (x, y) → (S − y, x)
+// Bounding box (L, T, R, B) → (S−B, L, S−T, R)
+function rotRect(L, T, R, B, S) {
+  return { L: S - B, T: L, R: S - T, B: R };
+}
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
@@ -55,6 +61,8 @@ module.exports = async function handler(req, res) {
     const srcBuffer = Buffer.from(await response.arrayBuffer());
     const meta      = await sharp(srcBuffer).metadata();
     const imgW = meta.width, imgH = meta.height;
+    const isLandscape = imgW > imgH; // photo is wider than tall
+    const isPortrait  = imgH > imgW; // photo is taller than wide
 
     // ── Cover-crop user photo to fill target dimensions ──────────────────
     async function fitPhoto(artW, artH) {
@@ -110,20 +118,34 @@ module.exports = async function handler(req, res) {
     // BOX FRAME PIPELINE
     // ─────────────────────────────────────────────────────────────────────
     if (isBox) {
-      const tmplBuf = fs.readFileSync(path.join(FRAMES_DIR, 'Box black framed print face on.jpg'));
-      const { W, H, frameL, frameT, frameR, frameB, matL, matT, matR, matB, artL, artT, artR, artB } = BOX_TMPL;
-      const artW = artR - artL; // 1000
-      const artH = artB - artT; // 729
+      let rawTmplBuf = fs.readFileSync(path.join(FRAMES_DIR, 'Box black framed print face on.jpg'));
+      let { W, H, frameL, frameT, frameR, frameB, matL, matT, matR, matB, artL, artT, artR, artB } = BOX_TMPL;
 
-      // 1. Erase the wave painting: fill the entire mat+art interior cream
-      //    so no template artwork bleeds into the mat zone
-      const interiorW = matR - matL; // 1337
-      const interiorH = matB - matT; // 1068
+      // Template art area is landscape (1000×729).
+      // If photo is portrait, rotate the template 90° CW so art area becomes portrait (729×1000).
+      if (isPortrait) {
+        rawTmplBuf = await sharp(rawTmplBuf).rotate(90).toBuffer();
+        const S = W; // square template
+        const f = rotRect(frameL, frameT, frameR, frameB, S);
+        const m = rotRect(matL,   matT,   matR,   matB,   S);
+        const a = rotRect(artL,   artT,   artR,   artB,   S);
+        frameL = f.L; frameT = f.T; frameR = f.R; frameB = f.B;
+        matL   = m.L; matT   = m.T; matR   = m.R; matB   = m.B;
+        artL   = a.L; artT   = a.T; artR   = a.R; artB   = a.B;
+        // W and H stay the same (square canvas)
+      }
+
+      const artW = artR - artL;
+      const artH = artB - artT;
+
+      // 1. Erase the template artwork: fill the entire mat+art interior with cream
+      const interiorW = matR - matL;
+      const interiorH = matB - matT;
       const creamBuf = await sharp({
         create: { width: interiorW, height: interiorH, channels: 3, background: { r: 238, g: 235, b: 232 } },
       }).png().toBuffer();
 
-      let result = await sharp(tmplBuf)
+      let result = await sharp(rawTmplBuf)
         .composite([{ input: creamBuf, left: matL, top: matT }])
         .toBuffer();
 
@@ -133,8 +155,9 @@ module.exports = async function handler(req, res) {
         .composite([{ input: photo, left: artL, top: artT }])
         .toBuffer();
 
-      // 3. Tint the frame border for non-black colors
-      //    evenodd path = outer rect minus mat rect → frame ring only
+      // 3. Tint the frame border for non-black colors.
+      //    evenodd path = outer frame rect minus mat rect → frame ring only.
+      //    'difference' blend: |white − dark_pixel| ≈ white, preserving texture variation.
       if (frameColor !== 'Black') {
         const c = BOX_TINTS[frameColor] || BOX_TINTS['Natural'];
         const tintSvg = `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
@@ -147,7 +170,7 @@ module.exports = async function handler(req, res) {
           .toBuffer();
       }
 
-      // 4. Crop to just the outer frame boundary (removes wall/background)
+      // 4. Crop to just the outer frame boundary (removes wall/background), then resize
       const finalBuf = await sharp(result)
         .extract({ left: frameL, top: frameT, width: frameR - frameL, height: frameB - frameT })
         .resize({ width: 1400, withoutEnlargement: true })
@@ -155,16 +178,27 @@ module.exports = async function handler(req, res) {
         .toBuffer();
 
       res.setHeader('Content-Type', 'image/jpeg');
-      res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+      res.setHeader('Cache-Control', 'public, max-age=3600');
       return res.send(finalBuf);
     }
 
     // ─────────────────────────────────────────────────────────────────────
     // CLASSIC FRAME PIPELINE
     // ─────────────────────────────────────────────────────────────────────
-    const tmpl   = CLASSIC_TEMPLATES[frameColor] || CLASSIC_TEMPLATES['Black'];
-    const tmplBuf = fs.readFileSync(path.join(FRAMES_DIR, tmpl.file));
-    const { artL, artT, artR, artB } = tmpl;
+    const tmpl = CLASSIC_TEMPLATES[frameColor] || CLASSIC_TEMPLATES['Black'];
+    let rawTmplBuf = fs.readFileSync(path.join(FRAMES_DIR, tmpl.file));
+    let { artL, artT, artR, artB } = tmpl;
+
+    // Templates are square with a portrait art area (artH > artW).
+    // If photo is landscape, rotate the template 90° CW so art area becomes landscape.
+    if (isLandscape) {
+      const tmplMeta = await sharp(rawTmplBuf).metadata();
+      const S = tmplMeta.width; // square template
+      rawTmplBuf = await sharp(rawTmplBuf).rotate(90).toBuffer();
+      const a = rotRect(artL, artT, artR, artB, S);
+      artL = a.L; artT = a.T; artR = a.R; artB = a.B;
+    }
+
     const artW = artR - artL;
     const artH = artB - artT;
 
@@ -172,7 +206,7 @@ module.exports = async function handler(req, res) {
     const photo = await addInsetShadow(await fitPhoto(artW, artH), artW, artH);
 
     // 2. Composite into the blank template
-    const result = await sharp(tmplBuf)
+    const result = await sharp(rawTmplBuf)
       .composite([{ input: photo, left: artL, top: artT }])
       .toBuffer();
 
@@ -183,7 +217,7 @@ module.exports = async function handler(req, res) {
       .toBuffer();
 
     res.setHeader('Content-Type', 'image/jpeg');
-    res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
     return res.send(finalBuf);
 
   } catch (err) {
