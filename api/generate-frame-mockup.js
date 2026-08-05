@@ -23,12 +23,13 @@ const CLASSIC_TEMPLATES = {
   'Light Grey':     { file: 'Light grey classic frame_blank.jpg', S: 2000, fL: 395, fT: 232, fR: 1591, fB: 1777, artL: 487, artT: 312, artR: 1515, artB: 1688 },
 };
 
-// Box frame template — "Box black framed print face on.jpg" (2000×2000 px), landscape art area.
+// Box frame template — "Box black framed print face on.jpg" (1376×768 px), landscape art area.
+// Coordinates measured from the updated template (Aug 2026).
 const BOX_TMPL = {
-  W: 2000, H: 2000,
-  frameL: 256, frameT: 375, frameR: 1704, frameB: 1554,
-  matL:   310, matT:   432, matR:   1647, matB:   1500,
-  artL:   470, artT:   589, artR:   1470, artB:   1318,
+  W: 1376, H: 768,
+  frameL: 219, frameT:  28, frameR: 1156, frameB: 738,
+  matL:   254, matT:   62, matR:  1121, matB:  703,
+  artL:   338, artT:  130, artR:  1050, artB:  640,
 };
 
 // Box frame border tint colors for non-black variants.
@@ -124,18 +125,19 @@ module.exports = async function handler(req, res) {
       let rawTmplBuf = fs.readFileSync(path.join(FRAMES_DIR, 'Box black framed print face on.jpg'));
       let { W, H, frameL, frameT, frameR, frameB, matL, matT, matR, matB, artL, artT, artR, artB } = BOX_TMPL;
 
-      // Template art area is landscape (1000×729).
-      // If photo is portrait, rotate the template 90° CW so art area becomes portrait (729×1000).
+      // Template art area is landscape. If photo is portrait, rotate template 90° CW
+      // so art area becomes portrait. Template is non-square (W×H), so after 90° CW
+      // rotation the canvas becomes H×W — use old H as the rotRect dimension (S).
       if (isPortrait) {
         rawTmplBuf = await sharp(rawTmplBuf).rotate(90).toBuffer();
-        const S = W; // square template
+        const S = H; // 90° CW of W×H → new width = H, use H for coordinate transform
         const f = rotRect(frameL, frameT, frameR, frameB, S);
         const m = rotRect(matL,   matT,   matR,   matB,   S);
         const a = rotRect(artL,   artT,   artR,   artB,   S);
         frameL = f.L; frameT = f.T; frameR = f.R; frameB = f.B;
         matL   = m.L; matT   = m.T; matR   = m.R; matB   = m.B;
         artL   = a.L; artT   = a.T; artR   = a.R; artB   = a.B;
-        // W and H stay the same (square canvas)
+        [W, H] = [H, W]; // canvas is now H×W after rotation
       }
 
       const artW = artR - artL;

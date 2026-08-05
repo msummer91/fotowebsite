@@ -448,6 +448,23 @@
     /* When modal is open: always show collapsed (hamburger) only, hide text nav */
     .modal-bar .mbar-nav { display: none; }
     .modal-bar .mbar-ham { display: flex; }
+    /* Cart button in modal-bar */
+    .mbar-cart {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); padding: 4px;
+      transition: color 0.2s;
+    }
+    .mbar-cart:hover { color: var(--dark); }
+    /* Footer stays visible when modal is open */
+    body.modal-open footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 250; padding: 12px 26px;
+    }
+    body.modal-open .overlay,
+    body.modal-open #modal {
+      bottom: 56px;
+    }
     .mbar-nav {
       display: flex;
       gap: 24px;
@@ -1195,6 +1212,14 @@
     <button class="mbar-ham" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
+    <button class="mbar-cart" onclick="event.stopPropagation(); openCart()" aria-label="Cart">
+      <svg width="17" height="15" viewBox="0 0 17 15" fill="none">
+        <path d="M1 1h2l2.2 8h8L15 3H5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="7" cy="13.5" r="1.1" fill="currentColor"/>
+        <circle cx="13" cy="13.5" r="1.1" fill="currentColor"/>
+      </svg>
+      <span class="cart-num" id="cartNumModal">0</span>
+    </button>
     <button class="modal-x" onclick="closeModal()">×</button>
   </div>
   <!-- Left: large image (click empty area to close) -->
@@ -1481,6 +1506,7 @@ function openModal(id) {
   document.getElementById('modal').classList.add('on');
   document.getElementById('overlay').classList.add('on');
   document.body.style.overflow = 'hidden';
+  document.body.classList.add('modal-open');
   _modalOpen = true;
   history.pushState({ modal: true }, '');
 }
@@ -1492,6 +1518,7 @@ function closeModal(fromPopstate) {
   document.getElementById('modal').classList.remove('on');
   document.getElementById('overlay').classList.remove('on');
   document.body.style.overflow = '';
+  document.body.classList.remove('modal-open');
   if (_modalOpen && !fromPopstate) { _modalOpen = false; history.back(); }
   else { _modalOpen = false; }
 }
@@ -1770,8 +1797,7 @@ function removeItem(key) { cart = cart.filter(i => i.key !== key); saveCart(); r
 function refreshCart() {
   const n = cart.reduce((s, i) => s + i.qty, 0);
   const t = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const num = document.getElementById('cartNum');
-  num.textContent = n; num.classList.toggle('on', n > 0);
+  document.querySelectorAll('.cart-num').forEach(el => { el.textContent = n; el.classList.toggle('on', n > 0); });
   document.getElementById('cpTotal').textContent = '€' + t;
   const body = document.getElementById('cpBody');
   if (!cart.length) { body.innerHTML = '<div class="cp-empty"><p>Nothing yet</p><p>Add a print to begin your collection.</p></div>'; return; }
