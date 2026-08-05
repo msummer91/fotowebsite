@@ -3,7 +3,7 @@
 // Returns: { shippingCost } in EUR
 //
 // Prodigi quote endpoint: POST /v4.0/quotes
-// Response path: data.quote.costSummary.shipping.amount
+// Response shape: { outcome: "Created", quotes: [{ shipmentMethod, costSummary: { shipping: { amount, currency } } }] }
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -19,12 +19,12 @@ module.exports = async function handler(req, res) {
   const quotePayload = {
     shippingMethod,
     destinationCountryCode: countryCode,
-    currencyCode: 'EUR',
     items: items.map((item, idx) => ({
       merchantReference: `item-${idx + 1}`,
       sku:    item.sku,
       copies: item.qty || 1,
-      sizing: 'fitPrintArea',
+      // assets required by Prodigi even for quotes (no URL needed)
+      assets: [{ printArea: 'default' }],
       ...(item.attributes && Object.keys(item.attributes).length
         ? { attributes: item.attributes }
         : {}),
@@ -45,13 +45,12 @@ module.exports = async function handler(req, res) {
       return res.status(response.status).json({ error: data.detail || data.message || 'Quote failed' });
     }
 
-    // Prodigi v4.0 response: data.quote.costSummary.shipping.amount
-    const shipping = data.quote?.costSummary?.shipping?.amount
-                  ?? data.costSummary?.shipping?.amount
-                  ?? null;
+    // Prodigi v4.0: response.quotes is an array; quotes[0] is the requested shippingMethod
+    const quote    = Array.isArray(data.quotes) ? data.quotes[0] : null;
+    const shipping = quote?.costSummary?.shipping?.amount ?? null;
 
     if (shipping === null) {
-      console.error('[get-shipping-quote] Unexpected response shape:', JSON.stringify(data).slice(0, 400));
+      console.error('[get-shipping-quote] Unexpected response shape:', JSON.stringify(data).slice(0, 500));
       return res.status(502).json({ error: 'Unexpected response from print service' });
     }
 
