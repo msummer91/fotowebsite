@@ -1503,10 +1503,7 @@ function _loadFramedMockup(colorName, style) {
     return;
   }
 
-  // Cache miss — show original photo + CSS border while the server renders the mockup.
-  mImg.src = cur.img;
-  mImg.style.opacity = '1';
-  roomImg.style.opacity = '0.45';
+  // Cache miss — keep current image visible, load new mockup silently in background
   if (hint) hint.style.display = 'block';
 
   const reqId = ++_mockupReqId;
