@@ -1283,17 +1283,6 @@ ordered.forEach(p => {
 // ── FRAME DATA — Prodigi Classic Frame (GLOBAL-CFP) + Box Frame ──
 // Colors match Prodigi's attribute values sent to the API.
 const frameData = {
-  classic: {
-    label: 'Classic Frame',
-    extra: 0,
-    desc: 'Satin-laminated wood frame · UV Perspex glass · Ships ready to hang.',
-    colors: [
-      { name: 'Black',   hex: '#1c1c1c' },
-      { name: 'White',   hex: '#f2f0ed', border: '#ccc' },
-      { name: 'Natural', hex: '#c09b6e' },
-      { name: 'Brown',   hex: '#7a4929' },
-    ]
-  },
   boxframe: {
     label: 'Box Frame',
     extra: 20,
@@ -1304,11 +1293,22 @@ const frameData = {
       { name: 'Natural', hex: '#c09b6e' },
       { name: 'Brown',   hex: '#7a4929' },
     ]
+  },
+  classic: {
+    label: 'Classic Frame',
+    extra: 0,
+    desc: 'Satin-laminated wood frame · UV Perspex glass · Ships ready to hang.',
+    colors: [
+      { name: 'Black',   hex: '#1c1c1c' },
+      { name: 'White',   hex: '#f2f0ed', border: '#ccc' },
+      { name: 'Natural', hex: '#c09b6e' },
+      { name: 'Brown',   hex: '#7a4929' },
+    ]
   }
 };
 
 // ── MODAL STATE ──
-let cur = null, fmt = 'print', sIdx = 0, frameType = 'classic', frameColorIdx = 0, paperType = 'hpr', _modalOpen = false;
+let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx = 0, paperType = 'hpr', _modalOpen = false;
 
 function price() {
   let p = cur.basePrice + cur.sp[sIdx];
@@ -1324,7 +1324,7 @@ function setModalView() {
 
 function openModal(id) {
   cur = products.find(p => p.id === id);
-  fmt = 'print'; sIdx = 0; frameType = 'classic'; frameColorIdx = 0; paperType = 'hpr';
+  fmt = 'print'; sIdx = 0; frameType = 'boxframe'; frameColorIdx = 0; paperType = 'hpr';
   const img = document.getElementById('mImg');
   img.style.maxHeight = '';
   img.style.maxWidth = '';
@@ -1371,7 +1371,7 @@ function setFmt(f, silent) {
   document.getElementById('frameOptionsWrap').classList.toggle('on', f === 'framed');
   document.getElementById('paperOptionsWrap').classList.toggle('hidden', f === 'framed');
   if (f === 'framed') {
-    frameType = 'classic'; frameColorIdx = 0;
+    frameType = 'boxframe'; frameColorIdx = 0;
     renderFrameTypes(); renderFrameColors(); applyFramePreview();
   } else {
     clearFramePreview();
