@@ -1,5 +1,5 @@
 // Vercel serverless function — generates a framed print mockup via sharp
-// Accepts: ?imageUrl=<full URL>&frameColor=<name>&frameStyle=<classic|boxframe>
+// Accepts: ?imageUrl=<full URL>&frameColor=<name>&frameStyle=<classic|boxframe>[&mountColor=<name>]
 // Returns: JPEG of the photo composited into a real frame template image
 
 const path  = require('path');
@@ -42,6 +42,13 @@ const BOX_TINTS = {
   'Natural': { r: 180, g: 145, b: 100, opacity: 0.80, blend: 'hard-light' },
 };
 
+// Box frame mount (mat) fill colors — Prodigi options.
+const MOUNT_COLORS = {
+  'Snow White': { r: 252, g: 252, b: 252 },
+  'Black':      { r: 20,  g: 20,  b: 18  },
+  'Hayseed':    { r: 216, g: 192, b: 140 },
+};
+
 // Rotate a bounding box 90° CW inside a square canvas of size S.
 // Transform: (x, y) → (S − y, x)
 // Bounding box (L, T, R, B) → (S−B, L, S−T, R)
@@ -52,7 +59,7 @@ function rotRect(L, T, R, B, S) {
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { imageUrl, frameColor = 'Black', frameStyle = 'classic' } = req.query;
+  const { imageUrl, frameColor = 'Black', frameStyle = 'classic', mountColor = 'Snow White' } = req.query;
   if (!imageUrl) return res.status(400).json({ error: 'imageUrl is required' });
 
   const isBox = frameStyle === 'boxframe';
@@ -144,10 +151,10 @@ module.exports = async function handler(req, res) {
       const artH = artB - artT;
 
       // 1. Erase the template artwork: fill the entire mat+art interior.
-      //    Mat is always snow white regardless of frame color.
+      //    Mat color set by mountColor param (Snow White / Black / Hayseed).
       const interiorW = matR - matL;
       const interiorH = matB - matT;
-      const matColor = { r: 252, g: 252, b: 252 };
+      const matColor = MOUNT_COLORS[mountColor] || MOUNT_COLORS['Snow White'];
       const creamBuf = await sharp({
         create: { width: interiorW, height: interiorH, channels: 3, background: matColor },
       }).png().toBuffer();

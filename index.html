@@ -465,6 +465,14 @@
     body.modal-open #modal {
       bottom: 56px;
     }
+    /* Ensure image panel has breathing room above fixed footer */
+    body.modal-open .modal-img-col {
+      padding-bottom: 32px;
+    }
+    body.modal-open .modal-frame-wrap,
+    body.modal-open .modal-frame-wrap img {
+      max-height: calc(100vh - 144px);
+    }
     .mbar-nav {
       display: flex;
       gap: 24px;
@@ -1270,6 +1278,19 @@
           <div class="field-label" style="margin-bottom:12px;margin-top:24px;">Colour</div>
           <div class="frame-colors" id="frameColors"></div>
           <div class="frame-desc" id="frameDesc"></div>
+          <!-- Mount — box frame only -->
+          <div id="mountSection" style="display:none">
+            <div class="field-label" style="margin-bottom:12px;margin-top:24px;">Mount</div>
+            <div class="frame-colors" id="mountSwatches"></div>
+            <div class="frame-desc" id="mountDesc"></div>
+          </div>
+          <!-- Paper — same options as print -->
+          <div class="field-label" style="margin-bottom:12px;margin-top:24px;">Paper</div>
+          <div class="frame-types">
+            <button class="ftype-btn" id="framePaperHpr" onclick="setFramePaper('hpr')">Hahnemühle Rag</button>
+            <button class="ftype-btn" id="framePaperPap" onclick="setFramePaper('pap')">Lustre</button>
+          </div>
+          <div class="frame-desc" id="framePaperDesc"></div>
         </div>
       </div>
 
@@ -1466,8 +1487,15 @@ const frameData = {
   }
 };
 
+// ── MOUNT COLORS (box frame only) ──
+const mountColorOptions = [
+  { name: 'Snow White', hex: '#f8f8f7', border: '#ccc' },
+  { name: 'Black',      hex: '#1a1a1a' },
+  { name: 'Hayseed',    hex: '#c9a96e' },
+];
+
 // ── MODAL STATE ──
-let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx = 0, paperType = 'hpr', _modalOpen = false;
+let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx = 0, mountColor = 'Snow White', paperType = 'hpr', _modalOpen = false;
 
 function price() {
   let p = cur.basePrice + cur.sp[sIdx];
@@ -1482,7 +1510,7 @@ function setModalView() {
 
 function openModal(id) {
   cur = products.find(p => p.id === id);
-  fmt = 'print'; sIdx = 0; frameType = 'boxframe'; frameColorIdx = 0; paperType = 'hpr';
+  fmt = 'print'; sIdx = 0; frameType = 'boxframe'; frameColorIdx = 0; mountColor = 'Snow White'; paperType = 'hpr';
   const img = document.getElementById('mImg');
   img.style.maxHeight = '';
   img.style.maxWidth = '';
@@ -1530,8 +1558,10 @@ function setFmt(f, silent) {
   document.getElementById('frameOptionsWrap').classList.toggle('on', f === 'framed');
   document.getElementById('paperOptionsWrap').classList.toggle('hidden', f === 'framed');
   if (f === 'framed') {
-    frameType = 'boxframe'; frameColorIdx = 0;
-    renderFrameTypes(); renderFrameColors(); applyFramePreview();
+    frameType = 'boxframe'; frameColorIdx = 0; mountColor = 'Snow White';
+    renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
+    syncFramePaperButtons();
+    applyFramePreview();
   } else {
     clearFramePreview();
     setPaper(paperType);
@@ -1572,6 +1602,41 @@ function setPaper(p) {
     pap: '240gsm · Satin lustre · Archival giclée'
   };
   document.getElementById('paperDesc').textContent = descs[p] || '';
+  syncFramePaperButtons();
+}
+function syncFramePaperButtons() {
+  const descs = {
+    hpr: '308gsm · Cotton rag · Matte · Archival giclée',
+    pap: '240gsm · Satin lustre · Archival giclée'
+  };
+  const fhpr = document.getElementById('framePaperHpr');
+  const fpap = document.getElementById('framePaperPap');
+  const fpd  = document.getElementById('framePaperDesc');
+  if (fhpr) fhpr.classList.toggle('on', paperType === 'hpr');
+  if (fpap) fpap.classList.toggle('on', paperType === 'pap');
+  if (fpd)  fpd.textContent = descs[paperType] || '';
+}
+function setFramePaper(p) { setPaper(p); }
+
+function renderMountColors() {
+  const el = document.getElementById('mountSwatches');
+  if (!el) return;
+  el.innerHTML = '';
+  mountColorOptions.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'fcolor-btn' + (c.name === mountColor ? ' on' : '');
+    b.style.background = c.hex;
+    if (c.border) b.style.borderColor = c.border;
+    b.title = c.name; b.setAttribute('aria-label', c.name);
+    b.onclick = () => { mountColor = c.name; renderMountColors(); applyFramePreview(); };
+    el.appendChild(b);
+  });
+  const md = document.getElementById('mountDesc');
+  if (md) md.textContent = mountColor;
+}
+function updateMountVisibility() {
+  const ms = document.getElementById('mountSection');
+  if (ms) ms.style.display = (frameType === 'boxframe') ? '' : 'none';
 }
 
 function renderFrameTypes() {
@@ -1580,7 +1645,7 @@ function renderFrameTypes() {
     const b = document.createElement('button');
     b.className = 'ftype-btn' + (key === frameType ? ' on' : '');
     b.textContent = data.label;
-    b.onclick = () => { frameType = key; frameColorIdx = 0; renderFrameTypes(); renderFrameColors(); applyFramePreview(); updatePrice(); };
+    b.onclick = () => { frameType = key; frameColorIdx = 0; mountColor = 'Snow White'; renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility(); applyFramePreview(); updatePrice(); };
     // Prefetch first color of this frame type on hover so it's often ready when clicked
     b.onmouseenter = () => {
       if (!cur || fmt !== 'framed') return;
@@ -1624,13 +1689,14 @@ const _mockupCache = {};
 // Stale-request guard: incremented on every new request; only the latest resolves
 let _mockupReqId = 0;
 
-function _loadFramedMockup(colorName, style) {
+function _loadFramedMockup(colorName, style, mc) {
   const roomImg = document.getElementById('roomImg2');
   const mImg    = document.getElementById('mImg');
   const rm      = document.getElementById('roomMount2');
   const wrap    = document.getElementById('mFrameWrap');
   const hint    = document.getElementById('frameLoadHint');
-  const cacheKey = `${cur.img}|${colorName}|${style}`;
+  const useMc   = (style === 'boxframe' && mc) ? mc : 'Snow White';
+  const cacheKey = `${cur.img}|${colorName}|${style}|${useMc}`;
   rm.style.border = '';
   rm.style.outline = '';
 
@@ -1666,7 +1732,8 @@ function _loadFramedMockup(colorName, style) {
 
   const reqId = ++_mockupReqId;
   const fullUrl = window.location.origin + '/' + cur.img;
-  const mockupUrl = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(fullUrl)}&frameColor=${encodeURIComponent(colorName)}&frameStyle=${encodeURIComponent(style)}`;
+  let mockupUrl = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(fullUrl)}&frameColor=${encodeURIComponent(colorName)}&frameStyle=${encodeURIComponent(style)}`;
+  if (style === 'boxframe') mockupUrl += `&mountColor=${encodeURIComponent(useMc)}`;
   const tmp = new Image();
   tmp.onload = () => {
     if (reqId !== _mockupReqId) return; // user switched frame while this was loading — discard
@@ -1701,7 +1768,7 @@ function applyFramePreview() {
     document.getElementById('mImg').style.maxHeight = `calc(${vh}vh - ${pad + thickness * 2}px)`;
   }
   // Load server-rendered mockup → updates both main image and room preview
-  _loadFramedMockup(color.name, frameType);
+  _loadFramedMockup(color.name, frameType, mountColor);
 }
 
 function clearFramePreview() {
@@ -1780,16 +1847,20 @@ loadCart();
 
 function addToCart() {
   if (!cur) return;
-  const frameKey = fmt === 'framed' ? `-${frameType}-${frameColorIdx}` : '';
+  const mc = (fmt === 'framed' && frameType === 'boxframe') ? mountColor : '';
+  const frameKey = fmt === 'framed' ? `-${frameType}-${frameColorIdx}-${mc}-${paperType}` : '';
   const paperKey = fmt === 'print' ? `-${paperType}` : '';
   const key = `${cur.id}-${cur.sizes[sIdx]}-${fmt}${frameKey}${paperKey}`;
   const ex = cart.find(i => i.key === key);
   if (ex) { ex.qty++; }
   else {
-    const frameLabel = fmt === 'framed'
-      ? `${frameData[frameType].label} – ${frameData[frameType].colors[frameColorIdx].name}`
-      : null;
-    cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, paperType: fmt === 'print' ? paperType : null, frameLabel, price: price(), qty: 1, img: cur.img });
+    let frameLabel = null;
+    if (fmt === 'framed') {
+      frameLabel = `${frameData[frameType].label} – ${frameData[frameType].colors[frameColorIdx].name}`;
+      if (frameType === 'boxframe') frameLabel += ` · Mount: ${mountColor}`;
+      frameLabel += ` · ${paperType === 'hpr' ? 'Hahnemühle Rag' : 'Lustre'}`;
+    }
+    cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, paperType, frameLabel, price: price(), qty: 1, img: cur.img });
   }
   saveCart(); refreshCart(); closeModal(); toast(`"${cur.name}" added`); openCart();
 }
