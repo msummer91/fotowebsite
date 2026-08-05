@@ -347,7 +347,7 @@
     }
     /* Modal top bar: nav + close button */
     .modal-bar {
-      position: absolute;
+      position: fixed;
       top: 0; right: 0;
       z-index: 220;
       display: flex;
@@ -387,7 +387,7 @@
     .modal-x {
       background: none; border: none;
       font-size: 24px; cursor: pointer;
-      color: rgba(0,0,0,0.3); line-height: 1;
+      color: var(--muted); line-height: 1;
       transition: color 0.2s;
       padding: 10px;
       margin: -10px;
