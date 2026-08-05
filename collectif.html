@@ -985,7 +985,7 @@
         <input class="cf-input" id="cfName" type="text" autocomplete="name" placeholder="Anna Müller" />
       </div>
       <div class="cf-gap">
-        <label class="cf-label">Email</label>
+        <label class="cf-label">Email *</label>
         <input class="cf-input" id="cfEmail" type="email" autocomplete="email" placeholder="anna@example.com" />
       </div>
       <div class="cf-gap">
@@ -1925,7 +1925,8 @@ async function placeOrder() {
   const country  = document.getElementById('cfCountry').value;
   const shipping = document.getElementById('cfShipping').value;
 
-  if (!name || !line1 || !city || !postal) { toast('Please fill in all required fields'); return; }
+  if (!name || !email || !line1 || !city || !postal) { toast('Please fill in all required fields'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address'); return; }
   if (!_stripe || !_cardEl) { toast('Payment not ready — please wait'); return; }
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
