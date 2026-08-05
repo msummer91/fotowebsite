@@ -37,7 +37,7 @@ const BOX_TMPL = {
 //        preserving the 3D texture/shading (unlike 'over' which paints a flat solid).
 // Warm colors: 'hard-light' tints the dark frame texture with color.
 const BOX_TINTS = {
-  'White':   { r: 255, g: 255, b: 255, opacity: 1.0,  blend: 'difference' },
+  'White':   { r: 220, g: 220, b: 218, opacity: 0.90, blend: 'hard-light' },
   'Brown':   { r: 100, g: 60,  b: 35,  opacity: 0.82, blend: 'hard-light' },
   'Natural': { r: 180, g: 145, b: 100, opacity: 0.80, blend: 'hard-light' },
 };
@@ -143,11 +143,13 @@ module.exports = async function handler(req, res) {
       const artW = artR - artL;
       const artH = artB - artT;
 
-      // 1. Erase the template artwork: fill the entire mat+art interior with cream
+      // 1. Erase the template artwork: fill the entire mat+art interior.
+      //    Mat is always snow white regardless of frame color.
       const interiorW = matR - matL;
       const interiorH = matB - matT;
+      const matColor = { r: 252, g: 252, b: 252 };
       const creamBuf = await sharp({
-        create: { width: interiorW, height: interiorH, channels: 3, background: { r: 238, g: 235, b: 232 } },
+        create: { width: interiorW, height: interiorH, channels: 3, background: matColor },
       }).png().toBuffer();
 
       let result = await sharp(rawTmplBuf)
