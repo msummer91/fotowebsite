@@ -1196,11 +1196,19 @@
       </div>
     </div>
     <div class="cp-foot">
+      <div class="cp-total-row" style="font-size:12px;opacity:0.7;margin-bottom:2px;">
+        <span class="cp-total-label">Subtotal</span>
+        <span id="cpSubtotal2">€0</span>
+      </div>
+      <div class="cp-total-row" style="font-size:12px;opacity:0.7;margin-bottom:10px;">
+        <span class="cp-total-label">Shipping</span>
+        <span id="cpShipping2">—</span>
+      </div>
       <div class="cp-total-row">
-        <span class="cp-total-label">Total (excl. shipping)</span>
+        <span class="cp-total-label">Total</span>
         <span class="cp-total-val" id="cpTotal2">€0</span>
       </div>
-      <button class="btn-checkout" id="btnPlaceOrder" onclick="placeOrder()">Pay €0</button>
+      <button class="btn-checkout" id="btnPlaceOrder" onclick="placeOrder()" disabled>Calculating…</button>
     </div>
   </div>
 
@@ -1301,7 +1309,7 @@
 
       <div>
         <div class="modal-price" id="mPrice"></div>
-        <div class="modal-price-note">incl. VAT · free shipping over €150</div>
+        <div class="modal-price-note">incl. VAT · free Standard shipping over €200</div>
       </div>
 
       <button class="btn-add" onclick="addToCart()">Add to selection</button>
@@ -1940,16 +1948,80 @@ function initStripe() {
 }
 initStripe();
 
+// Re-fetch shipping quote whenever country or method changes during checkout
+['cfCountry','cfShipping'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', () => {
+    if (document.getElementById('checkoutForm').style.display !== 'none') fetchShippingQuote();
+  });
+});
+
+let _shippingCost = 0;
+
 function showCheckout() {
   if (!cart.length) return;
   document.getElementById('cartMain').style.display = 'none';
   document.getElementById('checkoutForm').style.display = 'flex';
-  const t = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  document.getElementById('cpTotal2').textContent = '€' + t;
-  document.getElementById('btnPlaceOrder').textContent = 'Pay €' + t;
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('cpSubtotal2').textContent = '€' + subtotal;
+  document.getElementById('cpShipping2').textContent = '—';
+  document.getElementById('cpTotal2').textContent = '€' + subtotal;
+  document.getElementById('btnPlaceOrder').textContent = 'Calculating…';
+  document.getElementById('btnPlaceOrder').disabled = true;
   document.getElementById('cardError').style.display = 'none';
   if (!_cardMounted && _cardEl) { _cardEl.mount('#stripeCardEl'); _cardMounted = true; }
-  else if (!_cardEl) { setTimeout(showCheckout, 200); }
+  else if (!_cardEl) { setTimeout(showCheckout, 200); return; }
+  fetchShippingQuote();
+}
+
+async function fetchShippingQuote() {
+  const country   = document.getElementById('cfCountry').value;
+  const method    = document.getElementById('cfShipping').value;
+  const subtotal  = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const btn       = document.getElementById('btnPlaceOrder');
+  const shipEl    = document.getElementById('cpShipping2');
+  const totalEl   = document.getElementById('cpTotal2');
+
+  function applyShipping(cost, label) {
+    _shippingCost = cost;
+    const grand = Math.round((subtotal + cost) * 100) / 100;
+    shipEl.textContent  = label;
+    totalEl.textContent = '€' + grand;
+    btn.textContent     = 'Pay €' + grand;
+    btn.disabled        = false;
+    btn.onclick         = placeOrder;
+  }
+
+  // Free Standard shipping for orders ≥ €200
+  if (method === 'Standard' && subtotal >= 200) {
+    applyShipping(0, 'Free');
+    return;
+  }
+
+  // Fetch live Prodigi quote for all other cases
+  btn.textContent = 'Calculating…'; btn.disabled = true;
+  shipEl.textContent = '…';
+
+  try {
+    const quoteItems = cart.map(item => ({
+      sku:        getOrderSku(item),
+      qty:        item.qty,
+      attributes: getOrderAttributes(item)
+    }));
+    const res  = await fetch('/api/get-shipping-quote', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ items: quoteItems, countryCode: country, shippingMethod: method })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Quote failed');
+    applyShipping(data.shippingCost || 0, data.shippingCost ? '€' + data.shippingCost.toFixed(2) : 'Free');
+  } catch (e) {
+    console.error('Shipping quote error:', e);
+    shipEl.textContent = 'Error';
+    btn.textContent = 'Retry';
+    btn.disabled = false;
+    btn.onclick = fetchShippingQuote;
+  }
 }
 function showCart() {
   document.getElementById('cartMain').style.display = 'flex';
@@ -1984,9 +2056,10 @@ async function placeOrder() {
   if (!name || !line1 || !city || !postal) { toast('Please fill in all required fields'); return; }
   if (!_stripe || !_cardEl) { toast('Payment not ready — please wait'); return; }
 
-  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const btn   = document.getElementById('btnPlaceOrder');
-  const reset = () => { btn.textContent = 'Pay €' + total; btn.disabled = false; };
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const total    = Math.round((subtotal + _shippingCost) * 100) / 100;
+  const btn      = document.getElementById('btnPlaceOrder');
+  const reset    = () => { btn.textContent = 'Pay €' + total; btn.disabled = false; btn.onclick = placeOrder; };
   btn.textContent = 'Processing…'; btn.disabled = true;
   document.getElementById('cardError').style.display = 'none';
 
