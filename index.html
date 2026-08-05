@@ -2014,13 +2014,16 @@ async function fetchShippingQuote() {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Quote failed');
+    if (data.unavailable) {
+      shipEl.textContent = 'Not available for this destination';
+      btn.textContent = 'Retry'; btn.disabled = false; btn.onclick = fetchShippingQuote;
+      return;
+    }
     applyShipping(data.shippingCost || 0, data.shippingCost ? '€' + data.shippingCost.toFixed(2) : 'Free');
   } catch (e) {
     console.error('Shipping quote error:', e);
-    shipEl.textContent = 'Error';
-    btn.textContent = 'Retry';
-    btn.disabled = false;
-    btn.onclick = fetchShippingQuote;
+    shipEl.textContent = e.message || 'Error';
+    btn.textContent = 'Retry'; btn.disabled = false; btn.onclick = fetchShippingQuote;
   }
 }
 function showCart() {

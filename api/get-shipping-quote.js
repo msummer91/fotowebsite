@@ -39,19 +39,27 @@ module.exports = async function handler(req, res) {
     });
 
     const data = await response.json();
+    // Always log for debugging
+    console.log('[get-shipping-quote] status:', response.status, 'body:', JSON.stringify(data).slice(0, 600));
 
     if (!response.ok) {
-      console.error('[get-shipping-quote] Prodigi error:', JSON.stringify(data));
-      return res.status(response.status).json({ error: data.detail || data.message || 'Quote failed' });
+      const msg = data?.traceParent || data?.detail || data?.message || JSON.stringify(data).slice(0, 200);
+      return res.status(response.status).json({ error: `Prodigi ${response.status}: ${msg}` });
     }
 
-    // Prodigi v4.0: response.quotes is an array; quotes[0] is the requested shippingMethod
-    const quote    = Array.isArray(data.quotes) ? data.quotes[0] : null;
+    // Prodigi v4.0: { outcome, quotes: [{ shipmentMethod, costSummary: { shipping: { amount } } }] }
+    if (!Array.isArray(data.quotes) || data.quotes.length === 0) {
+      // Express may not be available for this destination — return null so frontend can handle
+      console.warn('[get-shipping-quote] Empty quotes array for', shippingMethod, countryCode);
+      return res.status(200).json({ shippingCost: null, unavailable: true });
+    }
+
+    const quote    = data.quotes[0];
     const shipping = quote?.costSummary?.shipping?.amount ?? null;
 
     if (shipping === null) {
-      console.error('[get-shipping-quote] Unexpected response shape:', JSON.stringify(data).slice(0, 500));
-      return res.status(502).json({ error: 'Unexpected response from print service' });
+      console.error('[get-shipping-quote] No shipping amount in quote:', JSON.stringify(quote));
+      return res.status(502).json({ error: 'No shipping cost in quote response' });
     }
 
     return res.status(200).json({ shippingCost: parseFloat(shipping) });
