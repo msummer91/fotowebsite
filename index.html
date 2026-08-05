@@ -1635,8 +1635,9 @@ function renderMountColors() {
   if (md) md.textContent = mountColor;
 }
 function updateMountVisibility() {
+  // Mount option hidden for now — keep code, always hide
   const ms = document.getElementById('mountSection');
-  if (ms) ms.style.display = (frameType === 'boxframe') ? '' : 'none';
+  if (ms) ms.style.display = 'none';
 }
 
 function renderFrameTypes() {
