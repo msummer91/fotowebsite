@@ -19,17 +19,18 @@ module.exports = async function handler(req, res) {
   const quotePayload = {
     shippingMethod,
     destinationCountryCode: countryCode,
-    items: items.map((item, idx) => ({
-      merchantReference: `item-${idx + 1}`,
+    items: items.map(item => ({
       sku:    item.sku,
       copies: item.qty || 1,
-      // assets required by Prodigi even for quotes (no URL needed)
       assets: [{ printArea: 'default' }],
       ...(item.attributes && Object.keys(item.attributes).length
         ? { attributes: item.attributes }
         : {}),
     }))
   };
+
+  // Log full request for debugging
+  console.log('[get-shipping-quote] request:', JSON.stringify(quotePayload));
 
   try {
     const response = await fetch('https://api.prodigi.com/v4.0/quotes', {
@@ -39,12 +40,16 @@ module.exports = async function handler(req, res) {
     });
 
     const data = await response.json();
-    // Always log for debugging
-    console.log('[get-shipping-quote] status:', response.status, 'body:', JSON.stringify(data).slice(0, 600));
+    // Log full response for debugging
+    console.log('[get-shipping-quote] status:', response.status, 'body:', JSON.stringify(data));
 
     if (!response.ok) {
-      const msg = data?.traceParent || data?.detail || data?.message || JSON.stringify(data).slice(0, 200);
-      return res.status(response.status).json({ error: `Prodigi ${response.status}: ${msg}` });
+      // Extract the real Prodigi error — avoid traceParent (that's just a trace ID, not the error)
+      const errDetail = data?.detail || data?.title
+        || (data?.errors ? JSON.stringify(data.errors) : null)
+        || (data?.validationIssues ? JSON.stringify(data.validationIssues) : null)
+        || JSON.stringify(data).slice(0, 300);
+      return res.status(response.status).json({ error: `Prodigi ${response.status}: ${errDetail}` });
     }
 
     // Prodigi v4.0: { outcome, quotes: [{ shipmentMethod, costSummary: { shipping: { amount } } }] }
