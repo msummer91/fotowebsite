@@ -173,9 +173,11 @@ module.exports = async function handler(req, res) {
           .toBuffer();
       }
 
-      // 4. Crop to just the outer frame boundary (removes wall/background), then resize
+      // 4. Crop to just the outer frame boundary (removes wall/background), then resize.
+      //    CROP_INSET trims shadow/background fringe from the template photo edges.
+      const BOX_CROP_INSET = 10;
       const finalBuf = await sharp(result)
-        .extract({ left: frameL, top: frameT, width: frameR - frameL, height: frameB - frameT })
+        .extract({ left: frameL + BOX_CROP_INSET, top: frameT + BOX_CROP_INSET, width: (frameR - frameL) - BOX_CROP_INSET * 2, height: (frameB - frameT) - BOX_CROP_INSET * 2 })
         .resize({ width: 1400, withoutEnlargement: true })
         .jpeg({ quality: 88, mozjpeg: true })
         .toBuffer();
@@ -218,11 +220,16 @@ module.exports = async function handler(req, res) {
     //    dimension = TARGET_ART_PX in the output. This normalises all frames so
     //    the photo always appears at the same size regardless of which template
     //    was used (different templates were photographed at different scales).
+    //    CROP_INSET: trim a few px from each side to remove shadow/background
+    //    fringe that bleeds in from the template photo edges.
     const TARGET_ART_PX = 1200;
+    const CROP_INSET = 10;
+    const cropL = fL + CROP_INSET, cropT = fT + CROP_INSET;
+    const cropW = (fR - fL) - CROP_INSET * 2, cropH = (fB - fT) - CROP_INSET * 2;
     const artLong = Math.max(artW, artH);
-    const outW = Math.round((fR - fL) * TARGET_ART_PX / artLong);
+    const outW = Math.round(cropW * TARGET_ART_PX / artLong);
     const finalBuf = await sharp(composited)
-      .extract({ left: fL, top: fT, width: fR - fL, height: fB - fT })
+      .extract({ left: cropL, top: cropT, width: cropW, height: cropH })
       .resize({ width: outW, withoutEnlargement: true })
       .jpeg({ quality: 88, mozjpeg: true })
       .toBuffer();
