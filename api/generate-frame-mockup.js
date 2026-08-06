@@ -13,7 +13,10 @@ const FRAMES_DIR = path.join(__dirname, '..', 'Images', 'frames');
 // fL/fT/fR/fB = outer frame edge (background excluded).
 // artL/artT/artR/artB = inner artwork area.
 const CLASSIC_TEMPLATES = {
-  'Black':          { file: 'Black classic frame_blank.png',      S: 2500, fL: 474, fT: 189, fR: 2061, fB: 2351, artL: 564, artT: 280, artR: 1937, artB: 2220 },
+  // Black template is stored in LANDSCAPE orientation (artW > artH).
+  // All other templates are portrait-oriented.
+  // The rotation logic below handles orientation matching automatically.
+  'Black':          { file: 'Black classic frame_blank.png',      S: 2500, fL: 188, fT: 432, fR: 2358, fB: 2026, artL: 279, artT: 563, artR: 2219, artB: 1935 },
   'White':          { file: 'White classic frame_blank.png',      S: 2500, fL: 474, fT: 189, fR: 2061, fB: 2351, artL: 564, artT: 279, artR: 1938, artB: 2220 },
   'Natural':        { file: 'Natural classic frame_blank.png',    S: 2500, fL: 474, fT: 189, fR: 2061, fB: 2351, artL: 564, artT: 279, artR: 1938, artB: 2220 },
   'Brown':          { file: 'Brown classic frame_blank.jpg',      S: 2000, fL: 391, fT: 216, fR: 1590, fB: 1762, artL: 490, artT: 302, artR: 1507, artB: 1660 },
@@ -205,10 +208,10 @@ module.exports = async function handler(req, res) {
     let rawTmplBuf = fs.readFileSync(path.join(FRAMES_DIR, tmpl.file));
     let { S, fL, fT, fR, fB, artL, artT, artR, artB } = tmpl;
 
-    // Templates are square with a portrait art area (artH > artW).
-    // If photo is landscape, rotate 90° CW so art area becomes landscape.
-    // Both art and frame-boundary coordinates are transformed together.
-    if (isLandscape) {
+    // Rotate template 90° CW if photo orientation doesn't match template orientation.
+    // Black template is stored landscape; all others are portrait — handled automatically.
+    const tmplIsPortrait = (artB - artT) > (artR - artL);
+    if ((isLandscape && tmplIsPortrait) || (isPortrait && !tmplIsPortrait)) {
       rawTmplBuf = await sharp(rawTmplBuf).rotate(90).toBuffer();
       const a = rotRect(artL, artT, artR, artB, S);
       const f = rotRect(fL,   fT,   fR,   fB,   S);

@@ -366,22 +366,23 @@
       transition: color 0.2s;
     }
     .mbar-cart:hover { color: var(--dark); }
-    /* Footer stays visible when modal is open */
+    /* Footer stays visible when modal is open — compact strip, no logo */
     body.modal-open footer {
       position: fixed; bottom: 0; left: 0; right: 0;
-      z-index: 250; padding: 12px 26px;
+      z-index: 250; padding: 8px 26px;
     }
+    body.modal-open footer .foot-logo { display: none; }
     body.modal-open .overlay,
     body.modal-open #modal {
-      bottom: 56px;
+      bottom: 38px;
     }
-    /* Ensure image panel has breathing room above fixed footer */
+    /* Ensure image panel has generous breathing room above fixed footer */
     body.modal-open .modal-img-col {
-      padding-bottom: 32px;
+      padding-bottom: 72px;
     }
     body.modal-open .modal-frame-wrap,
     body.modal-open .modal-frame-wrap img {
-      max-height: calc(100vh - 144px);
+      max-height: calc(100vh - 200px);
     }
     .mbar-nav {
       display: flex;
@@ -769,12 +770,12 @@
     footer {
       background: #ffffff;
       border-top: 1px solid var(--border);
-      padding: 44px 52px;
+      padding: 24px 52px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .foot-logo { text-decoration: none; display: flex; align-items: center; }
     .foot-logo img {
-      height: 80px;
+      height: 56px;
       width: auto;
       display: block;
       object-fit: contain;
@@ -1438,6 +1439,7 @@ function setFmt(f, silent) {
     renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
     syncFramePaperButtons();
     applyFramePreview();
+    prewarmFrameMockups('boxframe');
   } else {
     clearFramePreview();
     setPaper(paperType);
@@ -1522,7 +1524,12 @@ function renderFrameTypes() {
     const b = document.createElement('button');
     b.className = 'ftype-btn' + (key === frameType ? ' on' : '');
     b.textContent = data.label;
-    b.onclick = () => { frameType = key; frameColorIdx = 0; mountColor = 'Snow White'; renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility(); applyFramePreview(); updatePrice(); };
+    b.onclick = () => {
+      frameType = key; frameColorIdx = 0; mountColor = 'Snow White';
+      renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
+      applyFramePreview(); updatePrice();
+      prewarmFrameMockups(key);
+    };
     b.onmouseenter = () => {
       if (!cur || fmt !== 'framed') return;
       const fc = data.colors[0].name, pk = `${cur.img}|${fc}|${key}`;
@@ -1601,8 +1608,12 @@ function _loadFramedMockup(colorName, style, mc) {
     return;
   }
 
-  // Cache miss — keep current image visible, load new mockup silently in background
+  // Cache miss — immediately show original photo + CSS border so there's no wrong-color flicker
   if (hint) hint.style.display = 'block';
+  mImg.src = cur.img;
+  mImg.style.opacity = '1';
+  roomImg.src = cur.img;
+  roomImg.style.opacity = '1';
 
   const reqId = ++_mockupReqId;
   const fullUrl = window.location.origin + '/' + cur.img;
@@ -1620,6 +1631,21 @@ function _loadFramedMockup(colorName, style, mc) {
     if (hint) hint.style.display = 'none';
   };
   tmp.src = mockupUrl;
+}
+
+function prewarmFrameMockups(style) {
+  if (!cur) return;
+  const fullUrl = window.location.origin + '/' + cur.img;
+  (frameData[style]?.colors || []).forEach(c => {
+    const mc = style === 'boxframe' ? 'Snow White' : '';
+    const pk = `${cur.img}|${c.name}|${style}|${mc}`;
+    if (_mockupCache[pk]) return;
+    let u = `/api/generate-frame-mockup?imageUrl=${encodeURIComponent(fullUrl)}&frameColor=${encodeURIComponent(c.name)}&frameStyle=${encodeURIComponent(style)}`;
+    if (style === 'boxframe') u += `&mountColor=${encodeURIComponent(mc)}`;
+    const p = new Image();
+    p.onload = () => { _mockupCache[pk] = u; };
+    p.src = u;
+  });
 }
 
 function applyFramePreview() {
