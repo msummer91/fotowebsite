@@ -622,6 +622,7 @@
       font-size: 11px;
       color: var(--muted);
       margin-top: 3px;
+      margin-bottom: 20px;
     }
 
     .btn-add {
@@ -645,6 +646,7 @@
       font-size: 12px;
       line-height: 1.85;
       color: var(--muted);
+      margin-top: 20px;
     }
 
     /* ── CART DRAWER ── */
@@ -1404,7 +1406,6 @@ function openModal(id) {
   document.getElementById('roomImg2').src = cur.img;
   setModalView();
   document.getElementById('mTitle').textContent = cur.name;
-  document.getElementById('mDesc').textContent = cur.desc;
   setFmt('print', true);
   renderSizes();
   updatePrice();
@@ -1446,6 +1447,7 @@ function setFmt(f, silent) {
   }
   if (!silent) updatePrice();
   updateImgNav();
+  updateDesc();
 }
 function openImgZoom() {
   // When framed is selected, zoom shows the server-rendered framed mockup
@@ -1481,6 +1483,7 @@ function setPaper(p) {
   };
   document.getElementById('paperDesc').textContent = descs[p] || '';
   syncFramePaperButtons();
+  updateDesc();
 }
 function syncFramePaperButtons() {
   const descs = {
@@ -1495,6 +1498,20 @@ function syncFramePaperButtons() {
   if (fpd)  fpd.textContent = descs[paperType] || '';
 }
 function setFramePaper(p) { setPaper(p); }
+
+const _PRINT_DESCS = {
+  hpr: 'Giclée print on Hahnemühle Photo Rag 308gsm. Cotton rag · Matte · Archival inks, rated 100+ years.',
+  pap: 'Giclée print on Lustre Photo Paper 240gsm. Satin finish · Vibrant, true-to-life colours.',
+};
+function updateDesc() {
+  const el = document.getElementById('mDesc');
+  if (!el) return;
+  if (fmt === 'framed') {
+    el.textContent = frameData[frameType]?.desc || '';
+  } else {
+    el.textContent = _PRINT_DESCS[paperType] || _PRINT_DESCS.hpr;
+  }
+}
 
 function renderMountColors() {
   const el = document.getElementById('mountSwatches');
@@ -1527,7 +1544,7 @@ function renderFrameTypes() {
     b.onclick = () => {
       frameType = key; frameColorIdx = 0; mountColor = 'Snow White';
       renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
-      applyFramePreview(); updatePrice();
+      applyFramePreview(); updatePrice(); updateDesc();
       prewarmFrameMockups(key);
     };
     b.onmouseenter = () => {
