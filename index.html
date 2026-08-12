@@ -2002,6 +2002,7 @@ function addToCart() {
 }
 function removeItem(key) { cart = cart.filter(i => i.key !== key); saveCart(); refreshCart(); }
 function refreshCart() {
+  _cardMounted = false; // cart HTML rebuild destroys #stripeCardEl — force remount next checkout
   const n = cart.reduce((s, i) => s + i.qty, 0);
   const t = cart.reduce((s, i) => s + i.price * i.qty, 0);
   document.querySelectorAll('.cart-num').forEach(el => { el.textContent = n; el.classList.toggle('on', n > 0); });
