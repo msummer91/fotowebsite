@@ -1354,18 +1354,18 @@
 <script>
 // ── PRODUCTS ──
 const products = [
-  { id:1,  name:'Iced Coffee',          basePrice:180, framedExtra:95,  sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,60,130], img:'Images/iced coffee.jpeg',            desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:2,  name:'J-Bay',                basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/jbay.jpeg',                   desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:3,  name:'MXCD Street Art',      basePrice:195, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,65,140], img:'Images/mxcd street art.jpeg',        desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:4,  name:'Nicaragua Beach Ride', basePrice:185, framedExtra:95,  sizes:['30×40 cm','50×70 cm'],              sp:[0,60],     img:'Images/nicaragua beach ride.jpeg',   desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:5,  name:'Oaxaca Vintage',       basePrice:190, framedExtra:95,  sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,65,140], img:'Images/oaxaca vintage.jpeg',         desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:6,  name:'Padel Fun',            basePrice:165, framedExtra:88,  sizes:['30×40 cm','50×70 cm'],              sp:[0,55],     img:'Images/padel fun.jpeg',              desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:7,  name:'Point Break Views',    basePrice:220, framedExtra:100, sizes:['50×70 cm','70×100 cm'],             sp:[0,80],     img:'Images/point break views.jpeg',      desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:8,  name:'Sun Protection',       basePrice:170, framedExtra:90,  sizes:['30×40 cm','50×70 cm'],              sp:[0,55],     img:'Images/sun protection.jpeg',         desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:9,  name:'Sunset Surf',          basePrice:195, framedExtra:95,  sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,65,140], img:'Images/sunset surf.jpeg',            desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:10, name:'Switzerland Views',    basePrice:175, framedExtra:90,  sizes:['30×40 cm','50×70 cm'],              sp:[0,55],     img:'Images/switzerland views.jpeg',      desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:11, name:'Tokyo Nights',         basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/tokyo nights.jpeg',           desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:12, name:'Tokyo Street Walk',    basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/tokyo street walk.jpeg',      desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:1,  name:'Iced Coffee',          basePrice:180, framedExtra:95,  sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,60,130], img:'Images/iced coffee.jpeg',            pos:'50% 60%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:2,  name:'J-Bay',                basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/jbay.jpeg',                   pos:'50% 72%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:3,  name:'MXCD Street Art',      basePrice:195, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,65,140], img:'Images/mxcd street art.jpeg',        pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:4,  name:'Nicaragua Beach Ride', basePrice:185, framedExtra:95,  sizes:['30×40 cm','50×70 cm'],              sp:[0,60],     img:'Images/nicaragua beach ride.jpeg',   pos:'55% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:5,  name:'Oaxaca Vintage',       basePrice:190, framedExtra:95,  sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,65,140], img:'Images/oaxaca vintage.jpeg',         pos:'50% 78%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:6,  name:'Padel Fun',            basePrice:165, framedExtra:88,  sizes:['30×40 cm','50×70 cm'],              sp:[0,55],     img:'Images/padel fun.jpeg',              pos:'40% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:7,  name:'Point Break Views',    basePrice:220, framedExtra:100, sizes:['50×70 cm','70×100 cm'],             sp:[0,80],     img:'Images/point break views.jpeg',      pos:'62% 68%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:8,  name:'Sun Protection',       basePrice:170, framedExtra:90,  sizes:['30×40 cm','50×70 cm'],              sp:[0,55],     img:'Images/sun protection.jpeg',         pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:9,  name:'Sunset Surf',          basePrice:195, framedExtra:95,  sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,65,140], img:'Images/sunset surf.jpeg',            pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:10, name:'Switzerland Views',    basePrice:175, framedExtra:90,  sizes:['30×40 cm','50×70 cm'],              sp:[0,55],     img:'Images/switzerland views.jpeg',      pos:'28% 55%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:11, name:'Tokyo Nights',         basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/tokyo nights.jpeg',           pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:12, name:'Tokyo Street Walk',    basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/tokyo street walk.jpeg',      pos:'50% 22%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
 ];
 
 // ── FIXED RANDOM ORDER (stable per session, new each visit) ──
@@ -1407,7 +1407,7 @@ ordered.forEach(p => {
   el.dataset.id = p.id;
   el.innerHTML = `
     <div class="w-img-wrap">
-      <img src="${p.img}" alt="${p.name}" loading="lazy" />
+      <img src="${p.img}" alt="${p.name}" loading="lazy" ${p.pos ? `style="object-position:${p.pos}"` : ''} />
     </div>
     <div class="w-caption">
       <div class="w-name">${p.name}</div>
