@@ -2061,6 +2061,7 @@ function initStripe() {
   _stripe = Stripe('pk_test_51Tolhf0WnZlGFPbLr56HeXHvfGApj3OJQUTKCAkEZgZiiKjHFaKc3DoJr8luSJoAmYqvs9mts7dvLYx7ew5ifZUU00KXKymXc8');
   const els = _stripe.elements();
   _cardEl = els.create('card', {
+    hidePostalCode: true,
     style: {
       base: { fontFamily: "'Helvetica Neue', Helvetica, sans-serif", fontSize: '13px', color: '#1a1a1a', letterSpacing: '0.02em', '::placeholder': { color: '#aaa' } },
       invalid: { color: '#c0392b' }
