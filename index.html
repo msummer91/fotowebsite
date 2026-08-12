@@ -2253,8 +2253,9 @@ async function placeOrder() {
     });
     const orderData = await orderRes.json();
     if (!orderRes.ok) {
+      const errMsg = orderData.error || JSON.stringify(orderData);
       console.error('Print order failed after payment:', paymentIntent.id, orderData);
-      toast('Payment taken ✓ — print order error, we will contact you');
+      toast('Order error: ' + errMsg);
       cart = []; saveCart(); refreshCart(); closeCart(); return;
     }
 

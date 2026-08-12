@@ -33,7 +33,10 @@ module.exports = async function handler(req, res) {
   console.log('[get-shipping-quote] request:', JSON.stringify(quotePayload));
 
   try {
-    const response = await fetch('https://api.prodigi.com/v4.0/quotes', {
+    const prodigiBase = process.env.PRODIGI_SANDBOX === 'true'
+      ? 'https://api.sandbox.prodigi.com/v4.0'
+      : 'https://api.prodigi.com/v4.0';
+    const response = await fetch(`${prodigiBase}/quotes`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', 'X-API-Key': apiKey },
       body:    JSON.stringify(quotePayload)
