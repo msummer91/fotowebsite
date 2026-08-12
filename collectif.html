@@ -1411,7 +1411,7 @@ ordered.forEach(p => {
     </div>
     <div class="w-caption">
       <div class="w-name">${p.name}</div>
-      <div class="w-price">From €${p.basePrice}</div>
+      <div class="w-price">From ${_fmtP(p.basePrice)}</div>
     </div>`;
   el.addEventListener('click', () => openModal(p.id));
   grid.appendChild(el);
@@ -1798,7 +1798,7 @@ function renderSizes() {
   });
   updateFrameSizeNote();
 }
-function updatePrice() { document.getElementById('mPrice').textContent = '€' + price(); }
+function updatePrice() { document.getElementById('mPrice').textContent = _fmtP(price()); }
 function updateFrameSizeNote() {
   const el = document.getElementById('mFrameSizeNote');
   if (!el) return;
@@ -1831,6 +1831,82 @@ let cart = [];
 // Persist cart across pages — expires after 24h
 const _CART_KEY = 'ete_cart';
 const _CART_TTL = 24 * 60 * 60 * 1000;
+
+// ── MULTI-CURRENCY ──────────────────────────────────────────────────────────
+let _currency = 'EUR';
+let _xRates   = {};
+const _xFallback = {
+  EUR:1, CHF:0.94, GBP:0.86, USD:1.09, CAD:1.48, AUD:1.65,
+  NOK:11.7, SEK:11.3, DKK:7.46, SGD:1.47, NZD:1.82, JPY:161,
+  AED:4.01, HKD:8.50
+};
+const _localeCur = {
+  'en-GB':'GBP','en-US':'USD','en-CA':'CAD','en-AU':'AUD','en-NZ':'NZD',
+  'en-SG':'SGD','en-HK':'HKD','en-AE':'AED',
+  'de-CH':'CHF','fr-CH':'CHF','it-CH':'CHF','rm-CH':'CHF',
+  'de-DE':'EUR','de-AT':'EUR','fr-FR':'EUR','fr-BE':'EUR',
+  'it-IT':'EUR','nl-NL':'EUR','nl-BE':'EUR','es-ES':'EUR','pt-PT':'EUR','fi-FI':'EUR',
+  'sv-SE':'SEK','nb-NO':'NOK','nn-NO':'NOK','da-DK':'DKK','ja-JP':'JPY'
+};
+const _zeroDecimal = new Set(['JPY','KRW','BIF','CLP','GNF','MGA','PYG','RWF','UGX','VND','VUV','XAF','XOF','XPF']);
+
+function _toLocal(eurAmt) {
+  const rate = _xRates[_currency] ?? _xFallback[_currency] ?? 1;
+  return eurAmt * rate;
+}
+function _fmtP(eurAmt) {
+  return new Intl.NumberFormat(navigator.language || 'en', {
+    style: 'currency', currency: _currency,
+    maximumFractionDigits: 0, minimumFractionDigits: 0
+  }).format(Math.round(_toLocal(eurAmt)));
+}
+function _fmtAmt(eurAmt) {
+  if (eurAmt === 0) return 'Free';
+  const dp = _zeroDecimal.has(_currency) ? 0 : 2;
+  return new Intl.NumberFormat(navigator.language || 'en', {
+    style: 'currency', currency: _currency,
+    maximumFractionDigits: dp, minimumFractionDigits: dp
+  }).format(_toLocal(eurAmt));
+}
+function _stripeAmt(eurAmt) {
+  const local = _toLocal(eurAmt);
+  return _zeroDecimal.has(_currency) ? Math.round(local) : Math.round(local * 100) / 100;
+}
+
+async function _initCurrency() {
+  try {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 2000);
+    const res  = await fetch('https://ipapi.co/currency/', { signal: ctrl.signal });
+    const code = (await res.text()).trim().toUpperCase();
+    if (/^[A-Z]{3}$/.test(code)) _currency = code;
+  } catch(e) {
+    const loc = navigator.language || '';
+    _currency = _localeCur[loc] || _localeCur[loc.substring(0, 2)] || 'EUR';
+  }
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/EUR');
+    const d = await r.json();
+    if (d?.rates) _xRates = d.rates;
+  } catch(e) {}
+  _updateAllPrices();
+}
+
+function _updateAllPrices() {
+  // Work grid prices
+  document.querySelectorAll('.w-item[data-id]').forEach(el => {
+    const p = products.find(x => x.id === +el.dataset.id);
+    if (p) {
+      const wp = el.querySelector('.w-price');
+      if (wp) wp.textContent = 'From ' + _fmtP(p.basePrice);
+    }
+  });
+  if (typeof updatePrice === 'function') { try { updatePrice(); } catch(e) {} }
+  refreshCart();
+}
+
+_initCurrency();
+
 function saveCart() {
   try { localStorage.setItem(_CART_KEY, JSON.stringify({ ts: Date.now(), items: cart })); } catch(e) {}
 }
@@ -1867,7 +1943,7 @@ function addToCart() {
       if (frameType === 'boxframe') frameLabel += ` · Mount: ${mountColor}`;
       frameLabel += ` · ${paperType === 'hpr' ? 'Hahnemühle Rag' : 'Lustre'}`;
     }
-    cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, paperType, frameLabel, price: price(), qty: 1, img: cur.img });
+    cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, paperType, frameLabel, priceEur: price(), qty: 1, img: cur.img });
   }
   saveCart(); refreshCart(); closeModal(); toast(`"${cur.name}" added`); openCart();
 }
@@ -1875,15 +1951,16 @@ function removeItem(key) { cart = cart.filter(i => i.key !== key); saveCart(); r
 function refreshCart() {
   _cardMounted = false; // cart HTML rebuild destroys #stripeCardEl — force remount next checkout
   const n = cart.reduce((s, i) => s + i.qty, 0);
-  const t = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const tEur = cart.reduce((s, i) => s + (i.priceEur ?? i.price ?? 0) * i.qty, 0);
   document.querySelectorAll('.cart-num').forEach(el => { el.textContent = n; el.classList.toggle('on', n > 0); });
-  document.getElementById('cpTotal').textContent = '€' + t;
+  document.getElementById('cpTotal').textContent = _fmtP(tEur);
   const body = document.getElementById('cpBody');
   if (!cart.length) { body.innerHTML = '<div class="cp-empty"><p>Nothing yet</p><p>Add a print to begin your collection.</p></div>'; return; }
   body.innerHTML = cart.map(i => {
     const outerSz = i.fmt === 'framed' ? BOX_OUTER_SIZES[i.size] : null;
     const sizeLine = outerSz ? `${i.size} print · Frame ${outerSz}` : i.size;
     const label = i.frameLabel || (i.paperType === 'pap' ? 'Lustre · Unframed' : 'Hahnemühle Rag · Unframed');
+    const itemEur = (i.priceEur ?? i.price ?? 0) * i.qty;
     return `
     <div class="cp-item">
       <img class="cp-item-img${i.fmt === 'framed' ? ' fr' : ''}" src="${i.img}" alt="${i.name}"/>
@@ -1892,7 +1969,7 @@ function refreshCart() {
         <div class="cp-item-meta">${sizeLine}<br>${label} · Qty ${i.qty}</div>
         <button class="cp-item-rm" onclick="removeItem('${i.key}')">Remove</button>
       </div>
-      <div class="cp-item-price">€${i.price * i.qty}</div>
+      <div class="cp-item-price">${_fmtP(itemEur)}</div>
     </div>`;
   }).join('');
 }
@@ -1967,10 +2044,10 @@ function showCheckout() {
   if (!cart.length) return;
   document.getElementById('cartMain').style.display = 'none';
   document.getElementById('checkoutForm').style.display = 'flex';
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  document.getElementById('cpSubtotal2').textContent = '€' + subtotal;
+  const subtotal = cart.reduce((s, i) => s + (i.priceEur ?? i.price ?? 0) * i.qty, 0);
+  document.getElementById('cpSubtotal2').textContent = _fmtP(subtotal);
   document.getElementById('cpShipping2').textContent = '—';
-  document.getElementById('cpTotal2').textContent = '€' + subtotal;
+  document.getElementById('cpTotal2').textContent = _fmtP(subtotal);
   document.getElementById('btnPlaceOrder').textContent = 'Calculating…';
   document.getElementById('btnPlaceOrder').disabled = true;
   document.getElementById('cardError').style.display = 'none';
@@ -1982,24 +2059,24 @@ function showCheckout() {
 async function fetchShippingQuote() {
   const country   = document.getElementById('cfCountry').value;
   const method    = document.getElementById('cfShipping').value;
-  const subtotal  = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const subtotal  = cart.reduce((s, i) => s + (i.priceEur ?? i.price ?? 0) * i.qty, 0);
   const btn       = document.getElementById('btnPlaceOrder');
   const shipEl    = document.getElementById('cpShipping2');
   const totalEl   = document.getElementById('cpTotal2');
 
-  function applyShipping(cost, label) {
-    _shippingCost = cost;
-    const grand = Math.round((subtotal + cost) * 100) / 100;
-    shipEl.textContent  = label;
-    totalEl.textContent = '€' + grand;
-    btn.textContent     = 'Pay €' + grand;
+  function applyShipping(cost) {
+    _shippingCost = cost;  // stored in EUR
+    const grandEur = Math.round((subtotal + cost) * 100) / 100;
+    shipEl.textContent  = _fmtAmt(cost);
+    totalEl.textContent = _fmtAmt(grandEur);
+    btn.textContent     = 'Pay ' + _fmtAmt(grandEur);
     btn.disabled        = false;
     btn.onclick         = placeOrder;
   }
 
-  // Free Standard shipping for orders ≥ €200
+  // Free Standard shipping for orders ≥ €200 (compare in EUR)
   if (method === 'Standard' && subtotal >= 200) {
-    applyShipping(0, 'Free');
+    applyShipping(0);
     return;
   }
 
@@ -2025,7 +2102,7 @@ async function fetchShippingQuote() {
       btn.textContent = 'Retry'; btn.disabled = false; btn.onclick = fetchShippingQuote;
       return;
     }
-    applyShipping(data.shippingCost || 0, data.shippingCost ? '€' + data.shippingCost.toFixed(2) : 'Free');
+    applyShipping(data.shippingCost || 0);
   } catch (e) {
     console.error('Shipping quote error:', e);
     shipEl.textContent = e.message || 'Error';
@@ -2074,19 +2151,20 @@ async function placeOrder() {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address'); return; }
   if (!_stripe || !_cardEl) { toast('Payment not ready — please wait'); return; }
 
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const total    = Math.round((subtotal + _shippingCost) * 100) / 100;
-  const btn      = document.getElementById('btnPlaceOrder');
-  const reset    = () => { btn.textContent = 'Pay €' + total; btn.disabled = false; btn.onclick = placeOrder; };
+  const subtotalEur = cart.reduce((s, i) => s + (i.priceEur ?? i.price ?? 0) * i.qty, 0);
+  const totalEur    = Math.round((subtotalEur + _shippingCost) * 100) / 100;
+  const totalLocal  = _stripeAmt(totalEur);
+  const btn         = document.getElementById('btnPlaceOrder');
+  const reset       = () => { btn.textContent = 'Pay ' + _fmtAmt(totalEur); btn.disabled = false; btn.onclick = placeOrder; };
   btn.textContent = 'Processing…'; btn.disabled = true;
   document.getElementById('cardError').style.display = 'none';
 
   try {
-    // Step 1: create PaymentIntent on the server
+    // Step 1: create PaymentIntent on the server (charge in visitor's currency)
     const piRes = await fetch('/api/create-payment-intent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: total, currency: 'eur' })
+      body: JSON.stringify({ amount: totalLocal, currency: _currency.toLowerCase() })
     });
     const piData = await piRes.json();
     if (!piRes.ok) { toast(piData.error || 'Payment setup failed'); reset(); return; }
