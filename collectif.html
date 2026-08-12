@@ -2035,7 +2035,10 @@ function showCart() {
 }
 
 function getAssetUrl(imgPath) {
-  return window.location.origin + '/' + imgPath.split('/').map(encodeURIComponent).join('/');
+  // Use high-res print version: Images/print/<name>.jpeg
+  const filename = imgPath.split('/').pop().replace(/\.[^.]+$/, '.jpeg');
+  const printPath = 'Images/print/' + filename;
+  return window.location.origin + '/' + printPath.split('/').map(encodeURIComponent).join('/');
 }
 function getOrderSku(item) {
   if (item.fmt === 'framed') return SKU_MAP.framed[item.size] || 'GLOBAL-CFP-12X16';
