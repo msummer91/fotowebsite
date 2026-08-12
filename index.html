@@ -1531,6 +1531,8 @@ function openModal(id) {
   setFmt('print', true);
   renderSizes();
   updatePrice();
+  // Pre-warm box frame mockup immediately so it's ready when user clicks Framed
+  setTimeout(() => prewarmFrameMockups('boxframe'), 200);
   document.getElementById('modal').classList.add('on');
   document.getElementById('overlay').classList.add('on');
   document.body.style.overflow = 'hidden';
@@ -1716,20 +1718,16 @@ let _mockupReqId = 0;
 function _loadFramedMockup(colorName, style, mc) {
   const roomImg = document.getElementById('roomImg2');
   const mImg    = document.getElementById('mImg');
-  const rm      = document.getElementById('roomMount2');
   const wrap    = document.getElementById('mFrameWrap');
   const hint    = document.getElementById('frameLoadHint');
   const useMc   = (style === 'boxframe' && mc) ? mc : 'Snow White';
   const cacheKey = `${cur.img}|${colorName}|${style}|${useMc}`;
-  rm.style.border = '';
-  rm.style.outline = '';
 
   function applyMockup(url) {
     if (fmt !== 'framed') return;
     if (hint) hint.style.display = 'none';
     roomImg.src = url;
     roomImg.style.opacity = '1';
-    // Swap main image — frame baked in, remove CSS border
     mImg.src = url;
     mImg.style.opacity = '1';
     wrap.style.border = '';
@@ -1745,18 +1743,14 @@ function _loadFramedMockup(colorName, style, mc) {
     }
   }
 
-  // Cache hit — apply instantly
+  // Cache hit — apply instantly, no flicker
   if (_mockupCache[cacheKey]) {
     applyMockup(_mockupCache[cacheKey]);
     return;
   }
 
-  // Cache miss — immediately show original photo + CSS border so there's no wrong-color flicker
+  // Cache miss — keep current display (bare photo or previous mockup), just show loading hint
   if (hint) hint.style.display = 'block';
-  mImg.src = cur.img;
-  mImg.style.opacity = '1';
-  roomImg.src = cur.img;
-  roomImg.style.opacity = '1';
 
   const reqId = ++_mockupReqId;
   const fullUrl = window.location.origin + '/' + cur.img;
@@ -1794,24 +1788,11 @@ function prewarmFrameMockups(style) {
 
 function applyFramePreview() {
   const color = frameData[frameType].colors[frameColorIdx];
-  const isBox = frameType === 'boxframe';
-  const thickness = isBox ? 22 : 14;
-  const inset = isBox
-    ? 'inset 0 0 0 4px rgba(242,238,230,0.85), inset 1px 2px 6px rgba(0,0,0,0.25), inset -1px -1px 4px rgba(0,0,0,0.12)'
-    : 'inset 1px 2px 4px rgba(0,0,0,0.2), inset -1px -1px 3px rgba(0,0,0,0.1)';
-  // Instant CSS border feedback while server mockup loads
+  // No CSS border placeholder — it causes layout shift and looks wrong.
+  // The server-rendered mockup bakes the frame in; just load it directly.
   const wrap = document.getElementById('mFrameWrap');
-  wrap.style.border = `${thickness}px solid ${color.hex}`;
-  if (color.border) wrap.style.outline = `1px solid ${color.border}`;
-  else wrap.style.outline = '';
-  wrap.style.boxShadow = `${inset}, 6px 14px 40px rgba(0,0,0,0.55)`;
-  const w = window.innerWidth;
-  if (w <= 860) {
-    const vh = w <= 560 ? 46 : 50;
-    const pad = w <= 560 ? 48 : 60;
-    document.getElementById('mImg').style.maxHeight = `calc(${vh}vh - ${pad + thickness * 2}px)`;
-  }
-  // Load server-rendered mockup → updates both main image and room preview
+  wrap.style.border = '';
+  wrap.style.outline = '';
   _loadFramedMockup(color.name, frameType, mountColor);
 }
 
