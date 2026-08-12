@@ -810,7 +810,9 @@
     }
     .cp-item-name {
       font-family: var(--serif); font-size: 15px; font-weight: 300; margin-bottom: 3px;
+      cursor: pointer;
     }
+    .cp-item-name:hover { text-decoration: underline; }
     .cp-item-meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; line-height: 1.6; }
     .cp-item-rm {
       font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -1901,7 +1903,7 @@ function refreshCart() {
     <div class="cp-item">
       <img class="cp-item-img${i.fmt === 'framed' ? ' fr' : ''}" src="${i.img}" alt="${i.name}"/>
       <div>
-        <div class="cp-item-name">${i.name}</div>
+        <div class="cp-item-name" onclick="closeCart(); openModal('${i.id}')">${i.name}</div>
         <div class="cp-item-meta">${i.size}<br>${i.frameLabel || (i.paperType === 'pap' ? 'Lustre · Unframed' : 'Hahnemühle Rag · Unframed')} · Qty ${i.qty}</div>
         <button class="cp-item-rm" onclick="removeItem('${i.key}')">Remove</button>
       </div>
