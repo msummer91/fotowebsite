@@ -41,7 +41,6 @@ const BOX_TMPL = {
 // Warm colors: 'hard-light' tints the dark frame texture with color.
 const BOX_TINTS = {
   'White':   { r: 245, g: 245, b: 243, opacity: 1.0,  blend: 'hard-light' },
-  'Brown':   { r: 100, g: 60,  b: 35,  opacity: 0.82, blend: 'hard-light' },
   'Natural': { r: 180, g: 145, b: 100, opacity: 0.80, blend: 'hard-light' },
 };
 
@@ -49,7 +48,7 @@ const BOX_TINTS = {
 const MOUNT_COLORS = {
   'Snow White': { r: 252, g: 252, b: 252 },
   'Black':      { r: 20,  g: 20,  b: 18  },
-  'Hayseed':    { r: 216, g: 192, b: 140 },
+  'Off-white':  { r: 237, g: 232, b: 219 }, // warm off-white, matches Prodigi's "Off-white" mount
 };
 
 // Rotate a bounding box 90° CW inside a square canvas of size S.

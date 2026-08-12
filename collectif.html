@@ -618,6 +618,12 @@
       font-weight: 300;
       letter-spacing: -0.01em;
     }
+    .frame-size-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+      min-height: 15px;
+    }
     .modal-price-note {
       font-size: 11px;
       color: var(--muted);
@@ -1163,6 +1169,7 @@
       <div>
         <div class="field-label">Size</div>
         <div class="sizes" id="mSizes"></div>
+        <div class="frame-size-note" id="mFrameSizeNote"></div>
       </div>
 
       <div>
@@ -1339,28 +1346,27 @@ ordered.forEach(p => {
   grid.appendChild(el);
 });
 
-// ── FRAME DATA — Prodigi Classic Frame (GLOBAL-CFP) + Box Frame ──
-// Colors match Prodigi's attribute values sent to the API.
+// ── FRAME DATA — Prodigi Box Frame (GLOBAL-BOXM) ──
+// Available colors: Black, White, Natural (Brown not offered by Prodigi)
 const frameData = {
   boxframe: {
     label: 'Box Frame',
     extra: 20,
-    desc: 'Deep shadow-box frame · Float-mounted print · UV Perspex glass · Ships ready to hang.',
+    desc: 'Deep shadow-box frame · Mounted print · UV Perspex glass · Ships ready to hang.',
     colors: [
       { name: 'Black',   hex: '#1c1c1c' },
       { name: 'White',   hex: '#f2f0ed', border: '#ccc' },
       { name: 'Natural', hex: '#c09b6e' },
-      { name: 'Brown',   hex: '#7a4929' },
     ]
   },
   // classic frame hidden — not currently offered
 };
 
-// ── MOUNT COLORS (box frame only) ──
+// ── MOUNT COLORS (box frame only) — must match Prodigi's mount options ──
 const mountColorOptions = [
   { name: 'Snow White', hex: '#f8f8f7', border: '#ccc' },
   { name: 'Black',      hex: '#1a1a1a' },
-  { name: 'Hayseed',    hex: '#c9a96e' },
+  { name: 'Off-white',  hex: '#ede8db', border: '#ccc' },
 ];
 
 // ── MODAL STATE ──
@@ -1442,6 +1448,7 @@ function setFmt(f, silent) {
   if (!silent) updatePrice();
   updateImgNav();
   updateDesc();
+  updateFrameSizeNote();
 }
 function openImgZoom() {
   // When framed is selected, zoom shows the server-rendered framed mockup
@@ -1694,11 +1701,22 @@ function renderSizes() {
     const b = document.createElement('button');
     b.className = 'schip' + (i === 0 ? ' on' : '');
     b.textContent = s;
-    b.onclick = () => { sIdx = i; el.querySelectorAll('.schip').forEach((c, ci) => c.classList.toggle('on', ci === i)); updatePrice(); };
+    b.onclick = () => { sIdx = i; el.querySelectorAll('.schip').forEach((c, ci) => c.classList.toggle('on', ci === i)); updatePrice(); updateFrameSizeNote(); };
     el.appendChild(b);
   });
+  updateFrameSizeNote();
 }
 function updatePrice() { document.getElementById('mPrice').textContent = '€' + price(); }
+function updateFrameSizeNote() {
+  const el = document.getElementById('mFrameSizeNote');
+  if (!el) return;
+  if (fmt === 'framed') {
+    const outer = BOX_OUTER_SIZES[cur?.sizes[sIdx]];
+    el.textContent = outer ? `Outer frame incl. moulding: ${outer}` : '';
+  } else {
+    el.textContent = '';
+  }
+}
 
 // ── ZOOM ──
 function openZoom() {
@@ -1736,6 +1754,12 @@ function loadCart() {
 }
 loadCart();
 
+// Open a specific photo if navigated here from another page (e.g. cart on index.html)
+(function() {
+  const openId = parseInt(new URLSearchParams(location.search).get('open'));
+  if (openId) { setTimeout(() => openModal(openId), 0); }
+})();
+
 function addToCart() {
   if (!cur) return;
   const mc = (fmt === 'framed' && frameType === 'boxframe') ? mountColor : '';
@@ -1763,19 +1787,26 @@ function refreshCart() {
   document.getElementById('cpTotal').textContent = '€' + t;
   const body = document.getElementById('cpBody');
   if (!cart.length) { body.innerHTML = '<div class="cp-empty"><p>Nothing yet</p><p>Add a print to begin your collection.</p></div>'; return; }
-  body.innerHTML = cart.map(i => `
+  body.innerHTML = cart.map(i => {
+    const outerSz = i.fmt === 'framed' ? BOX_OUTER_SIZES[i.size] : null;
+    const sizeLine = outerSz ? `${i.size} print · Frame ${outerSz}` : i.size;
+    const label = i.frameLabel || (i.paperType === 'pap' ? 'Lustre · Unframed' : 'Hahnemühle Rag · Unframed');
+    return `
     <div class="cp-item">
       <img class="cp-item-img${i.fmt === 'framed' ? ' fr' : ''}" src="${i.img}" alt="${i.name}"/>
       <div>
-        <div class="cp-item-name" onclick="closeCart(); openModal('${i.id}')">${i.name}</div>
-        <div class="cp-item-meta">${i.size}<br>${i.frameLabel || (i.paperType === 'pap' ? 'Lustre · Unframed' : 'Hahnemühle Rag · Unframed')} · Qty ${i.qty}</div>
+        <div class="cp-item-name" onclick="openFromCart(${i.id})">${i.name}</div>
+        <div class="cp-item-meta">${sizeLine}<br>${label} · Qty ${i.qty}</div>
         <button class="cp-item-rm" onclick="removeItem('${i.key}')">Remove</button>
       </div>
       <div class="cp-item-price">€${i.price * i.qty}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 function openCart() { document.getElementById('cartPanel').classList.add('on'); document.getElementById('cartVeil').classList.add('on'); document.body.style.overflow = 'hidden'; }
 function closeCart() { document.getElementById('cartPanel').classList.remove('on'); document.getElementById('cartVeil').classList.remove('on'); document.body.style.overflow = ''; showCart(); }
+// On collectif.html: open modal in-place. From index.html openFromCart navigates here.
+function openFromCart(id) { closeCart(); openModal(id); }
 
 // ── PRODIGI CHECKOUT ──
 // Confirmed SKUs from prodigi.com/products catalogue (2025):
@@ -1793,23 +1824,18 @@ const SKU_MAP = {
     '50×70 cm': 'GLOBAL-PAP-20X28',
     '70×100 cm': 'GLOBAL-PAP-28X40',
   },
-  framed: { // Classic Frame (GLOBAL-CFP) — 8 colors, wood moulding
-    '30×40 cm': 'GLOBAL-CFP-12X16',
-    '50×70 cm': 'GLOBAL-CFP-20X28',
-    '70×100 cm': 'GLOBAL-CFP-28X40',
+  framed: { // Box Frame with mount (GLOBAL-BOXM) — Black/White/Natural, 20mm face width
+    '30×40 cm': 'GLOBAL-BOXM-12X16',
+    '50×70 cm': 'GLOBAL-BOXM-20X28',
+    '70×100 cm': 'GLOBAL-BOXM-28X40',
   }
 };
-// frameLabel color names → Prodigi Classic Frame API attribute values
-const FRAME_COLOR_ATTR = {
-  'Black':          'Black',
-  'White':          'White',
-  'Natural':        'Natural',
-  'Antique Silver': 'Antique Silver',
-  'Brown':          'Brown',
-  'Antique Gold':   'Antique Gold',
-  'Dark Grey':      'Dark Grey',
-  'Light Grey':     'Light Grey',
-};
+// Prodigi box frame color → API attribute value
+const FRAME_COLOR_ATTR = { 'Black': 'Black', 'White': 'White', 'Natural': 'Natural' };
+// Prodigi box frame mount color → API attribute value (verify 'mountColour' key with Prodigi docs)
+const MOUNT_COLOR_ATTR = { 'Snow White': 'Snow white', 'Black': 'Black', 'Off-white': 'Off-white' };
+// Outer frame size = glaze size + 2×20mm face width on each side
+const BOX_OUTER_SIZES = { '30×40 cm': '34×44 cm', '50×70 cm': '54×74 cm', '70×100 cm': '74×104 cm' };
 
 // ── STRIPE ──
 let _stripe = null, _cardEl = null, _cardMounted = false;
@@ -1927,9 +1953,14 @@ function getOrderSku(item) {
 }
 function getOrderAttributes(item) {
   if (item.fmt !== 'framed' || !item.frameLabel) return {};
-  const colorName = item.frameLabel.split(' – ')[1] || '';
-  const color = FRAME_COLOR_ATTR[colorName];
-  return color ? { color } : {};
+  const afterDash = item.frameLabel.split(' – ')[1] || '';
+  const colorName = afterDash.split(' · ')[0].trim();
+  const mountMatch = item.frameLabel.match(/Mount:\s*([^·]+)/);
+  const mountName  = mountMatch ? mountMatch[1].trim() : 'Snow White';
+  const attrs = {};
+  if (FRAME_COLOR_ATTR[colorName])  attrs.color       = FRAME_COLOR_ATTR[colorName];
+  if (MOUNT_COLOR_ATTR[mountName])  attrs.mountColour = MOUNT_COLOR_ATTR[mountName];
+  return attrs;
 }
 
 async function placeOrder() {
