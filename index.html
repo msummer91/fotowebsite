@@ -438,12 +438,18 @@
     /* Modal top bar: nav + close button */
     .modal-bar {
       position: absolute;
-      top: 0; right: 0;
+      top: 0; left: 0; right: 0;
       z-index: 220;
       display: flex;
       align-items: center;
-      gap: 24px;
+      justify-content: space-between;
       padding: 20px 26px;
+    }
+    .mbar-left {
+      display: flex; align-items: center; gap: 20px;
+    }
+    .mbar-right {
+      display: flex; align-items: center; gap: 20px;
     }
     /* When modal is open: always show collapsed (hamburger) only, hide text nav */
     .modal-bar .mbar-nav { display: none; }
@@ -456,6 +462,23 @@
       transition: color 0.2s;
     }
     .mbar-cart:hover { color: var(--dark); }
+    .mbar-insta {
+      display: flex; align-items: center;
+      color: var(--muted); padding: 4px;
+      transition: color 0.2s; line-height: 0;
+    }
+    .mbar-insta:hover { color: var(--dark); }
+    .mbar-email {
+      display: flex; align-items: center;
+      color: var(--muted); padding: 4px;
+      transition: color 0.2s; line-height: 0;
+    }
+    .mbar-email:hover { color: var(--dark); }
+    .foot-icon-link {
+      display: flex; align-items: center;
+      color: var(--muted); transition: color 0.2s; line-height: 0;
+    }
+    .foot-icon-link:hover { color: var(--dark); }
     /* Footer stays visible when modal is open — compact strip, no logo */
     body.modal-open footer {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -1043,7 +1066,21 @@
         gap: 12px;
         overflow-y: visible;
       }
-      .modal-bar { padding: 14px 18px; gap: 18px; }
+      .modal-bar {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        padding: 12px 18px;
+        z-index: 220;
+        box-sizing: border-box;
+      }
+      .mbar-left { gap: 16px; }
+      .mbar-right { gap: 16px; }
+      body.modal-open .modal-img-col { padding-bottom: 0; }
+      .modal-info-col { padding-bottom: 100px; }
+      body.modal-open footer { position: static; z-index: auto; padding: 24px; }
       .modal-title { font-size: clamp(18px, 5vw, 26px); }
       .modal-by { font-size: 9px; margin-top: 2px; }
       .ftab { padding: 8px 6px; font-size: 11px; }
@@ -1092,7 +1129,7 @@
       footer { padding: 28px 16px; }
       .modal-img-col { flex: 0 0 38vh; max-height: 38vh; }
       .modal-frame-wrap img { max-height: calc(38vh - 32px); }
-      .modal-info-col { padding: 14px 16px 32px; gap: 9px; }
+      .modal-info-col { padding: 14px 16px 100px; gap: 9px; }
     }
     /* ── STRIPE CARD ELEMENT ── */
     .stripe-wrap { margin-bottom: 14px; }
@@ -1232,22 +1269,39 @@
 <div class="modal" id="modal">
   <!-- Top-right bar: nav + close -->
   <div class="modal-bar">
-    <nav class="mbar-nav">
-      <a href="collectif.html">Collectif</a>
-      <a href="#about" onclick="closeModal()">About</a>
-    </nav>
-    <button class="mbar-ham" onclick="toggleMenu()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <button class="mbar-cart" onclick="event.stopPropagation(); openCart()" aria-label="Cart">
-      <svg width="17" height="15" viewBox="0 0 17 15" fill="none">
-        <path d="M1 1h2l2.2 8h8L15 3H5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="7" cy="13.5" r="1.1" fill="currentColor"/>
-        <circle cx="13" cy="13.5" r="1.1" fill="currentColor"/>
-      </svg>
-      <span class="cart-num" id="cartNumModal">0</span>
-    </button>
-    <button class="modal-x" onclick="closeModal()">×</button>
+    <div class="mbar-left">
+      <nav class="mbar-nav">
+        <a href="collectif.html">Collectif</a>
+        <a href="#about" onclick="closeModal()">About</a>
+      </nav>
+      <button class="mbar-ham" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <a class="mbar-insta" href="https://instagram.com/etecollectif" target="_blank" rel="noopener" aria-label="Instagram" onclick="event.stopPropagation()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+        </svg>
+      </a>
+      <a class="mbar-email" href="mailto:hello@etecollectif.com" aria-label="Contact" onclick="event.stopPropagation()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="M2 7l10 7 10-7"/>
+        </svg>
+      </a>
+    </div>
+    <div class="mbar-right">
+      <button class="mbar-cart" onclick="event.stopPropagation(); openCart()" aria-label="Cart">
+        <svg width="17" height="15" viewBox="0 0 17 15" fill="none">
+          <path d="M1 1h2l2.2 8h8L15 3H5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="7" cy="13.5" r="1.1" fill="currentColor"/>
+          <circle cx="13" cy="13.5" r="1.1" fill="currentColor"/>
+        </svg>
+        <span class="cart-num" id="cartNumModal">0</span>
+      </button>
+      <button class="modal-x" onclick="closeModal()">×</button>
+    </div>
   </div>
   <!-- Left: large image (click empty area to close) -->
   <div class="modal-img-col" onclick="closeModal()">
@@ -1427,8 +1481,23 @@
   <ul class="foot-links">
     <li><a href="collectif.html">Collectif</a></li>
     <li><a href="#about">About</a></li>
-    <li><a href="mailto:hello@etecollectif.com">Contact</a></li>
-    <li><a href="https://instagram.com/etecollectif" target="_blank" rel="noopener">Instagram</a></li>
+    <li>
+      <a class="foot-icon-link" href="mailto:hello@etecollectif.com" aria-label="Contact">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="M2 7l10 7 10-7"/>
+        </svg>
+      </a>
+    </li>
+    <li>
+      <a class="foot-icon-link" href="https://instagram.com/etecollectif" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+        </svg>
+      </a>
+    </li>
   </ul>
   <span class="foot-copy">© 2026 été collectif</span>
 </footer>
@@ -1595,6 +1664,27 @@ function navImgView(dir) {
   if (dir > 0 && fmt === 'print') setFmt('framed');
   else if (dir < 0 && fmt === 'framed') setFmt('print');
 }
+
+// Swipe left/right on image panel to toggle Print ↔ Framed
+(function() {
+  let _tx = 0, _ty = 0;
+  document.addEventListener('touchstart', function(e) {
+    const col = document.querySelector('.modal-img-col');
+    if (!col || !col.contains(e.target)) return;
+    _tx = e.touches[0].clientX;
+    _ty = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    const col = document.querySelector('.modal-img-col');
+    if (!col || !col.contains(e.changedTouches[0].target)) return;
+    const dx = e.changedTouches[0].clientX - _tx;
+    const dy = e.changedTouches[0].clientY - _ty;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      navImgView(dx < 0 ? 1 : -1);
+    }
+  }, { passive: true });
+})();
+
 function updateImgNav() {
   const prev = document.getElementById('imgNavPrev');
   const next = document.getElementById('imgNavNext');
