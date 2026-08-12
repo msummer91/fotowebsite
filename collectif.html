@@ -407,6 +407,19 @@
     body.modal-open .modal-frame-wrap img {
       max-height: calc(100vh - 200px);
     }
+    /* Currency picker */
+    .cur-picker {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .cur-picker button {
+      background: none; border: none; cursor: pointer; padding: 0;
+      font-family: var(--sans); font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); transition: color 0.15s;
+    }
+    .cur-picker button:hover { color: var(--dark); }
+    .cur-picker button.cur-active { color: var(--dark); text-decoration: underline; text-underline-offset: 3px; }
+    .cur-picker .cur-sep { color: var(--border); font-size: 10px; user-select: none; }
+    @media (max-width: 500px) { .cur-picker { display: none; } }
     .mbar-nav {
       display: flex;
       gap: 24px;
@@ -1146,6 +1159,15 @@
       </a>
     </div>
     <div class="mbar-right">
+      <div class="cur-picker" onclick="event.stopPropagation()">
+        <button data-cur="EUR" onclick="setCurrency('EUR')">EUR</button>
+        <span class="cur-sep">·</span>
+        <button data-cur="CHF" onclick="setCurrency('CHF')">CHF</button>
+        <span class="cur-sep">·</span>
+        <button data-cur="GBP" onclick="setCurrency('GBP')">GBP</button>
+        <span class="cur-sep">·</span>
+        <button data-cur="USD" onclick="setCurrency('USD')">USD</button>
+      </div>
       <button class="mbar-cart" onclick="event.stopPropagation(); openCart()" aria-label="Cart">
         <svg width="17" height="15" viewBox="0 0 17 15" fill="none">
           <path d="M1 1h2l2.2 8h8L15 3H5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1873,16 +1895,31 @@ function _stripeAmt(eurAmt) {
   return _zeroDecimal.has(_currency) ? Math.round(local) : Math.round(local * 100) / 100;
 }
 
+function setCurrency(code) {
+  _currency = code;
+  try { localStorage.setItem('ete_currency', code); } catch(e) {}
+  _updateAllPrices();
+}
+
 async function _initCurrency() {
+  // 1. Honour saved user preference
   try {
-    const ctrl = new AbortController();
-    setTimeout(() => ctrl.abort(), 2000);
-    const res  = await fetch('https://ipapi.co/currency/', { signal: ctrl.signal });
-    const code = (await res.text()).trim().toUpperCase();
-    if (/^[A-Z]{3}$/.test(code)) _currency = code;
+    const saved = localStorage.getItem('ete_currency');
+    if (saved && /^[A-Z]{3}$/.test(saved)) { _currency = saved; }
+    else { throw new Error('no saved'); }
   } catch(e) {
-    const loc = navigator.language || '';
-    _currency = _localeCur[loc] || _localeCur[loc.substring(0, 2)] || 'EUR';
+    // 2. Detect from IP
+    try {
+      const ctrl = new AbortController();
+      setTimeout(() => ctrl.abort(), 2000);
+      const res  = await fetch('https://ipapi.co/currency/', { signal: ctrl.signal });
+      const code = (await res.text()).trim().toUpperCase();
+      if (/^[A-Z]{3}$/.test(code)) _currency = code;
+    } catch(e2) {
+      // 3. Browser locale fallback
+      const loc = navigator.language || '';
+      _currency = _localeCur[loc] || _localeCur[loc.substring(0, 2)] || 'EUR';
+    }
   }
   try {
     const r = await fetch('https://open.er-api.com/v6/latest/EUR');
@@ -1893,6 +1930,15 @@ async function _initCurrency() {
 }
 
 function _updateAllPrices() {
+  // Active currency button
+  document.querySelectorAll('.cur-picker [data-cur]').forEach(btn => {
+    btn.classList.toggle('cur-active', btn.dataset.cur === _currency);
+  });
+  // Free-shipping threshold note
+  const shipThresh = _fmtP(200);
+  document.querySelectorAll('.modal-price-note').forEach(el => {
+    el.textContent = 'incl. VAT · free Standard shipping over ' + shipThresh;
+  });
   // Work grid prices
   document.querySelectorAll('.w-item[data-id]').forEach(el => {
     const p = products.find(x => x.id === +el.dataset.id);
