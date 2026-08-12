@@ -80,9 +80,11 @@ module.exports = async function handler(req, res) {
 
     if (!response.ok) {
       console.error('Prodigi error:', JSON.stringify(data));
-      return res.status(response.status).json({
-        error: data.detail || data.message || 'Order creation failed'
-      });
+      const detail = data.detail || data.message
+        || (data.validationIssues ? JSON.stringify(data.validationIssues) : null)
+        || (data.errors ? JSON.stringify(data.errors) : null)
+        || JSON.stringify(data).slice(0, 400);
+      return res.status(response.status).json({ error: detail });
     }
 
     return res.status(200).json({
