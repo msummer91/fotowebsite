@@ -721,7 +721,7 @@
     }
     .cp-item-name {
       font-family: var(--serif); font-size: 15px; font-weight: 300; margin-bottom: 3px;
-      cursor: pointer;
+      display: block; color: inherit; text-decoration: none;
     }
     .cp-item-name:hover { text-decoration: underline; }
     .cp-item-meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; line-height: 1.6; }
@@ -1795,7 +1795,7 @@ function refreshCart() {
     <div class="cp-item">
       <img class="cp-item-img${i.fmt === 'framed' ? ' fr' : ''}" src="${i.img}" alt="${i.name}"/>
       <div>
-        <div class="cp-item-name" onclick="openFromCart(${i.id})">${i.name}</div>
+        <a class="cp-item-name" href="/collectif.html?open=${i.id}">${i.name}</a>
         <div class="cp-item-meta">${sizeLine}<br>${label} · Qty ${i.qty}</div>
         <button class="cp-item-rm" onclick="removeItem('${i.key}')">Remove</button>
       </div>
