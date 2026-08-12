@@ -13,6 +13,8 @@ module.exports = async function handler(req, res) {
   }
 
   const apiKey = process.env.PRODIGI_API_KEY;
+  const isSandbox = process.env.PRODIGI_SANDBOX === 'true';
+  console.log('[create-order] sandbox:', isSandbox, '| key prefix:', apiKey ? apiKey.substring(0, 8) : 'MISSING');
   if (!apiKey) {
     console.error('PRODIGI_API_KEY env var is not set');
     return res.status(500).json({ error: 'Print service not configured' });
