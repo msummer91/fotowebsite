@@ -1375,21 +1375,23 @@
 
 <script>
 // ── PRODUCTS ──
-// Prices in CHF (base currency). sp = size premium [30×40, 50×70, 70×100].
-// fp = framing premium per size. Unframed: 65 / 85 / 95. Framed: 115 / 145 / 155.
+// Prices in CHF (base currency). sp = size premium [A5, A4, 30×40, 50×70, 70×100].
+// fp = framing premium per size.
+// Unframed: 40 / 55 / 65 / 85 / 95. Framed: 80 / 100 / 115 / 145 / 155.
+const ALL_SIZES = ['A5 (15×21 cm)', 'A4 (21×30 cm)', '30×40 cm', '50×70 cm', '70×100 cm'];
 const products = [
-  { id:1,  name:'Iced Coffee',          basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/iced coffee.jpeg',            pos:'50% 60%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:2,  name:'J-Bay',                basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/jbay.jpeg',                   pos:'50% 72%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:3,  name:'MXCD Street Art',      basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/mxcd street art.jpeg',        pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:4,  name:'Nicaragua Beach Ride', basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/nicaragua beach ride.jpeg',   pos:'55% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:5,  name:'Oaxaca Vintage',       basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/oaxaca vintage.jpeg',         pos:'50% 78%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:6,  name:'Padel Fun',            basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/padel fun.jpeg',              pos:'40% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:7,  name:'Point Break Views',    basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/point break views.jpeg',      pos:'62% 68%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:8,  name:'Sun Protection',       basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/sun protection.jpeg',         pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:9,  name:'Sunset Surf',          basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/sunset surf.jpeg',            pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:10, name:'Switzerland Views',    basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/switzerland views.jpeg',      pos:'28% 55%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:11, name:'Tokyo Nights',         basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/tokyo nights.jpeg',           pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:12, name:'Tokyo Street Walk',    basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/tokyo street walk.jpeg',      pos:'50% 22%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:1,  name:'Iced Coffee',          basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/iced coffee.jpeg',            pos:'50% 60%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:2,  name:'J-Bay',                basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/jbay.jpeg',                   pos:'50% 72%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:3,  name:'MXCD Street Art',      basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/mxcd street art.jpeg',        pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:4,  name:'Nicaragua Beach Ride', basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/nicaragua beach ride.jpeg',   pos:'55% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:5,  name:'Oaxaca Vintage',       basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/oaxaca vintage.jpeg',         pos:'50% 78%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:6,  name:'Padel Fun',            basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/padel fun.jpeg',              pos:'40% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:7,  name:'Point Break Views',    basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/point break views.jpeg',      pos:'62% 68%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:8,  name:'Sun Protection',       basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/sun protection.jpeg',         pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:9,  name:'Sunset Surf',          basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/sunset surf.jpeg',            pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:10, name:'Switzerland Views',    basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/switzerland views.jpeg',      pos:'28% 55%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:11, name:'Tokyo Nights',         basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/tokyo nights.jpeg',           pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:12, name:'Tokyo Street Walk',    basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/tokyo street walk.jpeg',      pos:'50% 22%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
 ];
 
 // ── FIXED RANDOM ORDER (stable per session, new each visit) ──
@@ -2039,19 +2041,25 @@ function openFromCart(id) { closeCart(); openModal(id); }
 //   Frame colors attribute:  Black, White, Natural, Antique Silver, Antique Gold, Dark Grey
 const SKU_MAP = {
   hpr: { // Hahnemühle Photo Rag — matte cotton, 308gsm
-    '30×40 cm': 'GLOBAL-HPR-12X16',
-    '50×70 cm': 'GLOBAL-HPR-20X28',
-    '70×100 cm': 'GLOBAL-HPR-28X40',
+    'A5 (15×21 cm)': 'GLOBAL-HPR-A5',
+    'A4 (21×30 cm)': 'GLOBAL-HPR-A4',
+    '30×40 cm':      'GLOBAL-HPR-12X16',
+    '50×70 cm':      'GLOBAL-HPR-20X28',
+    '70×100 cm':     'GLOBAL-HPR-28X40',
   },
   pap: { // Lustre Photo Paper — satin finish, 240gsm
-    '30×40 cm': 'GLOBAL-PAP-12X16',
-    '50×70 cm': 'GLOBAL-PAP-20X28',
-    '70×100 cm': 'GLOBAL-PAP-28X40',
+    'A5 (15×21 cm)': 'GLOBAL-PAP-A5',
+    'A4 (21×30 cm)': 'GLOBAL-PAP-A4',
+    '30×40 cm':      'GLOBAL-PAP-12X16',
+    '50×70 cm':      'GLOBAL-PAP-20X28',
+    '70×100 cm':     'GLOBAL-PAP-28X40',
   },
   framed: { // Box Frame with mount (GLOBAL-BOXM) — Black/White/Natural, 20mm face width
-    '30×40 cm': 'GLOBAL-BOXM-12X16',
-    '50×70 cm': 'GLOBAL-BOXM-20X28',
-    '70×100 cm': 'GLOBAL-BOXM-28X40',
+    'A5 (15×21 cm)': 'GLOBAL-BOXM-A5',  // verify A5 box frame SKU in Prodigi dashboard
+    'A4 (21×30 cm)': 'GLOBAL-BOXM-A4',  // verify A4 box frame SKU in Prodigi dashboard
+    '30×40 cm':      'GLOBAL-BOXM-12X16',
+    '50×70 cm':      'GLOBAL-BOXM-20X28',
+    '70×100 cm':     'GLOBAL-BOXM-28X40',
   }
 };
 // Prodigi box frame color → API attribute value
@@ -2059,7 +2067,13 @@ const FRAME_COLOR_ATTR = { 'Black': 'Black', 'White': 'White', 'Natural': 'Natur
 // Prodigi box frame mount color → API attribute value (verify 'mountColour' key with Prodigi docs)
 const MOUNT_COLOR_ATTR = { 'Snow White': 'Snow white', 'Black': 'Black', 'Off-white': 'Off-white' };
 // Outer frame size = glaze size + 2×20mm face width on each side
-const BOX_OUTER_SIZES = { '30×40 cm': '34×44 cm', '50×70 cm': '54×74 cm', '70×100 cm': '74×104 cm' };
+const BOX_OUTER_SIZES = {
+  'A5 (15×21 cm)': '19×25 cm',
+  'A4 (21×30 cm)': '25×34 cm',
+  '30×40 cm':      '34×44 cm',
+  '50×70 cm':      '54×74 cm',
+  '70×100 cm':     '74×104 cm',
+};
 
 // ── STRIPE ──
 let _stripe = null, _cardEl = null, _cardMounted = false;
