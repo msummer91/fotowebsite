@@ -1537,19 +1537,21 @@
 
 <script>
 // ── PRODUCTS ──
+// Prices in CHF (base currency). sp = size premium [30×40, 50×70, 70×100].
+// fp = framing premium per size. Unframed: 65 / 85 / 95. Framed: 115 / 145 / 155.
 const products = [
-  { id:1,  name:'Iced Coffee',          basePrice:180, framedExtra:95,  sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,60,130], img:'Images/iced coffee.jpeg',            pos:'50% 60%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:2,  name:'J-Bay',                basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/jbay.jpeg',                   pos:'50% 72%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:3,  name:'MXCD Street Art',      basePrice:195, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,65,140], img:'Images/mxcd street art.jpeg',        pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:4,  name:'Nicaragua Beach Ride', basePrice:185, framedExtra:95,  sizes:['30×40 cm','50×70 cm'],              sp:[0,60],     img:'Images/nicaragua beach ride.jpeg',   pos:'55% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:5,  name:'Oaxaca Vintage',       basePrice:190, framedExtra:95,  sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,65,140], img:'Images/oaxaca vintage.jpeg',         pos:'50% 78%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:6,  name:'Padel Fun',            basePrice:165, framedExtra:88,  sizes:['30×40 cm','50×70 cm'],              sp:[0,55],     img:'Images/padel fun.jpeg',              pos:'40% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:7,  name:'Point Break Views',    basePrice:220, framedExtra:100, sizes:['50×70 cm','70×100 cm'],             sp:[0,80],     img:'Images/point break views.jpeg',      pos:'62% 68%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:8,  name:'Sun Protection',       basePrice:170, framedExtra:90,  sizes:['30×40 cm','50×70 cm'],              sp:[0,55],     img:'Images/sun protection.jpeg',         pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:9,  name:'Sunset Surf',          basePrice:195, framedExtra:95,  sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,65,140], img:'Images/sunset surf.jpeg',            pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:10, name:'Switzerland Views',    basePrice:175, framedExtra:90,  sizes:['30×40 cm','50×70 cm'],              sp:[0,55],     img:'Images/switzerland views.jpeg',      pos:'28% 55%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:11, name:'Tokyo Nights',         basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/tokyo nights.jpeg',           pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:12, name:'Tokyo Street Walk',    basePrice:210, framedExtra:100, sizes:['30×40 cm','50×70 cm','70×100 cm'], sp:[0,70,150], img:'Images/tokyo street walk.jpeg',      pos:'50% 22%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:1,  name:'Iced Coffee',          basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/iced coffee.jpeg',            pos:'50% 60%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:2,  name:'J-Bay',                basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/jbay.jpeg',                   pos:'50% 72%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:3,  name:'MXCD Street Art',      basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/mxcd street art.jpeg',        pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:4,  name:'Nicaragua Beach Ride', basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/nicaragua beach ride.jpeg',   pos:'55% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:5,  name:'Oaxaca Vintage',       basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/oaxaca vintage.jpeg',         pos:'50% 78%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:6,  name:'Padel Fun',            basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/padel fun.jpeg',              pos:'40% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:7,  name:'Point Break Views',    basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/point break views.jpeg',      pos:'62% 68%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:8,  name:'Sun Protection',       basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/sun protection.jpeg',         pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:9,  name:'Sunset Surf',          basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/sunset surf.jpeg',            pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:10, name:'Switzerland Views',    basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/switzerland views.jpeg',      pos:'28% 55%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:11, name:'Tokyo Nights',         basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/tokyo nights.jpeg',           pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:12, name:'Tokyo Street Walk',    basePrice:65, sp:[0,20,30], fp:[50,60,60], sizes:['30×40 cm','50×70 cm','70×100 cm'], img:'Images/tokyo street walk.jpeg',      pos:'50% 22%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
 ];
 
 // shuffle
@@ -1611,7 +1613,7 @@ let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx =
 
 function price() {
   let p = cur.basePrice + cur.sp[sIdx];
-  if (fmt === 'framed') p += cur.framedExtra + frameData[frameType].extra;
+  if (fmt === 'framed') p += cur.fp[sIdx];
   return p;
 }
 
@@ -2001,17 +2003,17 @@ const _CART_KEY = 'ete_cart';
 const _CART_TTL = 24 * 60 * 60 * 1000;
 
 // ── MULTI-CURRENCY ──────────────────────────────────────────────────────────
-// All base prices are stored in EUR. On load we detect the visitor's currency
+// All base prices are stored in CHF. On load we detect the visitor's currency
 // via IP geolocation (ipapi.co) and fetch live rates (open.er-api.com).
 // Prices are displayed and charged in the detected currency.
 let _currency = 'EUR';
 let _xRates   = {};  // live EUR-base rates fetched on load
 
-// Fallback rates (EUR base) — updated periodically; used if API is unavailable
+// Fallback rates (CHF base) — updated periodically; used if API is unavailable
 const _xFallback = {
-  EUR:1, CHF:0.94, GBP:0.86, USD:1.09, CAD:1.48, AUD:1.65,
-  NOK:11.7, SEK:11.3, DKK:7.46, SGD:1.47, NZD:1.82, JPY:161,
-  AED:4.01, HKD:8.50, NZD:1.82
+  CHF:1.00, EUR:1.06, GBP:0.91, USD:1.16, CAD:1.57, AUD:1.75,
+  NOK:12.4, SEK:12.0, DKK:7.93, SGD:1.56, NZD:1.93, JPY:171,
+  AED:4.26, HKD:9.04
 };
 
 // Locale → currency fallback (used if IP geolocation fails)
@@ -2030,12 +2032,18 @@ const _localeCur = {
 // Zero-decimal currencies (Stripe uses integer amounts, not cents)
 const _zeroDecimal = new Set(['JPY','KRW','BIF','CLP','GNF','MGA','PYG','RWF','UGX','VND','VUV','XAF','XOF','XPF']);
 
-function _toLocal(eurAmt) {
+function _toLocal(chfAmt) {
   const rate = _xRates[_currency] ?? _xFallback[_currency] ?? 1;
-  return eurAmt * rate;
+  return chfAmt * rate;
 }
 
-// Format a EUR amount as the visitor's currency, 0 decimals (for product prices)
+// Convert a Prodigi EUR shipping amount to CHF (base currency)
+function _eurToBase(eurAmt) {
+  const eurRate = _xRates.EUR ?? _xFallback.EUR ?? 1.06;
+  return eurAmt / eurRate;
+}
+
+// Format a CHF amount as the visitor's currency, 0 decimals (for product prices)
 function _fmtP(eurAmt) {
   return new Intl.NumberFormat(navigator.language || 'en', {
     style: 'currency', currency: _currency,
@@ -2087,9 +2095,9 @@ async function _initCurrency() {
     }
   }
 
-  // 4. Fetch live exchange rates (EUR base)
+  // 4. Fetch live exchange rates (CHF base)
   try {
-    const r = await fetch('https://open.er-api.com/v6/latest/EUR');
+    const r = await fetch('https://open.er-api.com/v6/latest/CHF');
     const d = await r.json();
     if (d?.rates) _xRates = d.rates;
   } catch(e) { /* use fallback rates */ }
@@ -2272,16 +2280,16 @@ async function fetchShippingQuote() {
   const totalEl   = document.getElementById('cpTotal2');
 
   function applyShipping(cost) {
-    _shippingCost = cost;  // stored in EUR
-    const grandEur = Math.round((subtotal + cost) * 100) / 100;
+    _shippingCost = cost;  // stored in CHF (converted from Prodigi's EUR response)
+    const grandChf = Math.round((subtotal + cost) * 100) / 100;
     shipEl.textContent  = _fmtAmt(cost);
-    totalEl.textContent = _fmtAmt(grandEur);
-    btn.textContent     = 'Pay ' + _fmtAmt(grandEur);
+    totalEl.textContent = _fmtAmt(grandChf);
+    btn.textContent     = 'Pay ' + _fmtAmt(grandChf);
     btn.disabled        = false;
     btn.onclick         = placeOrder;
   }
 
-  // Free Standard shipping for orders ≥ €200 (compare in EUR)
+  // Free Standard shipping for orders ≥ CHF 200 (subtotal is in CHF)
   if (method === 'Standard' && subtotal >= 200) {
     applyShipping(0);
     return;
@@ -2309,7 +2317,7 @@ async function fetchShippingQuote() {
       btn.textContent = 'Retry'; btn.disabled = false; btn.onclick = fetchShippingQuote;
       return;
     }
-    applyShipping(data.shippingCost || 0);
+    applyShipping(data.shippingCost ? _eurToBase(data.shippingCost) : 0);
   } catch (e) {
     console.error('Shipping quote error:', e);
     shipEl.textContent = e.message || 'Error';
@@ -2359,11 +2367,11 @@ async function placeOrder() {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address'); return; }
   if (!_stripe || !_cardEl) { toast('Payment not ready — please wait'); return; }
 
-  const subtotalEur = cart.reduce((s, i) => s + (i.priceEur ?? i.price ?? 0) * i.qty, 0);
-  const totalEur    = Math.round((subtotalEur + _shippingCost) * 100) / 100;
-  const totalLocal  = _stripeAmt(totalEur);  // converted to visitor's currency
-  const btn         = document.getElementById('btnPlaceOrder');
-  const reset       = () => { btn.textContent = 'Pay ' + _fmtAmt(totalEur); btn.disabled = false; btn.onclick = placeOrder; };
+  const subtotalBase = cart.reduce((s, i) => s + (i.priceEur ?? i.price ?? 0) * i.qty, 0);
+  const totalBase    = Math.round((subtotalBase + _shippingCost) * 100) / 100;
+  const totalLocal   = _stripeAmt(totalBase);  // convert CHF → visitor's currency for Stripe
+  const btn          = document.getElementById('btnPlaceOrder');
+  const reset        = () => { btn.textContent = 'Pay ' + _fmtAmt(totalBase); btn.disabled = false; btn.onclick = placeOrder; };
   btn.textContent = 'Processing…'; btn.disabled = true;
   document.getElementById('cardError').style.display = 'none';
 
