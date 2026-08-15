@@ -1263,13 +1263,9 @@
             <div class="frame-colors" id="mountSwatches"></div>
             <div class="frame-desc" id="mountDesc"></div>
           </div>
-          <!-- Paper — same options as print -->
-          <div class="field-label" style="margin-bottom:12px;margin-top:24px;">Paper</div>
-          <div class="frame-types">
-            <button class="ftype-btn" id="framePaperHpr" onclick="setFramePaper('hpr')">Hahnemühle Rag</button>
-            <button class="ftype-btn" id="framePaperPap" onclick="setFramePaper('pap')">Lustre</button>
-          </div>
-          <div class="frame-desc" id="framePaperDesc"></div>
+          <!-- Paper — box frame always uses EMA -->
+          <div class="field-label" style="margin-bottom:8px;margin-top:24px;">Paper</div>
+          <div class="frame-desc">Enhanced Matte Art · 200gsm · Smooth matte · Archival giclée</div>
         </div>
       </div>
 
@@ -1630,7 +1626,6 @@ function setFmt(f, silent) {
   if (f === 'framed') {
     frameType = 'boxframe'; frameColorIdx = 0; mountColor = 'Snow White';
     renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
-    syncFramePaperButtons();
     applyFramePreview();
     prewarmFrameMockups('boxframe');
   } else {
@@ -1696,22 +1691,9 @@ function setPaper(p) {
     pap: '240gsm · Satin lustre · Archival giclée'
   };
   document.getElementById('paperDesc').textContent = descs[p] || '';
-  syncFramePaperButtons();
   updateDesc();
 }
-function syncFramePaperButtons() {
-  const descs = {
-    hpr: '308gsm · Cotton rag · Matte · Archival giclée',
-    pap: '240gsm · Satin lustre · Archival giclée'
-  };
-  const fhpr = document.getElementById('framePaperHpr');
-  const fpap = document.getElementById('framePaperPap');
-  const fpd  = document.getElementById('framePaperDesc');
-  if (fhpr) fhpr.classList.toggle('on', paperType === 'hpr');
-  if (fpap) fpap.classList.toggle('on', paperType === 'pap');
-  if (fpd)  fpd.textContent = descs[paperType] || '';
-}
-function setFramePaper(p) { setPaper(p); }
+function setFramePaper(p) { /* box frame paper is always EMA — no-op */ }
 
 const _PRINT_DESCS = {
   hpr: 'Giclée print on Hahnemühle Photo Rag 308gsm. Cotton rag · Matte · Archival inks, rated 100+ years.',
