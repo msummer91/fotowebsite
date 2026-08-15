@@ -2,10 +2,12 @@
 // API key lives in Vercel env var PRODIGI_API_KEY — never committed to code.
 //
 // Confirmed Prodigi SKUs used by this function:
-//   Print (Hahnemühle Photo Rag):  GLOBAL-HPR-12X16 / 20X28 / 28X40
-//   Classic Frame:                 GLOBAL-CFP-12X16 / 20X28 / 28X40
-//   Color attribute values:        Black, White, Natural, Antique Silver,
-//                                  Antique Gold, Dark Grey, Light Grey, Brown
+//   Hahnemühle Photo Rag (unframed): GLOBAL-HPR-A5 / A4 / A3 / A2 / A1 / A0
+//   Lustre Photo Paper (unframed):   GLOBAL-PAP-A5 / A4 / A3 / A2 / A1 / A0
+//   Box Frame with mount (framed):   GLOBAL-BOXM-A5 / A4 / A3 / A2 / A1 / A0
+//     EMA 200gsm · Acrylic glaze · 2.4mm mount · fulfilled UK/EU/US/AU
+//   Frame colour attribute:  Black | Natural | White
+//   Mount colour attribute:  Snow white | Black | Off-white
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
