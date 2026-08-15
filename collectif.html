@@ -1523,25 +1523,27 @@ function getOrderedProducts() {
 }
 
 // ── RENDER WORK GRID ──
-const ordered = getOrderedProducts();
-document.getElementById('workCount').textContent = ordered.length + ' works';
-
-const grid = document.getElementById('workGrid');
-ordered.forEach(p => {
-  const el = document.createElement('div');
-  el.className = 'w-item';
-  el.dataset.id = p.id;
-  el.innerHTML = `
-    <div class="w-img-wrap">
-      <img src="${p.img}" alt="${p.name}" loading="lazy" ${p.pos ? `style="object-position:${p.pos}"` : ''} />
-    </div>
-    <div class="w-caption">
-      <div class="w-name">${p.name}</div>
-      <div class="w-price">From ${_fmtP(p.basePrice)}</div>
-    </div>`;
-  el.addEventListener('click', () => openModal(p.id));
-  grid.appendChild(el);
-});
+// Defined as a function so it runs after _currency is initialised (avoids TDZ).
+function renderWorkGrid() {
+  const ordered = getOrderedProducts();
+  document.getElementById('workCount').textContent = ordered.length + ' works';
+  const grid = document.getElementById('workGrid');
+  ordered.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'w-item';
+    el.dataset.id = p.id;
+    el.innerHTML = `
+      <div class="w-img-wrap">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" ${p.pos ? `style="object-position:${p.pos}"` : ''} />
+      </div>
+      <div class="w-caption">
+        <div class="w-name">${p.name}</div>
+        <div class="w-price">From ${_fmtP(p.basePrice)}</div>
+      </div>`;
+    el.addEventListener('click', () => openModal(p.id));
+    grid.appendChild(el);
+  });
+}
 
 // ── FRAME DATA — Prodigi Box Frame (GLOBAL-BOXM) ──
 // Available colors: Black, White, Natural (Brown not offered by Prodigi)
@@ -2164,6 +2166,7 @@ function _updateAllPrices() {
 
 _initCurrency();
 _initLang();
+renderWorkGrid();
 
 function saveCart() {
   try { localStorage.setItem(_CART_KEY, JSON.stringify({ ts: Date.now(), items: cart })); } catch(e) {}
