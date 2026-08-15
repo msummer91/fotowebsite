@@ -2164,10 +2164,6 @@ function _updateAllPrices() {
   refreshCart();
 }
 
-_initCurrency();
-_initLang();
-renderWorkGrid();
-
 function saveCart() {
   try { localStorage.setItem(_CART_KEY, JSON.stringify({ ts: Date.now(), items: cart })); } catch(e) {}
 }
@@ -2181,7 +2177,6 @@ function loadCart() {
     refreshCart();
   } catch(e) {}
 }
-loadCart();
 
 // Open a specific photo if navigated here from another page (e.g. cart on index.html)
 (function() {
@@ -2522,6 +2517,12 @@ function closeMenu() {
   document.getElementById('hamburger').classList.remove('open');
   document.getElementById('mobileMenu').classList.remove('open');
 }
+
+// ── INIT ── called last so all let/const declarations above are initialised (avoids TDZ)
+_initCurrency();
+_initLang();
+loadCart();
+renderWorkGrid();
 </script>
 </body>
 </html>

@@ -2347,8 +2347,6 @@ function _updateAllPrices() {
   refreshCart();
 }
 
-_initCurrency();
-_initLang();
 function saveCart() {
   try { localStorage.setItem(_CART_KEY, JSON.stringify({ ts: Date.now(), items: cart })); } catch(e) {}
 }
@@ -2362,7 +2360,6 @@ function loadCart() {
     refreshCart();
   } catch(e) {}
 }
-loadCart();
 
 function addToCart() {
   if (!cur) return;
@@ -2697,6 +2694,11 @@ function closeMenu(){
   document.getElementById('hamburger').classList.remove('open');
   document.getElementById('mobileMenu').classList.remove('open');
 }
+
+// ── INIT ── called last so all let/const declarations above are initialised (avoids TDZ)
+_initCurrency();
+_initLang();
+loadCart();
 </script>
 </body>
 </html>
