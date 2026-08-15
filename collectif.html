@@ -1907,12 +1907,15 @@ function clearFramePreview() {
   rm.style.outline = '';
 }
 
+// Strip A-size prefix for display: 'A4 (21×30 cm)' → '21×30 cm', '50×70 cm' → '50×70 cm'
+function sizeLabel(s) { const m = s.match(/\(([^)]+)\)/); return m ? m[1] : s; }
+
 function renderSizes() {
   const el = document.getElementById('mSizes'); el.innerHTML = '';
   cur.sizes.forEach((s, i) => {
     const b = document.createElement('button');
     b.className = 'schip' + (i === 0 ? ' on' : '');
-    b.textContent = s;
+    b.textContent = sizeLabel(s);
     b.onclick = () => { sIdx = i; el.querySelectorAll('.schip').forEach((c, ci) => c.classList.toggle('on', ci === i)); updatePrice(); updateFrameSizeNote(); };
     el.appendChild(b);
   });
@@ -1926,7 +1929,9 @@ function updateFrameSizeNote() {
     const size  = cur?.sizes[sIdx];
     const img   = BOX_IMAGE_SIZES[size];
     const outer = BOX_OUTER_SIZES[size];
-    el.textContent = img ? `Image inside mount: ${img} · Overall frame: ${outer}` : '';
+    el.innerHTML = img
+      ? `Overall frame on wall: <strong>${outer}</strong><br>Actual print inside mount: <strong>${img}</strong>`
+      : '';
   } else {
     el.textContent = '';
   }
@@ -2207,7 +2212,9 @@ function refreshCart() {
   body.innerHTML = cart.map(i => {
     const imgSz   = i.fmt === 'framed' ? BOX_IMAGE_SIZES[i.size] : null;
     const outerSz = i.fmt === 'framed' ? BOX_OUTER_SIZES[i.size] : null;
-    const sizeLine = imgSz ? `${i.size} · Image ${imgSz} · Frame ${outerSz}` : i.size;
+    const sizeLine = imgSz
+      ? `${sizeLabel(i.size)} · Print ${imgSz} · Frame ${outerSz}`
+      : sizeLabel(i.size);
     const label = i.frameLabel || (i.paperType === 'pap' ? 'Lustre · Unframed' : 'Hahnemühle Rag · Unframed');
     const itemEur = (i.priceEur ?? i.price ?? 0) * i.qty;
     return `
