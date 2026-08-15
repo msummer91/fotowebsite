@@ -1744,9 +1744,8 @@ function renderMountColors() {
   if (md) md.textContent = mountColor;
 }
 function updateMountVisibility() {
-  // Mount option hidden for now — keep code, always hide
   const ms = document.getElementById('mountSection');
-  if (ms) ms.style.display = 'none';
+  if (ms) ms.style.display = (frameType === 'boxframe') ? '' : 'none';
 }
 
 function renderFrameTypes() {
@@ -1924,8 +1923,10 @@ function updateFrameSizeNote() {
   const el = document.getElementById('mFrameSizeNote');
   if (!el) return;
   if (fmt === 'framed') {
-    const outer = BOX_OUTER_SIZES[cur?.sizes[sIdx]];
-    el.textContent = outer ? `Outer frame incl. moulding: ${outer}` : '';
+    const size  = cur?.sizes[sIdx];
+    const img   = BOX_IMAGE_SIZES[size];
+    const outer = BOX_OUTER_SIZES[size];
+    el.textContent = img ? `Image inside mount: ${img} · Overall frame: ${outer}` : '';
   } else {
     el.textContent = '';
   }
@@ -2204,8 +2205,9 @@ function refreshCart() {
   const body = document.getElementById('cpBody');
   if (!cart.length) { body.innerHTML = '<div class="cp-empty"><p>Nothing yet</p><p>Add a print to begin your collection.</p></div>'; return; }
   body.innerHTML = cart.map(i => {
+    const imgSz   = i.fmt === 'framed' ? BOX_IMAGE_SIZES[i.size] : null;
     const outerSz = i.fmt === 'framed' ? BOX_OUTER_SIZES[i.size] : null;
-    const sizeLine = outerSz ? `${i.size} print · Frame ${outerSz}` : i.size;
+    const sizeLine = imgSz ? `${i.size} · Image ${imgSz} · Frame ${outerSz}` : i.size;
     const label = i.frameLabel || (i.paperType === 'pap' ? 'Lustre · Unframed' : 'Hahnemühle Rag · Unframed');
     const itemEur = (i.priceEur ?? i.price ?? 0) * i.qty;
     return `
@@ -2264,6 +2266,15 @@ const BOX_OUTER_SIZES = {
   'A2 (42×59 cm)': '46×63 cm',
   '50×70 cm':      '54×74 cm',
   '70×100 cm':     '74×104 cm',
+};
+// Image size inside the mount window (glaze minus Prodigi mount: 1" for ≤10", 1.5" for ≤14", 2" for ≥16")
+const BOX_IMAGE_SIZES = {
+  'A5 (15×21 cm)': '9.7×15.9 cm',
+  'A4 (21×30 cm)': '13.4×22.1 cm',
+  'A3 (30×42 cm)': '19.5×31.8 cm',
+  'A2 (42×59 cm)': '31.8×49.2 cm',
+  '50×70 cm':      '39.8×59.8 cm',
+  '70×100 cm':     '59.8×89.8 cm',
 };
 
 // ── STRIPE ──
