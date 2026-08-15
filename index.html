@@ -1626,23 +1626,33 @@
 
 <script>
 // ── PRODUCTS ──
-// Prices in CHF (base currency). sp = size premium [A5, A4, A3, A2, A1, A0].
-// fp = framing premium per size.
-// Unframed: 40 / 55 / 65 / 80 / 85 / 95. Framed: 80 / 100 / 115 / 135 / 145 / 155.
+// All prices CHF · 70% net margin: Sell = (Prodigi_CHF + 0.30) / 0.271
+// Unframed: Prodigi NL→CH Standard (EUR×0.95 CHF, source: prodigi-prints-ch.csv)
+//   HPR  A5–A0: €(4+9.15) (6+9.15) (12+10.25) (18+10.25) (34+16.65) (61+16.65)
+//   PAP  A5–A0: €(4+9.15) (5+9.15) (7+10.25)  (10+10.25) (14+16.65) (26+16.65)
+// Framed: Prodigi NL→DE Standard (CH shipping not in CSV — actual CH prices will be higher)
+//   BOXM A5–A0: €(30+9.64) (35+9.64) (45+9.64) (58+9.64) (80+12.95) (120+68.00)
 const ALL_SIZES = ['A5 (15×21 cm)', 'A4 (21×30 cm)', 'A3 (30×42 cm)', 'A2 (42×59 cm)', 'A1 (59×84 cm)', 'A0 (84×119 cm)'];
+const PRINT_PRICES = {
+  hpr: [47, 54, 79, 100, 179, 273],  // GLOBAL-HPR-A5→A0, 308gsm Hahnemühle Photo Rag
+  pap: [47, 51, 62, 72, 109, 151],   // GLOBAL-PAP-A5→A0, 240gsm Lustre Photo Paper
+};
+const FRAME_PRICES = [140, 158, 193, 238, 327, 660]; // GLOBAL-BOXM-A5→A0, EMA 200gsm, Snow White mount
+const FROM_PRICE   = 47; // cheapest option CHF (Lustre A5 or HPR A5)
+
 const products = [
-  { id:1,  name:'Iced Coffee',          basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/iced coffee.jpeg',            pos:'50% 60%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:2,  name:'J-Bay',                basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/jbay.jpeg',                   pos:'50% 72%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:3,  name:'MXCD Street Art',      basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/mxcd street art.jpeg',        pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:4,  name:'Nicaragua Beach Ride', basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/nicaragua beach ride.jpeg',   pos:'55% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:5,  name:'Oaxaca Vintage',       basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/oaxaca vintage.jpeg',         pos:'50% 78%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:6,  name:'Padel Fun',            basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/padel fun.jpeg',              pos:'40% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:7,  name:'Point Break Views',    basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/point break views.jpeg',      pos:'62% 68%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:8,  name:'Sun Protection',       basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/sun protection.jpeg',         pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:9,  name:'Sunset Surf',          basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/sunset surf.jpeg',            pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:10, name:'Switzerland Views',    basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/switzerland views.jpeg',      pos:'28% 55%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:11, name:'Tokyo Nights',         basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/tokyo nights.jpeg',           pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:12, name:'Tokyo Street Walk',    basePrice:48, sp:[0,7,32,53,129,245], fp:[119,130,170,195,238,333], sizes:ALL_SIZES, img:'Images/tokyo street walk.jpeg',      pos:'50% 22%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:1,  name:'Iced Coffee',          sizes:ALL_SIZES, img:'Images/iced coffee.jpeg',            pos:'50% 60%' },
+  { id:2,  name:'J-Bay',                sizes:ALL_SIZES, img:'Images/jbay.jpeg',                   pos:'50% 72%' },
+  { id:3,  name:'MXCD Street Art',      sizes:ALL_SIZES, img:'Images/mxcd street art.jpeg',        pos:'50% 50%' },
+  { id:4,  name:'Nicaragua Beach Ride', sizes:ALL_SIZES, img:'Images/nicaragua beach ride.jpeg',   pos:'55% 65%' },
+  { id:5,  name:'Oaxaca Vintage',       sizes:ALL_SIZES, img:'Images/oaxaca vintage.jpeg',         pos:'50% 78%' },
+  { id:6,  name:'Padel Fun',            sizes:ALL_SIZES, img:'Images/padel fun.jpeg',              pos:'40% 65%' },
+  { id:7,  name:'Point Break Views',    sizes:ALL_SIZES, img:'Images/point break views.jpeg',      pos:'62% 68%' },
+  { id:8,  name:'Sun Protection',       sizes:ALL_SIZES, img:'Images/sun protection.jpeg',         pos:'50% 45%' },
+  { id:9,  name:'Sunset Surf',          sizes:ALL_SIZES, img:'Images/sunset surf.jpeg',            pos:'50% 50%' },
+  { id:10, name:'Switzerland Views',    sizes:ALL_SIZES, img:'Images/switzerland views.jpeg',      pos:'28% 55%' },
+  { id:11, name:'Tokyo Nights',         sizes:ALL_SIZES, img:'Images/tokyo nights.jpeg',           pos:'50% 45%' },
+  { id:12, name:'Tokyo Street Walk',    sizes:ALL_SIZES, img:'Images/tokyo street walk.jpeg',      pos:'50% 22%' },
 ];
 
 // shuffle
@@ -1658,7 +1668,7 @@ shuffle(products).forEach(p => {
     <img src="${p.img}" alt="${p.name}" loading="lazy" />
     <div class="g-hover">
       <span class="g-hover-name">${p.name}</span>
-      <span class="g-hover-price">From CHF ${p.basePrice}</span>
+      <span class="g-hover-price">From CHF ${FROM_PRICE}</span>
       <span class="g-hover-cta">View print</span>
     </div>`;
   el.addEventListener('click', () => openModal(p.id));
@@ -1703,9 +1713,8 @@ const mountColorOptions = [
 let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx = 0, mountColor = 'Snow White', paperType = 'hpr', _modalOpen = false;
 
 function price() {
-  let p = cur.basePrice + cur.sp[sIdx];
-  if (fmt === 'framed') p += cur.fp[sIdx];
-  return p;
+  if (fmt === 'framed') return FRAME_PRICES[sIdx];
+  return (PRINT_PRICES[paperType] || PRINT_PRICES.hpr)[sIdx];
 }
 
 function setModalView() {
@@ -2315,7 +2324,7 @@ function _updateAllPrices() {
     const p = products.find(x => x.id === +el.dataset.id);
     if (p) {
       const span = el.querySelector('.g-hover-price');
-      if (span) span.textContent = 'From ' + _fmtP(p.basePrice);
+      if (span) span.textContent = 'From ' + _fmtP(FROM_PRICE);
     }
   });
   // Modal price (if open)
@@ -2343,7 +2352,7 @@ function loadCart() {
 function addToCart() {
   if (!cur) return;
   const mc = (fmt === 'framed' && frameType === 'boxframe') ? mountColor : '';
-  const frameKey = fmt === 'framed' ? `-${frameType}-${frameColorIdx}-${mc}-${paperType}` : '';
+  const frameKey = fmt === 'framed' ? `-${frameType}-${frameColorIdx}-${mc}` : '';
   const paperKey = fmt === 'print' ? `-${paperType}` : '';
   const key = `${cur.id}-${cur.sizes[sIdx]}-${fmt}${frameKey}${paperKey}`;
   const ex = cart.find(i => i.key === key);
@@ -2353,7 +2362,7 @@ function addToCart() {
     if (fmt === 'framed') {
       frameLabel = `${frameData[frameType].label} – ${frameData[frameType].colors[frameColorIdx].name}`;
       if (frameType === 'boxframe') frameLabel += ` · Mount: ${mountColor}`;
-      frameLabel += ` · ${paperType === 'hpr' ? 'Hahnemühle Rag' : 'Lustre'}`;
+      frameLabel += ' · Enhanced Matte Art';
     }
     cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, paperType, frameLabel, priceEur: price(), qty: 1, img: cur.img });
   }
