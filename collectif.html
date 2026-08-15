@@ -1005,6 +1005,45 @@
     #stripeCardEl.focused { border-color: var(--dark); }
     #cardError { color: #c0392b; font-size: 12px; margin-top: 6px; display: none; }
     .cf-section-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); padding: 14px 0 10px; border-top: 1px solid var(--border); margin-top: 4px; }
+
+    /* ── GLOBE / LOCALE DROPDOWN ── */
+    .locale-wrap { position: relative; }
+    .locale-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: none; border: none; cursor: pointer;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+      color: var(--dark); padding: 4px 2px;
+      transition: color 0.2s; font-family: inherit;
+    }
+    .locale-btn:hover { color: var(--crimson); }
+    .locale-dropdown {
+      position: absolute; top: calc(100% + 10px); right: 0;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 6px; padding: 14px 16px;
+      min-width: 150px; z-index: 600;
+      opacity: 0; pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.09);
+    }
+    .locale-dropdown.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .locale-section-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #aaa; margin-bottom: 7px;
+    }
+    .locale-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
+    .locale-row button {
+      background: none; border: none; cursor: pointer;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+      color: #888; padding: 3px 7px; border-radius: 3px;
+      transition: color 0.15s, background 0.15s; font-family: inherit;
+    }
+    .locale-row button:hover { color: var(--dark); background: #f5f5f5; }
+    .locale-row button.active { color: var(--dark); background: #efefef; }
+    .locale-sep { color: #ccc; font-size: 10px; line-height: 1; }
+    .locale-divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+    .foot-locale { display: flex; align-items: center; gap: 12px; }
+    .foot-locale .locale-dropdown { top: auto; bottom: calc(100% + 10px); }
   </style>
 </head>
 <script src="https://js.stripe.com/v3/" async></script>
@@ -1251,10 +1290,10 @@
 
       <div>
         <div class="modal-price" id="mPrice"></div>
-        <div class="modal-price-note">incl. VAT · free Standard shipping over €200</div>
+        <div class="modal-price-note" id="mPriceNote">incl. VAT · Free shipping on orders over CHF 200</div>
       </div>
 
-      <button class="btn-add" onclick="addToCart()">Add to selection</button>
+      <button class="btn-add" id="btnAdd" onclick="addToCart()">Add to selection</button>
       <div class="modal-desc-text" id="mDesc"></div>
 
       <!-- Room preview — scroll down to see it on the wall -->
@@ -1303,7 +1342,7 @@
     <a href="collectif.html" class="active">Collectif</a>
     <a href="index.html#about">About</a>
   </nav>
-  <div style="display:flex;align-items:center;gap:20px;">
+  <div style="display:flex;align-items:center;gap:18px;">
     <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -1314,6 +1353,36 @@
         <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
       </svg>
     </a>
+    <!-- Globe / locale selector -->
+    <div class="locale-wrap" id="localeWrapHeader">
+      <button class="locale-btn" onclick="toggleLocaleDropdown('header')" aria-label="Language &amp; Currency">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+        </svg>
+        <span class="locale-btn-label">EN</span>
+      </button>
+      <div class="locale-dropdown" id="localeDropdown-header">
+        <div class="locale-section-label locale-label-lang">Language</div>
+        <div class="locale-row">
+          <button data-lang="en" onclick="setLang('en')">EN</button>
+          <span class="locale-sep">·</span>
+          <button data-lang="de" onclick="setLang('de')">DE</button>
+        </div>
+        <hr class="locale-divider">
+        <div class="locale-section-label locale-label-cur">Currency</div>
+        <div class="locale-row">
+          <button data-cur="EUR" onclick="setCurrency('EUR');closeLocaleDropdowns()">EUR</button>
+          <span class="locale-sep">·</span>
+          <button data-cur="CHF" onclick="setCurrency('CHF');closeLocaleDropdowns()">CHF</button>
+          <span class="locale-sep">·</span>
+          <button data-cur="GBP" onclick="setCurrency('GBP');closeLocaleDropdowns()">GBP</button>
+          <span class="locale-sep">·</span>
+          <button data-cur="USD" onclick="setCurrency('USD');closeLocaleDropdowns()">USD</button>
+        </div>
+      </div>
+    </div>
     <button class="cart-trigger" onclick="openCart()">
       <svg width="17" height="15" viewBox="0 0 17 15" fill="none">
         <path d="M1 1h2l2.2 8h8L15 3H5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1328,8 +1397,8 @@
 <!-- MOBILE DROPDOWN MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="collectif.html" onclick="toggleMenu()">Collectif</a>
-  <a href="index.html#about" onclick="toggleMenu()">About</a>
-  <a href="mailto:hello@etecollectif.com" onclick="toggleMenu()">Contact</a>
+  <a href="index.html#about" onclick="toggleMenu()" data-i18n="nav_about">About</a>
+  <a href="mailto:hello@etecollectif.com" onclick="toggleMenu()" data-i18n="nav_contact">Contact</a>
   <a href="https://instagram.com/etecollectif" target="_blank" rel="noopener" onclick="toggleMenu()">Instagram</a>
 </div>
 
@@ -1368,30 +1437,61 @@
       </a>
     </li>
   </ul>
-  <span class="foot-copy">© 2026 été collectif</span>
+  <div class="foot-locale">
+    <div class="locale-wrap" id="localeWrapFooter">
+      <button class="locale-btn" onclick="toggleLocaleDropdown('footer')" aria-label="Language &amp; Currency">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+        </svg>
+        <span class="locale-btn-label">EN</span>
+      </button>
+      <div class="locale-dropdown" id="localeDropdown-footer">
+        <div class="locale-section-label locale-label-lang">Language</div>
+        <div class="locale-row">
+          <button data-lang="en" onclick="setLang('en')">EN</button>
+          <span class="locale-sep">·</span>
+          <button data-lang="de" onclick="setLang('de')">DE</button>
+        </div>
+        <hr class="locale-divider">
+        <div class="locale-section-label locale-label-cur">Currency</div>
+        <div class="locale-row">
+          <button data-cur="EUR" onclick="setCurrency('EUR');closeLocaleDropdowns()">EUR</button>
+          <span class="locale-sep">·</span>
+          <button data-cur="CHF" onclick="setCurrency('CHF');closeLocaleDropdowns()">CHF</button>
+          <span class="locale-sep">·</span>
+          <button data-cur="GBP" onclick="setCurrency('GBP');closeLocaleDropdowns()">GBP</button>
+          <span class="locale-sep">·</span>
+          <button data-cur="USD" onclick="setCurrency('USD');closeLocaleDropdowns()">USD</button>
+        </div>
+      </div>
+    </div>
+    <span class="foot-copy">© 2026 été collectif</span>
+  </div>
 </footer>
 
 <div class="toast" id="toast"></div>
 
 <script>
 // ── PRODUCTS ──
-// Prices in CHF (base currency). sp = size premium [A5, A4, 30×40, 50×70, 70×100].
+// Prices in CHF (base currency). sp = size premium [A5, A4, A3, A2, 50×70, 70×100].
 // fp = framing premium per size.
-// Unframed: 40 / 55 / 65 / 85 / 95. Framed: 80 / 100 / 115 / 145 / 155.
-const ALL_SIZES = ['A5 (15×21 cm)', 'A4 (21×30 cm)', '30×40 cm', '50×70 cm', '70×100 cm'];
+// Unframed: 40 / 55 / 65 / 80 / 85 / 95. Framed: 80 / 100 / 115 / 135 / 145 / 155.
+const ALL_SIZES = ['A5 (15×21 cm)', 'A4 (21×30 cm)', 'A3 (30×42 cm)', 'A2 (42×59 cm)', '50×70 cm', '70×100 cm'];
 const products = [
-  { id:1,  name:'Iced Coffee',          basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/iced coffee.jpeg',            pos:'50% 60%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:2,  name:'J-Bay',                basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/jbay.jpeg',                   pos:'50% 72%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:3,  name:'MXCD Street Art',      basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/mxcd street art.jpeg',        pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:4,  name:'Nicaragua Beach Ride', basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/nicaragua beach ride.jpeg',   pos:'55% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:5,  name:'Oaxaca Vintage',       basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/oaxaca vintage.jpeg',         pos:'50% 78%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:6,  name:'Padel Fun',            basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/padel fun.jpeg',              pos:'40% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:7,  name:'Point Break Views',    basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/point break views.jpeg',      pos:'62% 68%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:8,  name:'Sun Protection',       basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/sun protection.jpeg',         pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:9,  name:'Sunset Surf',          basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/sunset surf.jpeg',            pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:10, name:'Switzerland Views',    basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/switzerland views.jpeg',      pos:'28% 55%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:11, name:'Tokyo Nights',         basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/tokyo nights.jpeg',           pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
-  { id:12, name:'Tokyo Street Walk',    basePrice:40, sp:[0,15,25,45,55], fp:[40,45,50,60,60], sizes:ALL_SIZES, img:'Images/tokyo street walk.jpeg',      pos:'50% 22%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:1,  name:'Iced Coffee',          basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/iced coffee.jpeg',            pos:'50% 60%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:2,  name:'J-Bay',                basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/jbay.jpeg',                   pos:'50% 72%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:3,  name:'MXCD Street Art',      basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/mxcd street art.jpeg',        pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:4,  name:'Nicaragua Beach Ride', basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/nicaragua beach ride.jpeg',   pos:'55% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:5,  name:'Oaxaca Vintage',       basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/oaxaca vintage.jpeg',         pos:'50% 78%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:6,  name:'Padel Fun',            basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/padel fun.jpeg',              pos:'40% 65%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:7,  name:'Point Break Views',    basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/point break views.jpeg',      pos:'62% 68%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:8,  name:'Sun Protection',       basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/sun protection.jpeg',         pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:9,  name:'Sunset Surf',          basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/sunset surf.jpeg',            pos:'50% 50%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:10, name:'Switzerland Views',    basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/switzerland views.jpeg',      pos:'28% 55%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:11, name:'Tokyo Nights',         basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/tokyo nights.jpeg',           pos:'50% 45%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
+  { id:12, name:'Tokyo Street Walk',    basePrice:40, sp:[0,15,25,40,45,55], fp:[40,45,50,55,60,60], sizes:ALL_SIZES, img:'Images/tokyo street walk.jpeg',      pos:'50% 22%', desc:'Giclée print on Hahnemühle Photo Rag 308gsm. Archival inks, rated 100+ years.' },
 ];
 
 // ── FIXED RANDOM ORDER (stable per session, new each visit) ──
@@ -1482,6 +1582,8 @@ function setModalView() {
 
 
 function openModal(id) {
+  closeMenu(); // collapse hamburger if open
+  closeLocaleDropdowns();
   cur = products.find(p => p.id === id);
   fmt = 'print'; sIdx = 0; frameType = 'boxframe'; frameColorIdx = 0; mountColor = 'Snow White'; paperType = 'hpr';
   const img = document.getElementById('mImg');
@@ -1908,8 +2010,108 @@ function _stripeAmt(eurAmt) {
 function setCurrency(code) {
   _currency = code;
   try { localStorage.setItem('ete_currency', code); } catch(e) {}
+  document.querySelectorAll('[data-cur]').forEach(b => b.classList.toggle('active', b.dataset.cur === code));
   _updateAllPrices();
 }
+
+// ── LANGUAGE / LOCALE ──
+let _lang = 'en';
+const _i18n = {
+  en: {
+    nav_about: 'About', nav_contact: 'Contact',
+    about_sup: 'About',
+    about_h: 'We photograph the feeling of being alive in the world.',
+    about_p1: 'We photograph the daily worlds, hustle, tranquility, people, nature, sports and what we love — living on this planet.',
+    about_p2: 'été collectif was born out of the idea to share what we see with our eyes, captured through a lens (analog to digital).',
+    fmt_print: 'Print — Unframed', fmt_framed: 'Framed',
+    paper_hpr: 'Hahnemühle Rag', paper_pap: 'Lustre',
+    add_to_cart: 'Add to selection',
+    price_note: (amt) => `incl. VAT · Free shipping on orders over ${amt}`,
+    cart_title: 'Your selection',
+    cart_empty: 'Nothing yet',
+    cart_empty_sub: 'Add a print to begin your collection.',
+    checkout: 'Checkout',
+    vat_note: 'VAT included where applicable. Shipping calculated at checkout.',
+    lang_label: 'Language', cur_label: 'Currency',
+    see_on_wall: 'See it on your wall',
+    frame_style: 'Frame style', colour: 'Colour', mount: 'Mount', paper: 'Paper', size: 'Size', format: 'Format',
+  },
+  de: {
+    nav_about: 'Über uns', nav_contact: 'Kontakt',
+    about_sup: 'Über uns',
+    about_h: 'Wir fotografieren das Gefühl, lebendig auf der Welt zu sein.',
+    about_p1: 'Wir fotografieren Alltag, Trubel, Stille, Menschen, Natur, Sport und alles, was wir lieben — das Leben auf diesem Planeten.',
+    about_p2: 'été collectif entstand aus der Idee, das zu teilen, was wir sehen – eingefangen durch eine Linse (analog bis digital).',
+    fmt_print: 'Print — Ungerahmt', fmt_framed: 'Gerahmt',
+    paper_hpr: 'Hahnemühle Rag', paper_pap: 'Lustre',
+    add_to_cart: 'Zur Auswahl',
+    price_note: (amt) => `inkl. MwSt. · Gratisversand ab ${amt}`,
+    cart_title: 'Deine Auswahl',
+    cart_empty: 'Noch nichts',
+    cart_empty_sub: 'Füge einen Druck hinzu, um deine Kollektion zu starten.',
+    checkout: 'Zur Kasse',
+    vat_note: 'MwSt. inkl. wo anwendbar. Versand wird beim Checkout berechnet.',
+    lang_label: 'Sprache', cur_label: 'Währung',
+    see_on_wall: 'Auf deiner Wand',
+    frame_style: 'Rahmenstil', colour: 'Farbe', mount: 'Passepartout', paper: 'Papier', size: 'Grösse', format: 'Format',
+  }
+};
+function t(key) { return (_i18n[_lang] || _i18n.en)[key] || key; }
+
+function setLang(code) {
+  _lang = code;
+  try { localStorage.setItem('ete_lang', code); } catch(e) {}
+  applyTranslations();
+  document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === code));
+  document.querySelectorAll('.locale-btn-label').forEach(el => el.textContent = code.toUpperCase());
+  closeLocaleDropdowns();
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (_i18n.en[k] !== undefined) el.textContent = t(k);
+  });
+  const tabPrint = document.getElementById('tabPrint');
+  if (tabPrint) tabPrint.textContent = t('fmt_print');
+  const tabFramed = document.getElementById('tabFramed');
+  if (tabFramed) tabFramed.textContent = t('fmt_framed');
+  const btnAdd = document.getElementById('btnAdd');
+  if (btnAdd) btnAdd.textContent = t('add_to_cart');
+  const pn = document.getElementById('mPriceNote');
+  if (pn) pn.textContent = t('price_note')(_fmtP(200));
+  document.querySelectorAll('.locale-label-lang').forEach(el => el.textContent = t('lang_label'));
+  document.querySelectorAll('.locale-label-cur').forEach(el => el.textContent = t('cur_label'));
+  refreshCart();
+}
+
+function _initLang() {
+  try {
+    const saved = localStorage.getItem('ete_lang');
+    if (saved === 'de' || saved === 'en') _lang = saved;
+    else {
+      const loc = navigator.language || '';
+      if (loc.startsWith('de')) _lang = 'de';
+    }
+  } catch(e) {}
+  document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === _lang));
+  document.querySelectorAll('.locale-btn-label').forEach(el => el.textContent = _lang.toUpperCase());
+  applyTranslations();
+}
+
+function toggleLocaleDropdown(id) {
+  const dd = document.getElementById('localeDropdown-' + id);
+  if (!dd) return;
+  const wasOpen = dd.classList.contains('open');
+  closeLocaleDropdowns();
+  if (!wasOpen) dd.classList.add('open');
+}
+function closeLocaleDropdowns() {
+  document.querySelectorAll('.locale-dropdown').forEach(d => d.classList.remove('open'));
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.locale-wrap')) closeLocaleDropdowns();
+});
 
 async function _initCurrency() {
   // 1. Honour saved user preference
@@ -1940,14 +2142,13 @@ async function _initCurrency() {
 }
 
 function _updateAllPrices() {
-  // Active currency button
-  document.querySelectorAll('.cur-picker [data-cur]').forEach(btn => {
+  document.querySelectorAll('[data-cur]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cur === _currency);
     btn.classList.toggle('cur-active', btn.dataset.cur === _currency);
   });
-  // Free-shipping threshold note
   const shipThresh = _fmtP(200);
   document.querySelectorAll('.modal-price-note').forEach(el => {
-    el.textContent = 'incl. VAT · free Standard shipping over ' + shipThresh;
+    el.textContent = (typeof t === 'function') ? t('price_note')(shipThresh) : `incl. VAT · Free shipping on orders over ${shipThresh}`;
   });
   // Work grid prices
   document.querySelectorAll('.w-item[data-id]').forEach(el => {
@@ -1962,6 +2163,7 @@ function _updateAllPrices() {
 }
 
 _initCurrency();
+_initLang();
 
 function saveCart() {
   try { localStorage.setItem(_CART_KEY, JSON.stringify({ ts: Date.now(), items: cart })); } catch(e) {}
@@ -2035,29 +2237,28 @@ function closeCart() { document.getElementById('cartPanel').classList.remove('on
 function openFromCart(id) { closeCart(); openModal(id); }
 
 // ── PRODIGI CHECKOUT ──
-// Confirmed SKUs from prodigi.com/products catalogue (2025):
-//   Hahnemühle Photo Rag (GLOBAL-HPR): 12X16=30×40cm, 20X28=50×70cm, 28X40=70×100cm
-//   Classic Frame (GLOBAL-CFP):         12X16=30×40cm, 20X28=50×70cm, 28X40=70×100cm
-//   Frame colors attribute:  Black, White, Natural, Antique Silver, Antique Gold, Dark Grey
 const SKU_MAP = {
   hpr: { // Hahnemühle Photo Rag — matte cotton, 308gsm
     'A5 (15×21 cm)': 'GLOBAL-HPR-A5',
     'A4 (21×30 cm)': 'GLOBAL-HPR-A4',
-    '30×40 cm':      'GLOBAL-HPR-12X16',
+    'A3 (30×42 cm)': 'GLOBAL-HPR-A3',
+    'A2 (42×59 cm)': 'GLOBAL-HPR-A2',
     '50×70 cm':      'GLOBAL-HPR-20X28',
     '70×100 cm':     'GLOBAL-HPR-28X40',
   },
   pap: { // Lustre Photo Paper — satin finish, 240gsm
     'A5 (15×21 cm)': 'GLOBAL-PAP-A5',
     'A4 (21×30 cm)': 'GLOBAL-PAP-A4',
-    '30×40 cm':      'GLOBAL-PAP-12X16',
+    'A3 (30×42 cm)': 'GLOBAL-PAP-A3',
+    'A2 (42×59 cm)': 'GLOBAL-PAP-A2',
     '50×70 cm':      'GLOBAL-PAP-20X28',
     '70×100 cm':     'GLOBAL-PAP-28X40',
   },
   framed: { // Box Frame with mount (GLOBAL-BOXM) — Black/White/Natural, 20mm face width
-    'A5 (15×21 cm)': 'GLOBAL-BOXM-A5',  // verify A5 box frame SKU in Prodigi dashboard
-    'A4 (21×30 cm)': 'GLOBAL-BOXM-A4',  // verify A4 box frame SKU in Prodigi dashboard
-    '30×40 cm':      'GLOBAL-BOXM-12X16',
+    'A5 (15×21 cm)': 'GLOBAL-BOXM-A5',
+    'A4 (21×30 cm)': 'GLOBAL-BOXM-A4',
+    'A3 (30×42 cm)': 'GLOBAL-BOXM-A3',
+    'A2 (42×59 cm)': 'GLOBAL-BOXM-A2',
     '50×70 cm':      'GLOBAL-BOXM-20X28',
     '70×100 cm':     'GLOBAL-BOXM-28X40',
   }
@@ -2070,7 +2271,8 @@ const MOUNT_COLOR_ATTR = { 'Snow White': 'Snow white', 'Black': 'Black', 'Off-wh
 const BOX_OUTER_SIZES = {
   'A5 (15×21 cm)': '19×25 cm',
   'A4 (21×30 cm)': '25×34 cm',
-  '30×40 cm':      '34×44 cm',
+  'A3 (30×42 cm)': '34×46 cm',
+  'A2 (42×59 cm)': '46×63 cm',
   '50×70 cm':      '54×74 cm',
   '70×100 cm':     '74×104 cm',
 };
@@ -2189,9 +2391,9 @@ function getAssetUrl(imgPath) {
   return window.location.origin + '/' + printPath.split('/').map(encodeURIComponent).join('/');
 }
 function getOrderSku(item) {
-  if (item.fmt === 'framed') return SKU_MAP.framed[item.size] || 'GLOBAL-CFP-12X16';
+  if (item.fmt === 'framed') return SKU_MAP.framed[item.size] || 'GLOBAL-BOXM-A4';
   const paperKey = item.paperType || 'hpr';
-  return (SKU_MAP[paperKey] || SKU_MAP.hpr)[item.size] || 'GLOBAL-HPR-12X16';
+  return (SKU_MAP[paperKey] || SKU_MAP.hpr)[item.size] || 'GLOBAL-HPR-A4';
 }
 function getOrderAttributes(item) {
   if (item.fmt !== 'framed' || !item.frameLabel) return {};
