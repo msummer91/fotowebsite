@@ -1548,11 +1548,11 @@ const frameData = {
   boxframe: {
     label: 'Box Frame',
     extra: 20,
-    desc: 'Deep shadow-box frame · Mounted print · UV Perspex glass · Ships ready to hang.',
+    desc: 'Deep shadow-box frame · 20mm face · 33mm depth · Mounted print · UV Perspex glass · Ships ready to hang.',
     colors: [
       { name: 'Black',   hex: '#1c1c1c' },
       { name: 'White',   hex: '#f2f0ed', border: '#ccc' },
-      { name: 'Natural', hex: '#d9bb8f', border: '#c8a87a' },
+      { name: 'Natural', hex: '#d4c4a3', border: '#bfaf90' },
     ]
   },
   // classic frame hidden — not currently offered
@@ -2276,7 +2276,7 @@ const SKU_MAP = {
 const FRAME_COLOR_ATTR = { 'Black': 'Black', 'White': 'White', 'Natural': 'Natural' };
 // Prodigi box frame mount color → API attribute value (verify 'mountColour' key with Prodigi docs)
 const MOUNT_COLOR_ATTR = { 'Snow White': 'Snow white', 'Black': 'Black', 'Off-white': 'Off-white' };
-// Outer frame size = glaze size + 2×20mm face width on each side
+// Outer frame size = image/print size + 2×20mm face width (confirmed Prodigi spec)
 const BOX_OUTER_SIZES = {
   'A5 (15×21 cm)':  '19×25 cm',
   'A4 (21×30 cm)':  '25×34 cm',
