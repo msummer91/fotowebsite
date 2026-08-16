@@ -1468,13 +1468,13 @@
 //   PAP  A5–A0: €(4+9.15) (5+9.15) (7+10.25)  (10+10.25) (14+16.65) (26+16.65)
 // Framed: Prodigi NL→DE Standard (CH shipping not in CSV — actual CH prices will be higher)
 //   BOXM A5–A1: €(30+9.64) (35+9.64) (45+9.64) (58+9.64) (80+12.95) — A0 not offered (CH shipping cost unknown)
-const ALL_SIZES = ['A5 (15×21 cm)', 'A4 (21×30 cm)', 'A3 (30×42 cm)', 'A2 (42×59 cm)', 'A1 (59×84 cm)', 'A0 (84×119 cm)'];
+const ALL_SIZES = ['Postcard (10×15 cm)', 'A5 (15×21 cm)', 'A4 (21×30 cm)', 'A3 (30×42 cm)', 'A2 (42×59 cm)', 'A1 (59×84 cm)', 'A0 (84×119 cm)'];
 const PRINT_PRICES = {
-  hpr: [47, 54, 79, 100, 179, 273], // GLOBAL-HPR-A5→A0, 308gsm Hahnemühle Photo Rag
-  pap: [47, 51, 62, 72, 109, 151], // GLOBAL-PAP-A5→A0, 240gsm Lustre Photo Paper
+  hpr: [44, 47, 54, 79, 100, 179, 273], // GLOBAL-HPR-4X6→A0, 308gsm Hahnemühle Photo Rag
+  pap: [44, 47, 51, 62, 72, 109, 151], // GLOBAL-PAP-4X6→A0, 240gsm Lustre Photo Paper
 };
 const FRAME_PRICES = [140, 158, 193, 238, 327];    // GLOBAL-BOXM-A5→A1, EMA 200gsm, Snow White mount (A0 not offered)
-const FROM_PRICE   = 47; // cheapest option CHF (Lustre A5 or HPR A5)
+const FROM_PRICE   = 44; // cheapest option CHF (Postcard 10×15 cm)
 
 const products = [
   { id:1,  name:'Iced Coffee',          sizes:ALL_SIZES, img:'Images/iced coffee.jpeg',            pos:'50% 60%' },
@@ -1569,7 +1569,7 @@ const mountColorOptions = [
 let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx = 0, mountColor = 'Snow White', paperType = 'hpr', _modalOpen = false;
 
 function price() {
-  if (fmt === 'framed') return FRAME_PRICES[sIdx];
+  if (fmt === 'framed') return FRAME_PRICES[sIdx - 1]; // sIdx offset: index 0 = Postcard (framed-only A5–A1)
   return (PRINT_PRICES[paperType] || PRINT_PRICES.hpr)[sIdx];
 }
 
@@ -1633,6 +1633,8 @@ function setFmt(f, silent) {
   document.getElementById('frameOptionsWrap').classList.toggle('on', f === 'framed');
   document.getElementById('paperOptionsWrap').classList.toggle('hidden', f === 'framed');
   if (f === 'framed') {
+    if (sIdx === 0) sIdx = 1; // Postcard not available framed — bump to A5
+    if (sIdx > FRAME_PRICES.length) sIdx = FRAME_PRICES.length; // cap at A1
     frameType = 'boxframe'; frameColorIdx = 0; mountColor = 'Snow White';
     renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
     applyFramePreview();
@@ -1899,19 +1901,31 @@ function clearFramePreview() {
   rm.style.outline = '';
 }
 
-// Strip A-size prefix for display: 'A4 (21×30 cm)' → '21×30 cm'
-function sizeLabel(s) { const m = s.match(/\(([^)]+)\)/); return m ? m[1] : s; }
+// Display format: 'A4 (21×30 cm)' → '21×30 cm (A4)', 'Postcard (10×15 cm)' → as-is
+function sizeLabel(s) {
+  const m = s.match(/^(A\d+) \(([^)]+)\)$/);
+  if (m) return m[2] + ' (' + m[1] + ')';
+  return s;
+}
 
 function renderSizes() {
   const el = document.getElementById('mSizes'); el.innerHTML = '';
-  const maxIdx = fmt === 'framed' ? FRAME_PRICES.length - 1 : cur.sizes.length - 1;
+  // Framed: skip Postcard (index 0), show A5–A1 only (indices 1–FRAME_PRICES.length)
+  const minIdx = fmt === 'framed' ? 1 : 0;
+  const maxIdx = fmt === 'framed' ? FRAME_PRICES.length : cur.sizes.length - 1;
+  if (sIdx < minIdx) sIdx = minIdx;
   if (sIdx > maxIdx) sIdx = maxIdx;
   cur.sizes.forEach((s, i) => {
-    if (i > maxIdx) return;
+    if (i < minIdx || i > maxIdx) return;
     const b = document.createElement('button');
     b.className = 'schip' + (i === sIdx ? ' on' : '');
     b.textContent = sizeLabel(s);
-    b.onclick = () => { sIdx = i; el.querySelectorAll('.schip').forEach((c, ci) => c.classList.toggle('on', ci === i)); updatePrice(); updateFrameSizeNote(); };
+    b.onclick = () => {
+      sIdx = i;
+      el.querySelectorAll('.schip').forEach(c => c.classList.remove('on'));
+      b.classList.add('on');
+      updatePrice(); updateFrameSizeNote();
+    };
     el.appendChild(b);
   });
   updateFrameSizeNote();
@@ -1925,7 +1939,7 @@ function updateFrameSizeNote() {
     const img   = BOX_IMAGE_SIZES[size];
     const outer = BOX_OUTER_SIZES[size];
     el.innerHTML = img
-      ? `Overall frame on wall: <strong>${outer}</strong><br>Actual print inside mount: <strong>${img}</strong>`
+      ? `Overall frame on wall: <strong>${outer}</strong><br>Image visible through mount: <strong>${img}</strong>`
       : '';
   } else {
     el.textContent = '';
@@ -2232,6 +2246,7 @@ function openFromCart(id) { closeCart(); openModal(id); }
 // ── PRODIGI CHECKOUT ──
 const SKU_MAP = {
   hpr: { // Hahnemühle Photo Rag — matte cotton, 308gsm
+    'Postcard (10×15 cm)': 'GLOBAL-HPR-4X6',
     'A5 (15×21 cm)':  'GLOBAL-HPR-A5',
     'A4 (21×30 cm)':  'GLOBAL-HPR-A4',
     'A3 (30×42 cm)':  'GLOBAL-HPR-A3',
@@ -2240,6 +2255,7 @@ const SKU_MAP = {
     'A0 (84×119 cm)': 'GLOBAL-HPR-A0',
   },
   pap: { // Lustre Photo Paper — satin finish, 240gsm
+    'Postcard (10×15 cm)': 'GLOBAL-PAP-4X6',
     'A5 (15×21 cm)':  'GLOBAL-PAP-A5',
     'A4 (21×30 cm)':  'GLOBAL-PAP-A4',
     'A3 (30×42 cm)':  'GLOBAL-PAP-A3',
