@@ -1473,7 +1473,7 @@ const PRINT_PRICES = {
   hpr: [44, 47, 54, 79, 100, 179, 273], // GLOBAL-HPR-4X6→A0, 308gsm Hahnemühle Photo Rag
   pap: [44, 47, 51, 62, 72, 109, 151], // GLOBAL-PAP-4X6→A0, 240gsm Lustre Photo Paper
 };
-const FRAME_PRICES = [140, 158, 193, 238, 327];    // GLOBAL-BOXM-A5→A1, EMA 200gsm, Snow White mount (A0 not offered)
+const FRAME_PRICES = [108, 140, 158, 193, 238, 327]; // GLOBAL-BOXM: Postcard(5X7)→A1, EMA 200gsm, Snow White mount
 const FROM_PRICE   = 44; // cheapest option CHF (Postcard 10×15 cm)
 
 const products = [
@@ -1569,7 +1569,7 @@ const mountColorOptions = [
 let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx = 0, mountColor = 'Snow White', paperType = 'hpr', _modalOpen = false;
 
 function price() {
-  if (fmt === 'framed') return FRAME_PRICES[sIdx - 1]; // sIdx offset: index 0 = Postcard (framed-only A5–A1)
+  if (fmt === 'framed') return FRAME_PRICES[sIdx];
   return (PRINT_PRICES[paperType] || PRINT_PRICES.hpr)[sIdx];
 }
 
@@ -1633,8 +1633,7 @@ function setFmt(f, silent) {
   document.getElementById('frameOptionsWrap').classList.toggle('on', f === 'framed');
   document.getElementById('paperOptionsWrap').classList.toggle('hidden', f === 'framed');
   if (f === 'framed') {
-    if (sIdx === 0) sIdx = 1; // Postcard not available framed — bump to A5
-    if (sIdx > FRAME_PRICES.length) sIdx = FRAME_PRICES.length; // cap at A1
+    if (sIdx >= FRAME_PRICES.length) sIdx = FRAME_PRICES.length - 1; // cap at A1
     frameType = 'boxframe'; frameColorIdx = 0; mountColor = 'Snow White';
     renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
     applyFramePreview();
@@ -1910,16 +1909,20 @@ function sizeLabel(s) {
 
 function renderSizes() {
   const el = document.getElementById('mSizes'); el.innerHTML = '';
-  // Framed: skip Postcard (index 0), show A5–A1 only (indices 1–FRAME_PRICES.length)
-  const minIdx = fmt === 'framed' ? 1 : 0;
-  const maxIdx = fmt === 'framed' ? FRAME_PRICES.length : cur.sizes.length - 1;
-  if (sIdx < minIdx) sIdx = minIdx;
+  const maxIdx = fmt === 'framed' ? FRAME_PRICES.length - 1 : cur.sizes.length - 1;
   if (sIdx > maxIdx) sIdx = maxIdx;
   cur.sizes.forEach((s, i) => {
-    if (i < minIdx || i > maxIdx) return;
+    if (i > maxIdx) return;
     const b = document.createElement('button');
     b.className = 'schip' + (i === sIdx ? ' on' : '');
-    b.textContent = sizeLabel(s);
+    // Framed chips: show outer frame dimensions; print chips: standard label
+    if (fmt === 'framed') {
+      const outer = BOX_OUTER_SIZES[s];
+      const tag = s.match(/^(A\d+)/) ? s.match(/^(A\d+)/)[1] : s.replace(/ \([^)]+\)/, '');
+      b.textContent = outer ? outer + ' (' + tag + ')' : sizeLabel(s);
+    } else {
+      b.textContent = sizeLabel(s);
+    }
     b.onclick = () => {
       sIdx = i;
       el.querySelectorAll('.schip').forEach(c => c.classList.remove('on'));
@@ -1935,11 +1938,13 @@ function updateFrameSizeNote() {
   const el = document.getElementById('mFrameSizeNote');
   if (!el) return;
   if (fmt === 'framed') {
-    const size  = cur?.sizes[sIdx];
-    const img   = BOX_IMAGE_SIZES[size];
-    const outer = BOX_OUTER_SIZES[size];
-    el.innerHTML = img
-      ? `Overall frame on wall: <strong>${outer}</strong><br>Image visible through mount: <strong>${img}</strong>`
+    const size   = cur?.sizes[sIdx];
+    const outer  = BOX_OUTER_SIZES[size];
+    const prt    = BOX_PRINT_SIZES[size];
+    const img    = BOX_IMAGE_SIZES[size];
+    const border = BOX_MOUNT_BORDERS[size];
+    el.innerHTML = outer
+      ? `Frame on wall: <strong>${outer}</strong> · Print inside: <strong>${prt}</strong><br>Mount border: <strong>${border} each side</strong> · Visible image: <strong>${img}</strong>`
       : '';
   } else {
     el.textContent = '';
@@ -2264,6 +2269,7 @@ const SKU_MAP = {
     'A0 (84×119 cm)': 'GLOBAL-PAP-A0',
   },
   framed: { // Box Frame with mount (GLOBAL-BOXM) — Black/White/Natural, 20mm face width
+    'Postcard (10×15 cm)': 'GLOBAL-BOXM-5X7',  // 5×7" frame (13×18cm print) — closest to postcard
     'A5 (15×21 cm)':  'GLOBAL-BOXM-A5',
     'A4 (21×30 cm)':  'GLOBAL-BOXM-A4',
     'A3 (30×42 cm)':  'GLOBAL-BOXM-A3',
@@ -2278,6 +2284,7 @@ const FRAME_COLOR_ATTR = { 'Black': 'Black', 'White': 'White', 'Natural': 'Natur
 const MOUNT_COLOR_ATTR = { 'Snow White': 'Snow white', 'Black': 'Black', 'Off-white': 'Off-white' };
 // Outer frame size = image/print size + 2×20mm face width (confirmed Prodigi spec)
 const BOX_OUTER_SIZES = {
+  'Postcard (10×15 cm)': '17×22 cm',  // BOXM-5X7: 12.7+4 × 17.8+4 cm
   'A5 (15×21 cm)':  '19×25 cm',
   'A4 (21×30 cm)':  '25×34 cm',
   'A3 (30×42 cm)':  '34×46 cm',
@@ -2285,14 +2292,33 @@ const BOX_OUTER_SIZES = {
   'A1 (59×84 cm)':  '63×88 cm',
   'A0 (84×119 cm)': '88×123 cm',
 };
-// Image size inside the mount window (glaze minus Prodigi mount: 1" for ≤10", 1.5" for ≤14", 2" for ≥16")
+// Image size inside the mount window (approx: 1" border for ≤10", 1.5" for ≤14", 2" for ≥16" — verify with Prodigi)
 const BOX_IMAGE_SIZES = {
+  'Postcard (10×15 cm)': '7.9×12.9 cm',  // 5×7 frame, ~1" border
   'A5 (15×21 cm)':  '9.7×15.9 cm',
   'A4 (21×30 cm)':  '13.4×22.1 cm',
   'A3 (30×42 cm)':  '19.5×31.8 cm',
   'A2 (42×59 cm)':  '31.8×49.2 cm',
   'A1 (59×84 cm)':  '49.2×73.9 cm',
   'A0 (84×119 cm)': '73.9×108.7 cm',
+};
+// Actual print Prodigi places inside each frame
+const BOX_PRINT_SIZES = {
+  'Postcard (10×15 cm)': '13×18 cm',    // BOXM-5X7
+  'A5 (15×21 cm)':  '14.8×21 cm',
+  'A4 (21×30 cm)':  '21×29.7 cm',
+  'A3 (30×42 cm)':  '29.7×42 cm',
+  'A2 (42×59 cm)':  '42×59.4 cm',
+  'A1 (59×84 cm)':  '59.4×84.1 cm',
+};
+// Approximate mount border on each side (Prodigi estimate — verify for exact)
+const BOX_MOUNT_BORDERS = {
+  'Postcard (10×15 cm)': '~2.5 cm',
+  'A5 (15×21 cm)':  '~2.5 cm',
+  'A4 (21×30 cm)':  '~3.8 cm',
+  'A3 (30×42 cm)':  '~5.1 cm',
+  'A2 (42×59 cm)':  '~5.1 cm',
+  'A1 (59×84 cm)':  '~5.1 cm',
 };
 
 // ── STRIPE ──
