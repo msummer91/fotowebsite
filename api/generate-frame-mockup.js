@@ -41,7 +41,7 @@ const BOX_TMPL = {
 // Warm colors: 'hard-light' tints the dark frame texture with color.
 const BOX_TINTS = {
   'White':   { r: 245, g: 245, b: 243, opacity: 1.0,  blend: 'hard-light' },
-  'Natural': { r: 180, g: 145, b: 100, opacity: 0.80, blend: 'hard-light' },
+  'Natural': { r: 200, g: 160, b: 90,  opacity: 0.75, blend: 'hard-light' },
 };
 
 // Box frame mount (mat) fill colors — Prodigi options.
