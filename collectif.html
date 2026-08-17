@@ -839,12 +839,6 @@
     .foot-links a:hover { color: var(--dark); }
     .foot-copy { font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
 
-    /* ── GOOGLE TRANSLATE — hide toolbar injected by the widget ── */
-    .goog-te-banner-frame, .goog-te-balloon-frame { display: none !important; }
-    .goog-te-gadget { display: none !important; }
-    .goog-tooltip, .goog-tooltip:hover { display: none !important; }
-    .goog-text-highlight { background: none !important; box-shadow: none !important; }
-    body { top: 0 !important; }
     /* ── TOAST ── */
     .toast {
       position: fixed; bottom: 32px; left: 50%;
@@ -2077,44 +2071,18 @@ const _i18n = {
 };
 function t(key) { return (_i18n[_lang] || _i18n.en)[key] || key; }
 
-// ── Google Translate helpers ──
-function _gtLang() {
-  try {
-    const c = document.cookie.split(';').find(s => s.trim().startsWith('googtrans='));
-    if (c) { const m = c.trim().match(/googtrans=\/[a-z]{2}\/([a-z]{2})/); if (m) return m[1]; }
-  } catch(e) {}
-  return 'en';
-}
-function _triggerGT(lang) {
-  function attempt(n) {
-    const sel = document.querySelector('.goog-te-combo');
-    if (sel) { sel.value = lang; sel.dispatchEvent(new Event('change')); }
-    else if (n > 0) setTimeout(() => attempt(n - 1), 300);
-  }
-  attempt(15);
-}
-function _clearGT() {
-  const d = location.hostname;
-  [location.pathname, '/'].forEach(p => {
-    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${p};`;
-    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${p}; domain=${d}`;
-    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${p}; domain=.${d}`;
-  });
-  location.reload();
-}
-
 function setLang(code) {
   _lang = code;
   try { localStorage.setItem('ete_lang', code); } catch(e) {}
-  if (code === 'de') {
-    _triggerGT('de');
+  const targets = [...document.querySelectorAll('[data-i18n], main')];
+  targets.forEach(el => { el.style.transition = 'opacity 0.15s'; el.style.opacity = '0'; });
+  setTimeout(() => {
     applyTranslations();
-    document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === code));
-    document.querySelectorAll('.locale-btn-label').forEach(el => el.textContent = 'DE');
-    closeLocaleDropdowns();
-  } else {
-    _clearGT();
-  }
+    targets.forEach(el => { el.style.opacity = '1'; });
+  }, 150);
+  document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === code));
+  document.querySelectorAll('.locale-btn-label').forEach(el => el.textContent = code.toUpperCase());
+  closeLocaleDropdowns();
 }
 
 function applyTranslations() {
@@ -2136,17 +2104,14 @@ function applyTranslations() {
 }
 
 function _initLang() {
-  const gtActive = _gtLang();
   try {
     const saved = localStorage.getItem('ete_lang');
     if (saved === 'de' || saved === 'en') _lang = saved;
-    else if (gtActive === 'de') _lang = 'de';
     else { const loc = navigator.language || ''; if (loc.startsWith('de')) _lang = 'de'; }
   } catch(e) {}
   document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === _lang));
   document.querySelectorAll('.locale-btn-label').forEach(el => el.textContent = _lang.toUpperCase());
   applyTranslations();
-  if (_lang === 'de' && gtActive !== 'de') _triggerGT('de');
 }
 
 function toggleLocaleDropdown(id) {
@@ -2608,13 +2573,5 @@ loadCart();
 renderWorkGrid();
 </script>
 
-<!-- Google Translate widget — hidden, triggered programmatically via setLang('de') -->
-<div id="google_translate_element" style="display:none;visibility:hidden;height:0;overflow:hidden;" aria-hidden="true"></div>
-<script>
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'de', autoDisplay: false }, 'google_translate_element');
-}
-</script>
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
 </body>
 </html>
