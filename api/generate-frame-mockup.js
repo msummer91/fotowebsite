@@ -35,14 +35,20 @@ const BOX_TMPL = {
   artL:   338, artT:  130, artR:  1050, artB:  640,
 };
 
-// Box frame border tint colors for non-black variants.
-// White: 'difference' blend inverts near-black frame pixels to near-white,
-//        preserving the 3D texture/shading (unlike 'over' which paints a flat solid).
-// Warm colors: 'hard-light' tints the dark frame texture with color.
+// Box frame border tint colors for non-black variants (fallback when no dedicated template exists).
+// White: hard-light near-white preserves 3D texture/shading.
+// Natural: warm sandy oak sampled from actual Prodigi natural frame (avg #ccb28f).
 const BOX_TINTS = {
   'White':   { r: 245, g: 245, b: 243, opacity: 1.0,  blend: 'hard-light' },
-  'Natural': { r: 200, g: 160, b: 90,  opacity: 0.75, blend: 'hard-light' },
+  'Natural': { r: 215, g: 185, b: 145, opacity: 0.85, blend: 'hard-light' },
 };
+
+// Optional dedicated face-on template for Natural box frame.
+// Drop "Box natural framed print face on.jpg" into Images/frames/ to use it
+// instead of tinting the black template. Coordinates to be filled in once measured.
+const BOX_NATURAL_TMPL_FILE = 'Box natural framed print face on.jpg';
+// Coordinates (portrait, 2500×2500 canvas — update after measuring the actual image):
+const BOX_NATURAL_TMPL = null; // set to { W, H, frameL, frameT, frameR, frameB, matL, matT, matR, matB, artL, artT, artR, artB } once measured
 
 // Box frame mount (mat) fill colors — Prodigi options.
 const MOUNT_COLORS = {
@@ -131,8 +137,12 @@ module.exports = async function handler(req, res) {
     // BOX FRAME PIPELINE
     // ─────────────────────────────────────────────────────────────────────
     if (isBox) {
-      let rawTmplBuf = fs.readFileSync(path.join(FRAMES_DIR, 'Box black framed print face on.jpg'));
-      let { W, H, frameL, frameT, frameR, frameB, matL, matT, matR, matB, artL, artT, artR, artB } = BOX_TMPL;
+      // Use dedicated natural template if it exists and coordinates are set; otherwise fall back to black + tint.
+      const naturalPath = path.join(FRAMES_DIR, BOX_NATURAL_TMPL_FILE);
+      const useNaturalTmpl = frameColor === 'Natural' && BOX_NATURAL_TMPL !== null && fs.existsSync(naturalPath);
+      let rawTmplBuf = fs.readFileSync(useNaturalTmpl ? naturalPath : path.join(FRAMES_DIR, 'Box black framed print face on.jpg'));
+      let tmplCoords = useNaturalTmpl ? BOX_NATURAL_TMPL : BOX_TMPL;
+      let { W, H, frameL, frameT, frameR, frameB, matL, matT, matR, matB, artL, artT, artR, artB } = tmplCoords;
 
       // Template art area is landscape. If photo is portrait, rotate template 90° CW
       // so art area becomes portrait. Template is non-square (W×H), so after 90° CW
@@ -172,9 +182,9 @@ module.exports = async function handler(req, res) {
         .toBuffer();
 
       // 3. Tint the frame border for non-black colors.
+      //    Skip if using a dedicated natural template (already the right color).
       //    evenodd path = outer frame rect minus mat rect → frame ring only.
-      //    'difference' blend: |white − dark_pixel| ≈ white, preserving texture variation.
-      if (frameColor !== 'Black') {
+      if (frameColor !== 'Black' && !useNaturalTmpl) {
         const c = BOX_TINTS[frameColor] || BOX_TINTS['Natural'];
         const tintSvg = `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
           <path d="M${frameL},${frameT} L${frameR},${frameT} L${frameR},${frameB} L${frameL},${frameB}Z
