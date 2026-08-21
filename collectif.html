@@ -1688,7 +1688,7 @@ function setPaper(p) {
     hpr: '308gsm · Cotton rag · Matte · Archival giclée',
     pap: '240gsm · Satin lustre · Archival giclée'
   };
-  document.getElementById('paperDesc').textContent = descs[p] || '';
+  const pd = document.getElementById('paperDesc'); if (pd) pd.textContent = descs[p] || '';
   updateDesc();
 }
 function setFramePaper(p) { /* box frame paper is always EMA — no-op */ }
@@ -1773,7 +1773,7 @@ function renderFrameColors() {
   });
   const label = colors[frameColorIdx].name;
   const extra = frameData[frameType].extra > 0 ? ` (+€${frameData[frameType].extra})` : '';
-  document.getElementById('frameDesc').textContent = `${label} · ${frameData[frameType].desc}${extra}`;
+  const fd = document.getElementById('frameDesc'); if (fd) fd.textContent = `${label} · ${frameData[frameType].desc}${extra}`;
 }
 
 // Client-side cache: keyed by "imgSrc|colorName|style" → generated mockup URL
