@@ -1977,9 +1977,8 @@ function updateFrameSizeNote() {
     const outer  = BOX_OUTER_SIZES[size];
     const prt    = BOX_PRINT_SIZES[size];
     const img    = BOX_IMAGE_SIZES[size];
-    const border = BOX_MOUNT_BORDERS[size];
     el.innerHTML = outer
-      ? `${t('frame_on_wall')}: <strong>${outer}</strong> · ${t('print_inside')}: <strong>${prt}</strong><br>${t('mount_border')}: <strong>${border} ${t('each_side')}</strong> · ${t('visible_image')}: <strong>${img}</strong>`
+      ? `${t('frame_on_wall')}: <strong>${outer}</strong> · ${t('print_inside')}: <strong>${prt}</strong>`
       : '';
   } else {
     el.textContent = '';
@@ -2332,33 +2331,26 @@ const BOX_OUTER_SIZES = {
   'A1 (59×84 cm)':  '63×88 cm',
   'A0 (84×119 cm)': '88×123 cm',
 };
-// Image size inside the mount window (approx: 1" border for ≤10", 1.5" for ≤14", 2" for ≥16" — verify with Prodigi)
+// Fixed 2.4 cm mount border each side (Prodigi standard)
+const BOX_MOUNT_BORDER = '2.4 cm';
+// Visible image window = print size − 2×2.4 cm on each axis
 const BOX_IMAGE_SIZES = {
-  'Postcard (10×15 cm)': '7.9×12.9 cm',  // 5×7 frame, ~1" border
-  'A5 (15×21 cm)':  '9.7×15.9 cm',
-  'A4 (21×30 cm)':  '13.4×22.1 cm',
-  'A3 (30×42 cm)':  '19.5×31.8 cm',
-  'A2 (42×59 cm)':  '31.8×49.2 cm',
-  'A1 (59×84 cm)':  '49.2×73.9 cm',
-  'A0 (84×119 cm)': '73.9×108.7 cm',
+  'Postcard (10×15 cm)': '8.2×13.2 cm',
+  'A5 (15×21 cm)':       '10.0×16.2 cm',
+  'A4 (21×30 cm)':       '16.2×24.9 cm',
+  'A3 (30×42 cm)':       '24.9×37.2 cm',
+  'A2 (42×59 cm)':       '37.2×54.6 cm',
+  'A1 (59×84 cm)':       '54.6×79.3 cm',
+  'A0 (84×119 cm)':      '79.2×114.2 cm',
 };
 // Actual print Prodigi places inside each frame
 const BOX_PRINT_SIZES = {
-  'Postcard (10×15 cm)': '13×18 cm',    // BOXM-5X7
-  'A5 (15×21 cm)':  '14.8×21 cm',
-  'A4 (21×30 cm)':  '21×29.7 cm',
-  'A3 (30×42 cm)':  '29.7×42 cm',
-  'A2 (42×59 cm)':  '42×59.4 cm',
-  'A1 (59×84 cm)':  '59.4×84.1 cm',
-};
-// Approximate mount border on each side (Prodigi estimate — verify for exact)
-const BOX_MOUNT_BORDERS = {
-  'Postcard (10×15 cm)': '~2.5 cm',
-  'A5 (15×21 cm)':  '~2.5 cm',
-  'A4 (21×30 cm)':  '~3.8 cm',
-  'A3 (30×42 cm)':  '~5.1 cm',
-  'A2 (42×59 cm)':  '~5.1 cm',
-  'A1 (59×84 cm)':  '~5.1 cm',
+  'Postcard (10×15 cm)': '13×18 cm',
+  'A5 (15×21 cm)':       '14.8×21 cm',
+  'A4 (21×30 cm)':       '21×29.7 cm',
+  'A3 (30×42 cm)':       '29.7×42 cm',
+  'A2 (42×59 cm)':       '42×59.4 cm',
+  'A1 (59×84 cm)':       '59.4×84.1 cm',
 };
 
 // ── STRIPE ──
