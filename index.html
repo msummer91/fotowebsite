@@ -759,8 +759,48 @@
       font-size: 11px;
       color: var(--muted);
       margin-top: 5px;
+      margin-bottom: 8px;
       min-height: 15px;
     }
+    /* Paper / spec info icon */
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      border: 1px solid var(--muted);
+      font-size: 8px;
+      font-style: normal;
+      font-family: var(--sans);
+      font-weight: 400;
+      cursor: help;
+      position: relative;
+      vertical-align: middle;
+      margin-left: 5px;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .info-icon::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 7px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dark);
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      padding: 7px 11px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 20;
+      line-height: 1.6;
+    }
+    .info-icon:hover::after { opacity: 1; }
     .modal-price-note {
       font-size: 11px;
       color: var(--muted);
@@ -1399,7 +1439,7 @@
           <button class="ftab" id="tabFramed" onclick="setFmt('framed')">Framed</button>
         </div>
         <div class="paper-options-wrap" id="paperOptionsWrap">
-          <div class="field-label" style="margin-top:22px;margin-bottom:12px">Paper</div>
+          <div class="field-label" style="margin-top:22px;margin-bottom:12px">Paper <span class="info-icon" id="paperInfoIcon" data-tip="308gsm · Cotton rag · Matte · Archival giclée">i</span></div>
           <div class="frame-types">
             <button class="ftype-btn on" id="paperHpr" onclick="setPaper('hpr')">Hahnemühle Rag</button>
             <button class="ftype-btn" id="paperPap" onclick="setPaper('pap')">Lustre</button>
@@ -1408,13 +1448,14 @@
         <div class="frame-options-wrap" id="frameOptionsWrap">
           <div class="field-label" style="margin-bottom:12px;margin-top:22px;">Frame style</div>
           <div class="frame-types" id="frameTypes"></div>
-          <div class="field-label" style="margin-bottom:12px;margin-top:24px;">Colour</div>
+          <div class="field-label" style="margin-bottom:12px;margin-top:22px;">Colour</div>
           <div class="frame-colors" id="frameColors"></div>
+          <div class="field-label" style="margin-bottom:6px;margin-top:22px;">Paper <span class="info-icon" data-tip="Enhanced Matte Art · 200gsm · Smooth matte · Archival giclée">i</span></div>
         </div>
       </div>
 
       <div>
-        <div class="field-label">Size</div>
+        <div class="field-label" style="margin-top:22px;">Size</div>
         <div class="sizes" id="mSizes"></div>
         <div class="frame-size-note" id="mFrameSizeNote"></div>
       </div>
@@ -1831,6 +1872,7 @@ function setPaper(p) {
     pap: '240gsm · Satin lustre · Archival giclée'
   };
   const pd = document.getElementById('paperDesc'); if (pd) pd.textContent = descs[p] || '';
+  const pi = document.getElementById('paperInfoIcon'); if (pi) pi.setAttribute('data-tip', descs[p] || '');
   updateDesc();
 }
 function setFramePaper(p) { /* box frame paper is always EMA — no-op */ }
