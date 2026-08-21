@@ -1233,8 +1233,7 @@
   <div class="modal-info-col" onclick="closeModal()">
     <div onclick="event.stopPropagation()">
       <div>
-        <div class="modal-by">été collectif</div>
-        <div class="modal-title" id="mTitle"></div>
+        <div class="modal-title" id="mTitle" style="margin-bottom:18px"></div>
       </div>
 
       <div>
@@ -1249,23 +1248,12 @@
             <button class="ftype-btn on" id="paperHpr" onclick="setPaper('hpr')">Hahnemühle Rag</button>
             <button class="ftype-btn" id="paperPap" onclick="setPaper('pap')">Lustre</button>
           </div>
-          <div class="frame-desc" id="paperDesc">308gsm · Cotton rag · Matte · Archival giclée</div>
         </div>
         <div class="frame-options-wrap" id="frameOptionsWrap">
           <div class="field-label" style="margin-bottom:12px;margin-top:22px;">Frame style</div>
           <div class="frame-types" id="frameTypes"></div>
           <div class="field-label" style="margin-bottom:12px;margin-top:24px;">Colour</div>
           <div class="frame-colors" id="frameColors"></div>
-          <div class="frame-desc" id="frameDesc"></div>
-          <!-- Mount — box frame only -->
-          <div id="mountSection" style="display:none">
-            <div class="field-label" style="margin-bottom:12px;margin-top:24px;">Mount</div>
-            <div class="frame-colors" id="mountSwatches"></div>
-            <div class="frame-desc" id="mountDesc"></div>
-          </div>
-          <!-- Paper — box frame always uses EMA -->
-          <div class="field-label" style="margin-bottom:8px;margin-top:24px;">Paper</div>
-          <div class="frame-desc">Enhanced Matte Art · 200gsm · Smooth matte · Archival giclée</div>
         </div>
       </div>
 
@@ -1281,7 +1269,6 @@
       </div>
 
       <button class="btn-add" id="btnAdd" onclick="addToCart()">Add to selection</button>
-      <div class="modal-desc-text" id="mDesc"></div>
 
       <!-- Room preview — scroll down to see it on the wall -->
       <div class="room-preview-section">
@@ -1592,8 +1579,8 @@ function openModal(id) {
     if (window.innerWidth > 860) {
       const ar = this.naturalWidth / this.naturalHeight;
       if (ar < 1) {
-        this.style.maxHeight = '480px';
-        this.style.maxWidth = '340px';
+        this.style.maxHeight = '380px';
+        this.style.maxWidth = '280px';
       }
     }
   };
