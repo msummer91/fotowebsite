@@ -1980,7 +1980,7 @@ function updateFrameSizeNote() {
     const img    = BOX_IMAGE_SIZES[size];
     const border = BOX_MOUNT_BORDERS[size];
     el.innerHTML = outer
-      ? `Frame on wall: <strong>${outer}</strong> · Print inside: <strong>${prt}</strong><br>Mount border: <strong>${border} each side</strong> · Visible image: <strong>${img}</strong>`
+      ? `${t('frame_on_wall')}: <strong>${outer}</strong> · ${t('print_inside')}: <strong>${prt}</strong><br>${t('mount_border')}: <strong>${border} ${t('each_side')}</strong> · ${t('visible_image')}: <strong>${img}</strong>`
       : '';
   } else {
     el.textContent = '';
@@ -2084,6 +2084,7 @@ const _i18n = {
     lang_label: 'Language', cur_label: 'Currency',
     see_on_wall: 'See it on your wall',
     frame_style: 'Frame style', colour: 'Colour', mount: 'Mount', paper: 'Paper', size: 'Size', format: 'Format',
+    frame_on_wall: 'Frame on wall', print_inside: 'Print inside', mount_border: 'Mount border', each_side: 'each side', visible_image: 'Visible image',
   },
   de: {
     nav_about: 'Über uns', nav_contact: 'Kontakt',
@@ -2103,6 +2104,7 @@ const _i18n = {
     lang_label: 'Sprache', cur_label: 'Währung',
     see_on_wall: 'Auf deiner Wand',
     frame_style: 'Rahmenstil', colour: 'Farbe', mount: 'Passepartout', paper: 'Papier', size: 'Grösse', format: 'Format',
+    frame_on_wall: 'Rahmen an der Wand', print_inside: 'Druck innen', mount_border: 'Passepartout-Rand', each_side: 'je Seite', visible_image: 'Sichtbares Bild',
   }
 };
 function t(key) { return (_i18n[_lang] || _i18n.en)[key] || key; }
@@ -2136,6 +2138,7 @@ function applyTranslations() {
   if (pn) pn.textContent = t('price_note')(_fmtP(200));
   document.querySelectorAll('.locale-label-lang').forEach(el => el.textContent = t('lang_label'));
   document.querySelectorAll('.locale-label-cur').forEach(el => el.textContent = t('cur_label'));
+  updateFrameSizeNote();
   refreshCart();
 }
 
