@@ -1646,6 +1646,19 @@ const mountColorOptions = [
 
 // ── MODAL STATE ──
 let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx = 0, mountColor = 'Snow White', paperType = 'hpr', _modalOpen = false;
+let _pullTouchStartY = 0;
+document.addEventListener('touchstart', e => { _pullTouchStartY = e.touches[0].clientY; }, { passive: true });
+function _blockPullRefresh(e) {
+  const infoCol = document.querySelector('.modal-info-col');
+  if (infoCol && infoCol.contains(e.target)) {
+    const dy = e.touches[0].clientY - _pullTouchStartY;
+    const atTop = infoCol.scrollTop <= 0;
+    const atBottom = infoCol.scrollTop + infoCol.clientHeight >= infoCol.scrollHeight;
+    if ((atTop && dy > 0) || (atBottom && dy < 0)) e.preventDefault();
+    return;
+  }
+  e.preventDefault();
+}
 
 function price() {
   if (fmt === 'framed') return FRAME_PRICES[sIdx];
@@ -1686,14 +1699,9 @@ function openModal(id) {
   setTimeout(() => prewarmFrameMockups('boxframe'), 200);
   document.getElementById('modal').classList.add('on');
   document.getElementById('overlay').classList.add('on');
-  // iOS Safari: use position:fixed to prevent pull-to-refresh back-navigation
-  const sy = window.scrollY;
   document.body.style.overflow = 'hidden';
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${sy}px`;
-  document.body.style.width = '100%';
-  document.body.dataset.scrollY = sy;
   document.body.classList.add('modal-open');
+  document.addEventListener('touchmove', _blockPullRefresh, { passive: false });
   _modalOpen = true;
 }
 function closeModal(fromPopstate) {
@@ -1703,14 +1711,9 @@ function closeModal(fromPopstate) {
   img.onload = null;
   document.getElementById('modal').classList.remove('on');
   document.getElementById('overlay').classList.remove('on');
-  // Restore scroll position after unlocking body
-  const sy = parseInt(document.body.dataset.scrollY || '0');
   document.body.style.overflow = '';
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.width = '';
-  window.scrollTo(0, sy);
   document.body.classList.remove('modal-open');
+  document.removeEventListener('touchmove', _blockPullRefresh);
   _modalOpen = false;
 }
 
