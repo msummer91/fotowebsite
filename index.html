@@ -1513,7 +1513,7 @@
         <div class="modal-price-note" id="mPriceNote">incl. VAT · Free shipping on orders over CHF 200</div>
       </div>
 
-      <button class="btn-add" id="btnAdd" onclick="addToCart()">Add to selection</button>
+      <button class="btn-add" id="btnAdd" onclick="addToCart()">Add to Shopping Cart</button>
 
       <!-- Room preview — scroll down to see it on the wall -->
       <div class="room-preview-section">
@@ -2303,7 +2303,7 @@ const _i18n = {
     about_p2: 'été collectif was born out of the idea to share what we see with our eyes, captured through a lens (analog to digital).',
     fmt_print: 'Print — Unframed', fmt_framed: 'Framed',
     paper_hpr: 'Hahnemühle Rag', paper_pap: 'Lustre',
-    add_to_cart: 'Add to selection',
+    add_to_cart: 'Add to Shopping Cart',
     price_note: (amt) => `incl. VAT · Free shipping on orders over ${amt}`,
     cart_title: 'Your selection',
     cart_empty: 'Nothing yet',
@@ -2323,7 +2323,7 @@ const _i18n = {
     about_p2: 'été collectif entstand aus der Idee, das zu teilen, was wir sehen – eingefangen durch eine Linse (analog bis digital).',
     fmt_print: 'Print — Ungerahmt', fmt_framed: 'Gerahmt',
     paper_hpr: 'Hahnemühle Rag', paper_pap: 'Lustre',
-    add_to_cart: 'Zur Auswahl',
+    add_to_cart: 'In den Warenkorb',
     price_note: (amt) => `inkl. MwSt. · Gratisversand ab ${amt}`,
     cart_title: 'Deine Auswahl',
     cart_empty: 'Noch nichts',
@@ -2492,7 +2492,8 @@ function addToCart() {
       if (frameType === 'boxframe') frameLabel += ` · Mount: ${mountColor}`;
       frameLabel += ' · Enhanced Matte Art';
     }
-    cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, paperType, frameLabel, priceEur: price(), qty: 1, img: cur.img });
+    const mockupImg = fmt === 'framed' ? (document.getElementById('roomImg2')?.src || null) : null;
+    cart.push({ key, id: cur.id, name: cur.name, size: cur.sizes[sIdx], fmt, paperType, frameLabel, priceEur: price(), qty: 1, img: cur.img, mockupImg });
   }
   saveCart(); refreshCart(); closeModal(); toast(`"${cur.name}" added`); openCart();
 }
@@ -2515,7 +2516,7 @@ function refreshCart() {
     const itemEur = (i.priceEur ?? i.price ?? 0) * i.qty;
     return `
     <div class="cp-item">
-      <img class="cp-item-img${i.fmt === 'framed' ? ' fr' : ''}" src="${i.img}" alt="${i.name}"/>
+      <img class="cp-item-img${i.fmt === 'framed' ? ' fr' : ''}" src="${i.mockupImg || i.img}" alt="${i.name}"/>
       <div>
         <a class="cp-item-name" href="/collectif.html?open=${i.id}">${i.name}</a>
         <div class="cp-item-meta">${sizeLine}<br>${label} · Qty ${i.qty}</div>
