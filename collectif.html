@@ -286,6 +286,18 @@
       max-width: 90vw; max-height: 90vh;
       object-fit: contain; display: block;
     }
+    .zoom-dots {
+      position: absolute; bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 10px; z-index: 5;
+    }
+    .zoom-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+    }
+    .zoom-dot.on { background: rgba(255,255,255,0.9); transform: scale(1.25); }
     .zoom-close {
       position: absolute; top: 24px; right: 28px;
       background: none; border: none;
@@ -1340,6 +1352,10 @@
 <div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
   <button class="zoom-close" onclick="closeZoom()">×</button>
   <img id="zoomImg" src="" alt="" />
+  <div class="zoom-dots" onclick="event.stopPropagation()">
+    <div class="zoom-dot on" id="zoomDot0" onclick="switchZoomView(0)"></div>
+    <div class="zoom-dot" id="zoomDot1" onclick="switchZoomView(1)"></div>
+  </div>
 </div>
 
 <!-- ROOM ZOOM LIGHTBOX -->
@@ -1689,7 +1705,26 @@ function openImgZoom() {
     : document.getElementById('mImg').src;
   if (!src) return;
   document.getElementById('zoomImg').src = src;
+  const isFramed = fmt === 'framed';
+  const d0 = document.getElementById('zoomDot0');
+  const d1 = document.getElementById('zoomDot1');
+  if (d0) d0.classList.toggle('on', !isFramed);
+  if (d1) d1.classList.toggle('on', isFramed);
   document.getElementById('zoomOverlay').classList.add('on');
+}
+function switchZoomView(idx) {
+  // idx 0 = print, idx 1 = framed
+  if (idx === 1 && fmt !== 'framed') setFmt('framed');
+  else if (idx === 0 && fmt !== 'print') setFmt('print');
+  // update zoom image src
+  const src = fmt === 'framed'
+    ? (document.getElementById('roomImg2').src || document.getElementById('mImg').src)
+    : document.getElementById('mImg').src;
+  if (src) document.getElementById('zoomImg').src = src;
+  const d0 = document.getElementById('zoomDot0');
+  const d1 = document.getElementById('zoomDot1');
+  if (d0) d0.classList.toggle('on', idx === 0);
+  if (d1) d1.classList.toggle('on', idx === 1);
 }
 function navImgView(dir) {
   if (dir > 0 && fmt === 'print') setFmt('framed');
