@@ -1796,12 +1796,17 @@ let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx =
 let _pullTouchStartY = 0;
 document.addEventListener('touchstart', e => { _pullTouchStartY = e.touches[0].clientY; }, { passive: true });
 function _blockPullRefresh(e) {
-  const infoCol = document.querySelector('.modal-info-col');
-  if (infoCol && infoCol.contains(e.target)) {
+  const modal = document.getElementById('modal');
+  if (modal && modal.contains(e.target)) {
+    // Allow scrolling inside the modal, but block overscroll at the very top
     const dy = e.touches[0].clientY - _pullTouchStartY;
-    const atTop = infoCol.scrollTop <= 0;
-    const atBottom = infoCol.scrollTop + infoCol.clientHeight >= infoCol.scrollHeight;
-    if ((atTop && dy > 0) || (atBottom && dy < 0)) e.preventDefault();
+    if (modal.scrollTop <= 0 && dy > 0) { e.preventDefault(); return; }
+    // Also check inner info col boundaries
+    const infoCol = document.querySelector('.modal-info-col');
+    if (infoCol && infoCol.contains(e.target)) {
+      const atBottom = infoCol.scrollTop + infoCol.clientHeight >= infoCol.scrollHeight;
+      if (atBottom && dy < 0) e.preventDefault();
+    }
     return;
   }
   e.preventDefault();
