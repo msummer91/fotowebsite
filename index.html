@@ -1123,18 +1123,24 @@
         flex: 0 0 48vh;
         max-height: 48vh;
         cursor: default;
-        padding: 28px 20px;
+        padding: 36px 20px;
         box-sizing: border-box;
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
+      }
+      body.modal-open .modal-img-col {
+        padding: 36px 20px;
       }
       .modal-frame-wrap {
         max-width: 100%;
-        max-height: calc(48vh - 56px);
+        max-height: calc(48vh - 72px);
       }
-      .modal-frame-wrap img {
-        max-height: calc(48vh - 56px);
+      .modal-frame-wrap img,
+      body.modal-open .modal-frame-wrap,
+      body.modal-open .modal-frame-wrap img {
+        max-height: calc(48vh - 72px);
       }
       .modal-info-col {
         flex: 0 0 auto;
@@ -1205,9 +1211,12 @@
 
       #about { padding: 48px 16px; }
       footer { padding: 28px 16px; }
-      .modal-img-col { flex: 0 0 44vh; max-height: 44vh; padding: 28px 16px; box-sizing: border-box; }
-      .modal-frame-wrap { max-height: calc(44vh - 56px); }
-      .modal-frame-wrap img { max-height: calc(44vh - 56px); }
+      .modal-img-col { flex: 0 0 44vh; max-height: 44vh; padding: 36px 16px; box-sizing: border-box; overflow: hidden; }
+      body.modal-open .modal-img-col { padding: 36px 16px; }
+      .modal-frame-wrap { max-height: calc(44vh - 72px); }
+      .modal-frame-wrap img,
+      body.modal-open .modal-frame-wrap,
+      body.modal-open .modal-frame-wrap img { max-height: calc(44vh - 72px); }
       .modal-info-col { padding: 14px 16px 100px; gap: 9px; }
     }
     /* ── STRIPE CARD ELEMENT ── */
