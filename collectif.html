@@ -356,7 +356,6 @@
       overflow-y: auto;
       overflow-x: hidden;
       border-radius: 0;
-      overscroll-behavior: contain;
     }
     /* Modal top bar: nav + close button */
     .modal-bar {
@@ -980,6 +979,7 @@
         flex-direction: column;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
       }
       .modal-img-col {
         flex: 0 0 48vh;
@@ -1079,7 +1079,7 @@
       .modal-frame-wrap img,
       body.modal-open .modal-frame-wrap,
       body.modal-open .modal-frame-wrap img { max-height: calc(44vh - 72px); }
-      .modal-info-col { padding: 14px 16px 100px; gap: 9px; }
+      .modal-info-col { padding: 14px 16px 100px; gap: 9px; overflow-y: visible; }
 
       footer { padding: 28px 16px; }
     }
