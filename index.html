@@ -1134,7 +1134,7 @@
         padding: 36px 20px;
       }
       body.modal-open .modal-img-col.portrait-modal {
-        padding-bottom: 52px;
+        padding-bottom: 68px;
       }
       .modal-frame-wrap {
         max-width: 100%;
@@ -1142,7 +1142,7 @@
       }
       .modal-img-col.portrait-modal .modal-frame-wrap,
       .modal-img-col.portrait-modal .modal-frame-wrap img {
-        max-height: calc(48vh - 88px);
+        max-height: calc(48vh - 104px);
       }
       .modal-frame-wrap img,
       body.modal-open .modal-frame-wrap,
@@ -1151,7 +1151,7 @@
       }
       body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap,
       body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap img {
-        max-height: calc(48vh - 88px);
+        max-height: calc(48vh - 104px);
       }
       .modal-info-col {
         flex: 0 0 auto;
@@ -1229,7 +1229,7 @@
       .modal-img-col.portrait-modal .modal-frame-wrap,
       .modal-img-col.portrait-modal .modal-frame-wrap img,
       body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap,
-      body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap img { max-height: calc(44vh - 88px); }
+      body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap img { max-height: calc(44vh - 104px); }
       .modal-frame-wrap img,
       body.modal-open .modal-frame-wrap,
       body.modal-open .modal-frame-wrap img { max-height: calc(44vh - 72px); }
@@ -1840,8 +1840,8 @@ function closeModal(fromPopstate) {
   document.getElementById('overlay').classList.remove('on');
   document.body.style.overflow = '';
   document.body.classList.remove('modal-open');
-  if (_modalOpen && !fromPopstate) { _modalOpen = false; history.back(); }
-  else { _modalOpen = false; }
+  _modalOpen = false;
+  if (!fromPopstate) history.replaceState(null, '');
 }
 
 function setFmt(f, silent) {
