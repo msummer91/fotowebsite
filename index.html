@@ -1133,25 +1133,26 @@
       body.modal-open .modal-img-col {
         padding: 36px 20px;
       }
+      .modal-img-col.portrait-modal,
       body.modal-open .modal-img-col.portrait-modal {
-        padding-bottom: 68px;
+        flex: 0 0 60vh;
+        max-height: 60vh;
+        padding: 32px 20px 44px;
       }
       .modal-frame-wrap {
         max-width: 100%;
         max-height: calc(48vh - 72px);
       }
       .modal-img-col.portrait-modal .modal-frame-wrap,
-      .modal-img-col.portrait-modal .modal-frame-wrap img {
-        max-height: calc(48vh - 104px);
+      .modal-img-col.portrait-modal .modal-frame-wrap img,
+      body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap,
+      body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap img {
+        max-height: calc(60vh - 76px);
       }
       .modal-frame-wrap img,
       body.modal-open .modal-frame-wrap,
       body.modal-open .modal-frame-wrap img {
         max-height: calc(48vh - 72px);
-      }
-      body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap,
-      body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap img {
-        max-height: calc(48vh - 104px);
       }
       .modal-info-col {
         flex: 0 0 auto;
@@ -1224,12 +1225,13 @@
       footer { padding: 28px 16px; }
       .modal-img-col { flex: 0 0 44vh; max-height: 44vh; padding: 36px 16px; box-sizing: border-box; overflow: hidden; }
       body.modal-open .modal-img-col { padding: 36px 16px; }
-      body.modal-open .modal-img-col.portrait-modal { padding-bottom: 52px; }
+      .modal-img-col.portrait-modal,
+      body.modal-open .modal-img-col.portrait-modal { flex: 0 0 58vh; max-height: 58vh; padding: 32px 16px 44px; }
       .modal-frame-wrap { max-height: calc(44vh - 72px); }
       .modal-img-col.portrait-modal .modal-frame-wrap,
       .modal-img-col.portrait-modal .modal-frame-wrap img,
       body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap,
-      body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap img { max-height: calc(44vh - 104px); }
+      body.modal-open .modal-img-col.portrait-modal .modal-frame-wrap img { max-height: calc(58vh - 76px); }
       .modal-frame-wrap img,
       body.modal-open .modal-frame-wrap,
       body.modal-open .modal-frame-wrap img { max-height: calc(44vh - 72px); }
