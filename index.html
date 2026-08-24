@@ -1481,8 +1481,8 @@
       <div>
         <div class="field-label">Format</div>
         <div class="format-tabs">
-          <button class="ftab on" id="tabPrint" onclick="setFmt('print')">Print — Unframed</button>
-          <button class="ftab" id="tabFramed" onclick="setFmt('framed')">Framed</button>
+          <button class="ftab on" id="tabFramed" onclick="setFmt('framed')">Framed</button>
+          <button class="ftab" id="tabPrint" onclick="setFmt('print')">Print — Unframed</button>
         </div>
         <div class="paper-options-wrap" id="paperOptionsWrap">
           <div class="field-label" style="margin-top:22px;margin-bottom:12px">Paper</div>
@@ -1808,7 +1808,7 @@ function openModal(id) {
   closeMenu(); // collapse hamburger if open
   closeLocaleDropdowns();
   cur = products.find(p => p.id === id);
-  fmt = 'print'; sIdx = 0; frameType = 'boxframe'; frameColorIdx = 0; mountColor = 'Snow White'; paperType = 'hpr';
+  fmt = 'framed'; sIdx = 0; frameType = 'boxframe'; frameColorIdx = 0; mountColor = 'Snow White'; paperType = 'hpr';
   const img = document.getElementById('mImg');
   img.style.maxHeight = '';
   img.style.maxWidth = '';
@@ -1825,7 +1825,7 @@ function openModal(id) {
   document.getElementById('roomImg2').src = cur.img;
   setModalView();
   document.getElementById('mTitle').textContent = cur.name;
-  setFmt('print', true);
+  setFmt('framed', true);
   renderSizes();
   updatePrice();
   // Pre-warm box frame mockup immediately so it's ready when user clicks Framed
@@ -1880,14 +1880,14 @@ function openImgZoom() {
   const isFramed = fmt === 'framed';
   const d0 = document.getElementById('zoomDot0');
   const d1 = document.getElementById('zoomDot1');
-  if (d0) d0.classList.toggle('on', !isFramed);
-  if (d1) d1.classList.toggle('on', isFramed);
+  if (d0) d0.classList.toggle('on', isFramed);
+  if (d1) d1.classList.toggle('on', !isFramed);
   document.getElementById('zoomOverlay').classList.add('on');
 }
 function switchZoomView(idx) {
-  // idx 0 = print, idx 1 = framed
-  if (idx === 1 && fmt !== 'framed') setFmt('framed');
-  else if (idx === 0 && fmt !== 'print') setFmt('print');
+  // idx 0 = framed, idx 1 = print
+  if (idx === 0 && fmt !== 'framed') setFmt('framed');
+  else if (idx === 1 && fmt !== 'print') setFmt('print');
   // update zoom image src
   const src = fmt === 'framed'
     ? (document.getElementById('roomImg2').src || document.getElementById('mImg').src)
@@ -1899,8 +1899,8 @@ function switchZoomView(idx) {
   if (d1) d1.classList.toggle('on', idx === 1);
 }
 function navImgView(dir) {
-  if (dir > 0 && fmt === 'print') setFmt('framed');
-  else if (dir < 0 && fmt === 'framed') setFmt('print');
+  if (dir > 0 && fmt === 'framed') setFmt('print');
+  else if (dir < 0 && fmt === 'print') setFmt('framed');
 }
 
 // Swipe left/right on image panel to toggle Print ↔ Framed
@@ -1931,8 +1931,8 @@ function updateImgNav() {
   const isFramed = fmt === 'framed';
   if (prev) prev.disabled = !isFramed;
   if (next) next.disabled = isFramed;
-  if (d0) d0.classList.toggle('on', !isFramed);
-  if (d1) d1.classList.toggle('on', isFramed);
+  if (d0) d0.classList.toggle('on', isFramed);
+  if (d1) d1.classList.toggle('on', !isFramed);
 }
 function setPaper(p) {
   paperType = p;
