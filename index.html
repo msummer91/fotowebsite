@@ -689,8 +689,10 @@
     .modal-title {
       font-family: var(--serif);
       font-size: 28px;
-      font-weight: 300;
+      font-weight: 700;
       font-style: italic;
+      letter-spacing: 0.04em;
+      color: var(--crimson);
       line-height: 1.2;
       padding-right: 24px;
       margin-top: 4px;
@@ -1495,8 +1497,7 @@
         <div class="frame-options-wrap" id="frameOptionsWrap">
           <div class="field-label" style="margin-bottom:12px;margin-top:22px;">Frame style</div>
           <div class="frame-types" id="frameTypes"></div>
-          <div class="field-label" style="margin-bottom:12px;margin-top:22px;">Colour</div>
-          <div class="frame-colors" id="frameColors"></div>
+          <div class="frame-colors" id="frameColors" style="display:none"></div>
           <div class="field-label" style="margin-bottom:6px;margin-top:22px;">Paper</div>
           <div class="frame-desc">Enhanced Matte Art · 200gsm · Smooth matte · Archival giclée</div>
         </div>
@@ -1776,8 +1777,6 @@ const frameData = {
     desc: 'Deep shadow-box frame · 20mm face · 33mm depth · Mounted print · UV Perspex glass · Ships ready to hang.',
     colors: [
       { name: 'Black',   hex: '#1c1c1c' },
-      { name: 'White',   hex: '#f2f0ed', border: '#ccc' },
-      { name: 'Natural', hex: '#ccb28f', border: '#a68858' },
     ]
   },
   // classic frame hidden — not currently offered
