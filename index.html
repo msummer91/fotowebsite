@@ -1487,7 +1487,7 @@
           <button class="ftab" id="tabPrint" onclick="setFmt('print')">Print — Unframed</button>
         </div>
         <div class="paper-options-wrap" id="paperOptionsWrap">
-          <div class="field-label" style="margin-top:22px;margin-bottom:12px">Paper</div>
+          <div class="field-label" style="margin-top:22px;margin-bottom:12px" data-i18n="paper">Paper</div>
           <div class="frame-types">
             <button class="ftype-btn on" id="paperHpr" onclick="setPaper('hpr')">Hahnemühle Rag</button>
             <button class="ftype-btn" id="paperPap" onclick="setPaper('pap')">Lustre</button>
@@ -1495,16 +1495,16 @@
           <div class="frame-desc" id="paperDesc" style="margin-top:8px;">308gsm · Cotton rag · Matte · Archival giclée</div>
         </div>
         <div class="frame-options-wrap" id="frameOptionsWrap">
-          <div class="field-label" style="margin-bottom:12px;margin-top:22px;">Frame style</div>
+          <div class="field-label" style="margin-bottom:12px;margin-top:22px;" data-i18n="frame_style">Frame style</div>
           <div class="frame-types" id="frameTypes"></div>
           <div class="frame-colors" id="frameColors" style="display:none"></div>
-          <div class="field-label" style="margin-bottom:6px;margin-top:22px;">Paper</div>
+          <div class="field-label" style="margin-bottom:6px;margin-top:22px;" data-i18n="paper">Paper</div>
           <div class="frame-desc">Enhanced Matte Art · 200gsm · Smooth matte · Archival giclée</div>
         </div>
       </div>
 
       <div>
-        <div class="field-label" style="margin-top:22px;">Size</div>
+        <div class="field-label" style="margin-top:22px;" data-i18n="size">Size</div>
         <div class="sizes" id="mSizes"></div>
         <div class="frame-size-note" id="mFrameSizeNote"></div>
       </div>
@@ -1989,7 +1989,7 @@ function renderFrameTypes() {
   Object.entries(frameData).forEach(([key, data]) => {
     const b = document.createElement('button');
     b.className = 'ftype-btn' + (key === frameType ? ' on' : '');
-    b.textContent = data.label;
+    b.textContent = key === 'boxframe' ? t('box_frame') : data.label;
     b.onclick = () => {
       frameType = key; frameColorIdx = 0; mountColor = 'Snow White';
       renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
@@ -2311,7 +2311,7 @@ const _i18n = {
     vat_note: 'VAT included where applicable. Shipping calculated at checkout.',
     lang_label: 'Language', cur_label: 'Currency',
     see_on_wall: 'See it on your wall',
-    frame_style: 'Frame style', colour: 'Colour', mount: 'Mount', paper: 'Paper', size: 'Size', format: 'Format',
+    frame_style: 'Frame style', box_frame: 'Box Frame', colour: 'Colour', mount: 'Mount', paper: 'Paper', size: 'Size', format: 'Format',
     frame_on_wall: 'Frame on wall', print_inside: 'Print inside', mount_border: 'Mount border', each_side: 'each side', visible_image: 'Visible image',
   },
   de: {
@@ -2331,7 +2331,7 @@ const _i18n = {
     vat_note: 'MwSt. inkl. wo anwendbar. Versand wird beim Checkout berechnet.',
     lang_label: 'Sprache', cur_label: 'Währung',
     see_on_wall: 'Auf deiner Wand',
-    frame_style: 'Rahmenstil', colour: 'Farbe', mount: 'Passepartout', paper: 'Papier', size: 'Grösse', format: 'Format',
+    frame_style: 'Rahmenstil', box_frame: 'Passepartout Rahmen', colour: 'Farbe', mount: 'Passepartout', paper: 'Papier', size: 'Grösse', format: 'Format',
     frame_on_wall: 'Rahmen an der Wand', print_inside: 'Druck innen', mount_border: 'Passepartout-Rand', each_side: 'je Seite', visible_image: 'Sichtbares Bild',
   }
 };
