@@ -1924,6 +1924,7 @@ function _loadFramedMockup(colorName, style, mc) {
     roomImg.style.opacity = '1';
     mImg.src = url;
     mImg.style.opacity = '1';
+    wrap.style.background = '';
     wrap.style.border = '';
     wrap.style.outline = '';
     wrap.style.boxShadow = '6px 14px 40px rgba(0,0,0,0.55)';
@@ -1943,7 +1944,9 @@ function _loadFramedMockup(colorName, style, mc) {
     return;
   }
 
-  // Cache miss — keep current display (bare photo or previous mockup), just show loading hint
+  // Cache miss — blank the image (white bg shows through) and show spinner
+  mImg.style.opacity = '0';
+  wrap.style.background = '#fff';
   if (hint) hint.classList.add('visible');
 
   const reqId = ++_mockupReqId;
