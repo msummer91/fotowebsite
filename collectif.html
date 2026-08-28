@@ -1624,7 +1624,7 @@ function getOrderedProducts() {
 // Defined as a function so it runs after _currency is initialised (avoids TDZ).
 function renderWorkGrid() {
   const ordered = getOrderedProducts();
-  document.getElementById('workCount').textContent = ordered.length + ' works';
+  const _wc = document.getElementById('workCount'); if (_wc) _wc.textContent = ordered.length + ' works';
   const grid = document.getElementById('workGrid');
   ordered.forEach(p => {
     const el = document.createElement('div');
