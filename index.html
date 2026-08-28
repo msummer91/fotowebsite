@@ -1656,10 +1656,8 @@
   <section id="about">
     <div>
       <p class="about-sup" data-i18n="about_sup">About</p>
-      <h2 class="about-h" data-i18n="about_h">We photograph the feeling of being alive in the world.</h2>
-      <p class="about-p" data-i18n="about_p1">We photograph the daily worlds, hustle, tranquility, people, nature, sports and what we love — living on this planet.</p>
-      <p class="about-p" data-i18n="about_p2">été collectif was born out of the idea to share what we see with our eyes, captured through a lens (analog to digital).</p>
-      <a href="mailto:hello@etecollectif.com" class="link-u">hello@etecollectif.com</a>
+      <p class="about-p" data-i18n="about_p1">été collectif was born out of the idea to share what we see with our eyes, but all captured through a lens (analog or digital). We photograph the daily hustle, tranquility, from people to nature, mountains to sea, all the beauty this world has to offer.</p>
+      <p class="about-p">If you have questions, drop us a message via <a href="https://instagram.com/etecollectif" target="_blank" rel="noopener" class="link-u">Instagram</a> or <a href="mailto:hello@etecollectif.com" class="link-u">E-Mail</a>.</p>
     </div>
   </section>
 </main>
@@ -1951,8 +1949,8 @@ function updateImgNav() {
   const d0 = document.getElementById('imgDot0');
   const d1 = document.getElementById('imgDot1');
   const isFramed = fmt === 'framed';
-  if (prev) prev.disabled = !isFramed;
-  if (next) next.disabled = isFramed;
+  if (prev) prev.disabled = isFramed;
+  if (next) next.disabled = !isFramed;
   if (d0) d0.classList.toggle('on', isFramed);
   if (d1) d1.classList.toggle('on', !isFramed);
 }
@@ -2322,9 +2320,7 @@ const _i18n = {
   en: {
     nav_about: 'About', nav_contact: 'Contact',
     about_sup: 'About',
-    about_h: 'We photograph the feeling of being alive in the world.',
-    about_p1: 'We photograph the daily worlds, hustle, tranquility, people, nature, sports and what we love — living on this planet.',
-    about_p2: 'été collectif was born out of the idea to share what we see with our eyes, captured through a lens (analog to digital).',
+    about_p1: 'été collectif was born out of the idea to share what we see with our eyes, but all captured through a lens (analog or digital). We photograph the daily hustle, tranquility, from people to nature, mountains to sea, all the beauty this world has to offer.',
     fmt_print: 'Print — Unframed', fmt_framed: 'Framed',
     paper_hpr: 'Hahnemühle Rag', paper_pap: 'Lustre',
     add_to_cart: 'Add to Shopping Cart',
@@ -2342,9 +2338,7 @@ const _i18n = {
   de: {
     nav_about: 'Über uns', nav_contact: 'Kontakt',
     about_sup: 'Über uns',
-    about_h: 'Wir fotografieren das Gefühl, lebendig auf der Welt zu sein.',
-    about_p1: 'Wir fotografieren Alltag, Trubel, Stille, Menschen, Natur, Sport und alles, was wir lieben — das Leben auf diesem Planeten.',
-    about_p2: 'été collectif entstand aus der Idee, das zu teilen, was wir sehen – eingefangen durch eine Linse (analog bis digital).',
+    about_p1: 'été collectif entstand aus der Idee, das zu teilen, was wir sehen – alles festgehalten durch eine Linse (analog oder digital). Wir fotografieren den Alltag, Stille, von Menschen bis zur Natur, Berge bis zum Meer, all die Schönheit, die diese Welt zu bieten hat.',
     fmt_print: 'Print — Ungerahmt', fmt_framed: 'Gerahmt',
     paper_hpr: 'Hahnemühle Rag', paper_pap: 'Lustre',
     add_to_cart: 'In den Warenkorb',
