@@ -149,7 +149,6 @@
       font-size: clamp(32px, 3.5vw, 52px);
       font-weight: 700;
       font-style: italic;
-      letter-spacing: 0.04em;
       color: var(--dark);
     }
     .work-count {
@@ -254,6 +253,20 @@
       position: relative;
       overflow: hidden;
       cursor: pointer;
+    }
+    /* Spinning camera overlay — shown while frame mockup loads */
+    .frame-loading-spinner {
+      display: none;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      pointer-events: none;
+    }
+    .frame-loading-spinner.visible { display: block; }
+    @keyframes spin-camera { to { transform: translate(-50%, -50%) rotate(360deg); } }
+    .frame-loading-spinner.visible svg {
+      animation: spin-camera 1.1s linear infinite;
     }
     .modal-frame-wrap {
       position: relative;
@@ -1301,8 +1314,13 @@
   <div class="modal-img-col" onclick="closeModal()">
     <div class="modal-frame-wrap" id="mFrameWrap" onclick="event.stopPropagation(); openImgZoom()">
       <img id="mImg" src="" alt="" />
+      <div class="frame-loading-spinner" id="frameLoadHint">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </div>
     </div>
-    <div id="frameLoadHint" onclick="event.stopPropagation()" style="display:none;text-align:center;font-size:12px;color:#aaa;padding:6px 0;pointer-events:none;letter-spacing:0.03em;">Generating preview…</div>
     <div class="img-nav-arrows" onclick="event.stopPropagation()">
       <button class="img-nav-btn" id="imgNavPrev" onclick="navImgView(-1)" title="Original" disabled>
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 14L6 9l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1901,7 +1919,7 @@ function _loadFramedMockup(colorName, style, mc) {
 
   function applyMockup(url) {
     if (fmt !== 'framed') return;
-    if (hint) hint.style.display = 'none';
+    if (hint) hint.classList.remove('visible');
     roomImg.src = url;
     roomImg.style.opacity = '1';
     mImg.src = url;
@@ -1926,7 +1944,7 @@ function _loadFramedMockup(colorName, style, mc) {
   }
 
   // Cache miss — keep current display (bare photo or previous mockup), just show loading hint
-  if (hint) hint.style.display = 'block';
+  if (hint) hint.classList.add('visible');
 
   const reqId = ++_mockupReqId;
   const fullUrl = window.location.origin + '/' + cur.img;
@@ -1941,7 +1959,7 @@ function _loadFramedMockup(colorName, style, mc) {
   tmp.onerror = () => {
     if (reqId !== _mockupReqId) return;
     roomImg.style.opacity = '1';
-    if (hint) hint.style.display = 'none';
+    if (hint) hint.classList.remove('visible');
   };
   tmp.src = mockupUrl;
 }
