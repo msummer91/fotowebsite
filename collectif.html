@@ -2557,13 +2557,11 @@ function getOrderSku(item) {
 }
 function getOrderAttributes(item) {
   if (item.fmt !== 'framed' || !item.frameLabel) return {};
+  // Note: GLOBAL-BOXM mount colour is fixed (Snow White) — Prodigi rejects mountColour attribute
   const afterDash = item.frameLabel.split(' – ')[1] || '';
   const colorName = afterDash.split(' · ')[0].trim();
-  const mountMatch = item.frameLabel.match(/Mount:\s*([^·]+)/);
-  const mountName  = mountMatch ? mountMatch[1].trim() : 'Snow White';
   const attrs = {};
-  if (FRAME_COLOR_ATTR[colorName])  attrs.color       = FRAME_COLOR_ATTR[colorName];
-  if (MOUNT_COLOR_ATTR[mountName])  attrs.mountColour = MOUNT_COLOR_ATTR[mountName];
+  if (FRAME_COLOR_ATTR[colorName]) attrs.color = FRAME_COLOR_ATTR[colorName];
   return attrs;
 }
 
