@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Datenschutz / Privacy Policy – été collectif</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<style>
+  :root {
+    --sans: 'Helvetica Neue', Arial, sans-serif;
+    --serif: Georgia, 'Times New Roman', serif;
+    --dark: #1a1a1a;
+    --muted: #888;
+    --border: #e8e8e6;
+    --crimson: #8b1a1a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--dark); background: #fff; font-size: 15px; line-height: 1.8; }
+
+  header {
+    position: sticky; top: 0; height: 72px;
+    padding: 0 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border-bottom: 1px solid var(--border); z-index: 100;
+  }
+  .logo a { text-decoration: none; }
+  .logo-text { font-family: var(--serif); font-size: 22px; font-weight: 400; font-style: italic; color: var(--crimson); letter-spacing: 0.02em; }
+  .logo-sub  { font-family: var(--sans); font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dark); margin-left: 2px; }
+  .back-link { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dark); text-decoration: none; }
+  .back-link:hover { color: var(--crimson); }
+
+  main { max-width: 720px; margin: 0 auto; padding: 72px 32px 120px; }
+
+  .lang-toggle { display: flex; gap: 16px; margin-bottom: 48px; }
+  .lang-btn { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; background: none; border: none; cursor: pointer; color: var(--muted); padding: 0; }
+  .lang-btn.active { color: var(--dark); border-bottom: 1.5px solid var(--dark); padding-bottom: 1px; }
+
+  h1 { font-family: var(--serif); font-size: 32px; font-weight: 300; margin-bottom: 12px; }
+  .last-updated { font-size: 12px; color: var(--muted); margin-bottom: 48px; }
+  h2 { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 40px 0 12px; }
+  p  { margin-bottom: 12px; }
+  ul { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; }
+  a  { color: var(--crimson); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .placeholder { background: #fff3cd; padding: 2px 6px; border-radius: 3px; font-style: italic; color: #856404; }
+  .box { background: #f9f9f8; border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; margin: 16px 0; }
+  .box h3 { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+
+  footer { text-align: center; padding: 40px 32px; font-size: 11px; color: var(--muted); letter-spacing: 0.08em; border-top: 1px solid var(--border); }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--dark); }
+
+  @media (max-width: 600px) {
+    header { padding: 0 20px; }
+    main { padding: 48px 20px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <a href="/"><span class="logo-text">été</span><span class="logo-sub">collectif</span></a>
+  </div>
+  <a class="back-link" href="javascript:history.back()">← Back</a>
+</header>
+
+<main>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('de',this)">DE</button>
+    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+  </div>
+
+  <!-- ══ GERMAN ══ -->
+  <div id="content-de">
+    <h1>Datenschutzerklärung</h1>
+    <p class="last-updated">Zuletzt aktualisiert: September 2026</p>
+
+    <h2>1. Verantwortlicher</h2>
+    <p>
+      Verantwortlicher im Sinne der DSGVO ist:<br><br>
+      <span class="placeholder">[Vollständiger Name]</span><br>
+      <span class="placeholder">[Straße und Hausnummer]</span><br>
+      <span class="placeholder">[PLZ Ort, Land]</span><br>
+      E-Mail: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>
+    </p>
+
+    <h2>2. Erhebung und Verarbeitung personenbezogener Daten</h2>
+    <p>Wir erheben personenbezogene Daten nur, soweit dies für die Bereitstellung unserer Dienste erforderlich ist. Im Einzelnen:</p>
+
+    <div class="box">
+      <h3>Bestelldaten</h3>
+      <p>Beim Kauf eines Druckes erheben wir: Name, E-Mail-Adresse, Lieferanschrift sowie Zahlungsinformationen. Diese Daten sind zur Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO) erforderlich.</p>
+    </div>
+
+    <div class="box">
+      <h3>Zahlungsabwicklung – Stripe</h3>
+      <p>Die Zahlungsabwicklung erfolgt über <strong>Stripe, Inc.</strong>, 354 Oyster Point Blvd, South San Francisco, CA 94080, USA. Stripe ist für die Verarbeitung Ihrer Zahlungsdaten verantwortlich. Wir erhalten zu keinem Zeitpunkt vollständige Kreditkartendaten. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</p>
+      <p>Stripe verwendet technisch notwendige Cookies zur Betrugsprävention. Weitere Informationen: <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener">stripe.com/de/privacy</a></p>
+    </div>
+
+    <div class="box">
+      <h3>Druckproduktion – Prodigi</h3>
+      <p>Bestellungen werden zur Erfüllung an <strong>Prodigi Group Ltd</strong>, 20 Eastbourne Terrace, London W2 6LG, UK, weitergeleitet. Dabei werden Name und Lieferadresse übermittelt. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
+      <p>Datenschutzerklärung Prodigi: <a href="https://www.prodigi.com/privacy-policy/" target="_blank" rel="noopener">prodigi.com/privacy-policy</a></p>
+    </div>
+
+    <div class="box">
+      <h3>Hosting – Vercel</h3>
+      <p>Diese Website wird gehostet von <strong>Vercel Inc.</strong>, 340 Pine Street Suite 701, San Francisco, CA 94104, USA. Vercel verarbeitet automatisch Server-Logs (IP-Adresse, Browser-Typ, aufgerufene Seiten, Zeitstempel). Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an sicherem Betrieb der Website).</p>
+      <p>Datenschutzerklärung Vercel: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">vercel.com/legal/privacy-policy</a></p>
+    </div>
+
+    <h2>3. Cookies und lokale Speicherung</h2>
+    <p>Unsere Website verwendet:</p>
+    <ul>
+      <li><strong>Stripe-Cookies:</strong> Technisch notwendig für sichere Zahlungsabwicklung und Betrugsprävention. Keine Einwilligung erforderlich (Art. 6 Abs. 1 lit. b DSGVO).</li>
+      <li><strong>Lokaler Speicher (localStorage):</strong> Wir speichern Ihre Sprachpräferenz (DE/EN) und Währungsauswahl ausschließlich lokal in Ihrem Browser. Diese Daten verlassen Ihr Gerät nicht und werden nicht an uns übertragen.</li>
+      <li><strong>Cookie-Einwilligung:</strong> Ihre Einwilligung oder Ablehnung wird im lokalen Speicher gespeichert, um erneute Abfragen zu vermeiden.</li>
+    </ul>
+    <p>Wir verwenden keine Analyse-, Werbe- oder Tracking-Cookies (keine Google Analytics, kein Meta Pixel o. ä.).</p>
+
+    <h2>4. Speicherdauer</h2>
+    <p>Bestelldaten werden entsprechend der gesetzlichen Aufbewahrungsfristen (in der Regel 7–10 Jahre für steuerrelevante Unterlagen) gespeichert. Darüber hinaus gehende Daten werden gelöscht, sobald sie nicht mehr benötigt werden.</p>
+
+    <h2>5. Datenübermittlung in Drittstaaten</h2>
+    <p>Stripe und Vercel sind in den USA ansässig. Die Datenübermittlung in die USA erfolgt auf Grundlage der EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO) bzw. des EU-US Data Privacy Framework.</p>
+
+    <h2>6. Ihre Rechte</h2>
+    <p>Sie haben gemäß DSGVO folgende Rechte:</p>
+    <ul>
+      <li><strong>Auskunft</strong> (Art. 15): Recht auf Auskunft über gespeicherte Daten</li>
+      <li><strong>Berichtigung</strong> (Art. 16): Recht auf Korrektur unrichtiger Daten</li>
+      <li><strong>Löschung</strong> (Art. 17): Recht auf Löschung Ihrer Daten</li>
+      <li><strong>Einschränkung</strong> (Art. 18): Recht auf Einschränkung der Verarbeitung</li>
+      <li><strong>Datenübertragbarkeit</strong> (Art. 20): Recht auf Erhalt Ihrer Daten in einem maschinenlesbaren Format</li>
+      <li><strong>Widerspruch</strong> (Art. 21): Recht auf Widerspruch gegen die Verarbeitung</li>
+    </ul>
+    <p>Zur Ausübung Ihrer Rechte wenden Sie sich bitte an: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a></p>
+
+    <h2>7. Beschwerderecht</h2>
+    <p>Sie haben das Recht, sich bei einer Datenschutzaufsichtsbehörde über die Verarbeitung Ihrer personenbezogenen Daten durch uns zu beschweren. Die zuständige Aufsichtsbehörde richtet sich nach Ihrem Wohnsitzland innerhalb der EU/des EWR.</p>
+
+    <h2>8. Änderungen dieser Datenschutzerklärung</h2>
+    <p>Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf zu aktualisieren. Die jeweils aktuelle Version ist auf dieser Seite abrufbar. Bei wesentlichen Änderungen werden wir Sie informieren.</p>
+  </div>
+
+  <!-- ══ ENGLISH ══ -->
+  <div id="content-en" style="display:none">
+    <h1>Privacy Policy</h1>
+    <p class="last-updated">Last updated: September 2026</p>
+
+    <h2>1. Controller</h2>
+    <p>
+      The controller within the meaning of the GDPR is:<br><br>
+      <span class="placeholder">[Full name]</span><br>
+      <span class="placeholder">[Street address]</span><br>
+      <span class="placeholder">[Postal code, City, Country]</span><br>
+      Email: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>
+    </p>
+
+    <h2>2. Data Collection and Processing</h2>
+    <p>We only collect personal data to the extent necessary to provide our services.</p>
+
+    <div class="box">
+      <h3>Order Data</h3>
+      <p>When purchasing a print, we collect: name, email address, delivery address, and payment information. This data is required for contract performance (Art. 6(1)(b) GDPR).</p>
+    </div>
+
+    <div class="box">
+      <h3>Payment Processing – Stripe</h3>
+      <p>Payments are processed by <strong>Stripe, Inc.</strong>, 354 Oyster Point Blvd, South San Francisco, CA 94080, USA. Stripe is responsible for processing your payment data. We never receive full card details. Legal basis: Art. 6(1)(b) GDPR (contract performance).</p>
+      <p>Stripe uses technically necessary cookies for fraud prevention. Learn more: <a href="https://stripe.com/privacy" target="_blank" rel="noopener">stripe.com/privacy</a></p>
+    </div>
+
+    <div class="box">
+      <h3>Print Fulfilment – Prodigi</h3>
+      <p>Orders are forwarded to <strong>Prodigi Group Ltd</strong>, 20 Eastbourne Terrace, London W2 6LG, UK, for production. Your name and delivery address are transmitted. Legal basis: Art. 6(1)(b) GDPR.</p>
+      <p>Prodigi's privacy policy: <a href="https://www.prodigi.com/privacy-policy/" target="_blank" rel="noopener">prodigi.com/privacy-policy</a></p>
+    </div>
+
+    <div class="box">
+      <h3>Hosting – Vercel</h3>
+      <p>This website is hosted by <strong>Vercel Inc.</strong>, 340 Pine Street Suite 701, San Francisco, CA 94104, USA. Vercel automatically processes server logs (IP address, browser type, pages visited, timestamps). Legal basis: Art. 6(1)(f) GDPR (legitimate interest in secure website operation).</p>
+      <p>Vercel's privacy policy: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">vercel.com/legal/privacy-policy</a></p>
+    </div>
+
+    <h2>3. Cookies and Local Storage</h2>
+    <p>Our website uses:</p>
+    <ul>
+      <li><strong>Stripe cookies:</strong> Technically necessary for secure payment processing and fraud prevention. No consent required (Art. 6(1)(b) GDPR).</li>
+      <li><strong>Local storage:</strong> We store your language preference (DE/EN) and currency selection exclusively in your browser. This data does not leave your device.</li>
+      <li><strong>Cookie consent:</strong> Your consent choice is stored in local storage to avoid repeated prompts.</li>
+    </ul>
+    <p>We do not use analytics, advertising or tracking cookies (no Google Analytics, no Meta Pixel, etc.).</p>
+
+    <h2>4. Retention Periods</h2>
+    <p>Order data is retained in accordance with statutory retention periods (generally 7–10 years for tax-relevant records). Other data is deleted as soon as it is no longer required.</p>
+
+    <h2>5. International Data Transfers</h2>
+    <p>Stripe and Vercel are based in the USA. Data transfers to the USA are carried out on the basis of EU Standard Contractual Clauses (Art. 46(2)(c) GDPR) and the EU-US Data Privacy Framework.</p>
+
+    <h2>6. Your Rights</h2>
+    <p>Under the GDPR, you have the following rights:</p>
+    <ul>
+      <li><strong>Access</strong> (Art. 15): Right to information about stored data</li>
+      <li><strong>Rectification</strong> (Art. 16): Right to correct inaccurate data</li>
+      <li><strong>Erasure</strong> (Art. 17): Right to deletion of your data</li>
+      <li><strong>Restriction</strong> (Art. 18): Right to restrict processing</li>
+      <li><strong>Data portability</strong> (Art. 20): Right to receive your data in a machine-readable format</li>
+      <li><strong>Objection</strong> (Art. 21): Right to object to processing</li>
+    </ul>
+    <p>To exercise your rights, please contact: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a></p>
+
+    <h2>7. Right to Lodge a Complaint</h2>
+    <p>You have the right to lodge a complaint with a data protection supervisory authority regarding our processing of your personal data. The competent authority depends on your country of residence within the EU/EEA.</p>
+
+    <h2>8. Changes to This Policy</h2>
+    <p>We reserve the right to update this privacy policy as needed. The current version is always available on this page. We will notify you of material changes.</p>
+  </div>
+</main>
+
+<footer>
+  <a href="/privacy-policy.html">Privacy Policy / Datenschutz</a> &nbsp;·&nbsp;
+  <a href="/impressum.html">Impressum</a> &nbsp;·&nbsp;
+  © <span id="yr"></span> été collectif
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+function setLang(lang, btn) {
+  document.getElementById('content-de').style.display = lang === 'de' ? '' : 'none';
+  document.getElementById('content-en').style.display = lang === 'en' ? '' : 'none';
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

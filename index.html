@@ -1071,6 +1071,62 @@
     }
     .foot-links a:hover { color: var(--dark); }
     .foot-copy { font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+    .foot-legal {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap;
+      font-size: 10px; color: var(--muted); letter-spacing: 0.06em;
+      border-top: 1px solid var(--border);
+      padding-top: 16px; margin-top: 8px;
+    }
+    .foot-legal a { color: var(--muted); text-decoration: none; }
+    .foot-legal a:hover { color: var(--dark); }
+    .foot-legal span { color: var(--border); }
+
+    /* ── COOKIE BANNER ── */
+    #cookieBanner {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--dark); color: #fff;
+      z-index: 9000;
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    #cookieBannerInner {
+      max-width: 1100px; margin: 0 auto;
+      padding: 20px 40px;
+      display: flex; align-items: center; gap: 32px;
+      flex-wrap: wrap;
+    }
+    #cookieBannerText { flex: 1; min-width: 260px; }
+    #cookieBannerText strong {
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      display: block; margin-bottom: 6px;
+    }
+    #cookieBannerText p { font-size: 12px; line-height: 1.6; color: rgba(255,255,255,0.75); }
+    #cookieBannerText a { color: rgba(255,255,255,0.9); text-decoration: underline; }
+    #cookieBannerBtns { display: flex; gap: 10px; flex-shrink: 0; }
+    #cookieBtnDecline {
+      padding: 10px 20px;
+      font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      background: transparent; border: 1px solid rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.8); cursor: pointer; border-radius: 2px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    #cookieBtnDecline:hover { border-color: #fff; color: #fff; }
+    #cookieBtnAccept {
+      padding: 10px 24px;
+      font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      background: #fff; border: 1px solid #fff;
+      color: var(--dark); cursor: pointer; border-radius: 2px;
+      transition: background 0.2s;
+    }
+    #cookieBtnAccept:hover { background: #eee; }
+    @media (max-width: 600px) {
+      #cookieBannerInner { padding: 16px 20px; gap: 16px; }
+      #cookieBannerBtns { width: 100%; }
+      #cookieBtnDecline, #cookieBtnAccept { flex: 1; text-align: center; }
+    }
 
     /* ── TOAST ── */
     .toast {
@@ -1757,9 +1813,30 @@
         </div>
       </div>
     </div>
-    <span class="foot-copy">© 2026 été collectif</span>
+    <span class="foot-copy">© <span class="js-year"></span> été collectif</span>
+  </div>
+  <div class="foot-legal">
+    <a href="/privacy-policy.html" data-i18n="footer_privacy">Privacy Policy</a>
+    <span>·</span>
+    <a href="/impressum.html">Impressum</a>
+    <span>·</span>
+    <a href="#" onclick="showCookieSettings(); return false;" data-i18n="footer_cookies">Cookie Settings</a>
   </div>
 </footer>
+
+<!-- ── COOKIE CONSENT BANNER ── -->
+<div id="cookieBanner" style="display:none">
+  <div id="cookieBannerInner">
+    <div id="cookieBannerText">
+      <strong data-i18n="cookie_title">Cookie Notice</strong>
+      <p data-i18n="cookie_body">We use technically necessary cookies for payment processing (Stripe) and to remember your language and currency preferences. We do not use tracking or advertising cookies. <a href="/privacy-policy.html" data-i18n="cookie_more">Learn more</a></p>
+    </div>
+    <div id="cookieBannerBtns">
+      <button id="cookieBtnDecline" onclick="setCookieConsent('essential')" data-i18n="cookie_essential">Essential only</button>
+      <button id="cookieBtnAccept"  onclick="setCookieConsent('all')"       data-i18n="cookie_accept">Accept</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -2350,6 +2427,10 @@ const _i18n = {
     see_on_wall: 'See it on your wall',
     frame_style: 'Frame style', box_frame: 'Box Frame', colour: 'Colour', mount: 'Mount', paper: 'Paper', size: 'Size', format: 'Format',
     frame_on_wall: 'Frame on wall', print_inside: 'Print inside', mount_border: 'Mount border', each_side: 'each side', visible_image: 'Visible image',
+    footer_privacy: 'Privacy Policy', footer_cookies: 'Cookie Settings',
+    cookie_title: 'Cookie Notice',
+    cookie_body: 'We use technically necessary cookies for payment processing (Stripe) and to remember your preferences. We do not use tracking or advertising cookies.',
+    cookie_more: 'Learn more', cookie_essential: 'Essential only', cookie_accept: 'Accept',
   },
   de: {
     nav_about: 'Über uns', nav_contact: 'Kontakt',
@@ -2368,6 +2449,10 @@ const _i18n = {
     see_on_wall: 'Auf deiner Wand',
     frame_style: 'Rahmenstil', box_frame: 'Passepartout Rahmen', colour: 'Farbe', mount: 'Passepartout', paper: 'Papier', size: 'Grösse', format: 'Format',
     frame_on_wall: 'Rahmen an der Wand', print_inside: 'Druck innen', mount_border: 'Passepartout-Rand', each_side: 'je Seite', visible_image: 'Sichtbares Bild',
+    footer_privacy: 'Datenschutz', footer_cookies: 'Cookie-Einstellungen',
+    cookie_title: 'Cookie-Hinweis',
+    cookie_body: 'Wir verwenden technisch notwendige Cookies für die Zahlungsabwicklung (Stripe) und zur Speicherung Ihrer Spracheinstellung. Wir setzen keine Tracking- oder Werbe-Cookies ein.',
+    cookie_more: 'Mehr erfahren', cookie_essential: 'Nur notwendige', cookie_accept: 'Akzeptieren',
   }
 };
 function t(key) { return (_i18n[_lang] || _i18n.en)[key] || key; }
@@ -2876,6 +2961,39 @@ function closeMenu(){
 _initCurrency();
 _initLang();
 loadCart();
+
+// ── COOKIE CONSENT ──
+(function() {
+  document.querySelectorAll('.js-year').forEach(el => el.textContent = new Date().getFullYear());
+  const CONSENT_KEY = 'ete_cookie_consent';
+  function setCookieConsent(level) {
+    try { localStorage.setItem(CONSENT_KEY, level); } catch(e) {}
+    const b = document.getElementById('cookieBanner');
+    if (b) { b.style.animation = 'slideDown 0.3s ease forwards'; setTimeout(() => b.style.display = 'none', 300); }
+  }
+  function showCookieSettings() {
+    const b = document.getElementById('cookieBanner');
+    if (b) { b.style.display = ''; b.style.animation = 'slideUp 0.4s ease'; }
+  }
+  window.setCookieConsent = setCookieConsent;
+  window.showCookieSettings = showCookieSettings;
+  // Show banner if no consent yet
+  try {
+    if (!localStorage.getItem(CONSENT_KEY)) {
+      setTimeout(() => {
+        const b = document.getElementById('cookieBanner');
+        if (b) b.style.display = '';
+      }, 800);
+    }
+  } catch(e) {
+    const b = document.getElementById('cookieBanner');
+    if (b) b.style.display = '';
+  }
+  // Add slide-down keyframe dynamically
+  const s = document.createElement('style');
+  s.textContent = '@keyframes slideDown { to { transform: translateY(100%); } }';
+  document.head.appendChild(s);
+})();
 </script>
 
 </body>
