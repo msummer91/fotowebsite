@@ -1661,12 +1661,7 @@ const frameData = {
   // classic frame hidden — not currently offered
 };
 
-// ── MOUNT COLORS (box frame only) — must match Prodigi's mount options ──
-const mountColorOptions = [
-  { name: 'Snow White', hex: '#f8f8f7', border: '#ccc' },
-  { name: 'Black',      hex: '#1a1a1a' },
-  { name: 'Off-white',  hex: '#ede8db', border: '#ccc' },
-];
+// Mount colour fixed at Snow White — no UI selector
 
 // ── MODAL STATE ──
 let cur = null, fmt = 'print', sIdx = 0, frameType = 'boxframe', frameColorIdx = 0, mountColor = 'Snow White', paperType = 'hpr', _modalOpen = false;
@@ -1735,7 +1730,7 @@ function setFmt(f, silent) {
   if (f === 'framed') {
     if (sIdx >= FRAME_SIZES.length) sIdx = FRAME_SIZES.length - 1; // cap at A0
     frameType = 'boxframe'; frameColorIdx = 0; mountColor = 'Snow White';
-    renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
+    renderFrameTypes(); renderFrameColors();
     applyFramePreview();
     prewarmFrameMockups('boxframe');
   } else {
@@ -1840,26 +1835,7 @@ function updateDesc() {
   }
 }
 
-function renderMountColors() {
-  const el = document.getElementById('mountSwatches');
-  if (!el) return;
-  el.innerHTML = '';
-  mountColorOptions.forEach(c => {
-    const b = document.createElement('button');
-    b.className = 'fcolor-btn' + (c.name === mountColor ? ' on' : '');
-    b.style.background = c.hex;
-    if (c.border) b.style.borderColor = c.border;
-    b.title = c.name; b.setAttribute('aria-label', c.name);
-    b.onclick = () => { mountColor = c.name; renderMountColors(); applyFramePreview(); };
-    el.appendChild(b);
-  });
-  const md = document.getElementById('mountDesc');
-  if (md) md.textContent = mountColor;
-}
-function updateMountVisibility() {
-  const ms = document.getElementById('mountSection');
-  if (ms) ms.style.display = (frameType === 'boxframe') ? '' : 'none';
-}
+// Mount colour is fixed at Snow White — no UI selector needed
 
 function renderFrameTypes() {
   const el = document.getElementById('frameTypes'); el.innerHTML = '';
@@ -1869,7 +1845,7 @@ function renderFrameTypes() {
     b.textContent = key === 'boxframe' ? t('box_frame') : data.label;
     b.onclick = () => {
       frameType = key; frameColorIdx = 0; mountColor = 'Snow White';
-      renderFrameTypes(); renderFrameColors(); renderMountColors(); updateMountVisibility();
+      renderFrameTypes(); renderFrameColors();
       applyFramePreview(); updatePrice(); updateDesc();
       prewarmFrameMockups(key);
     };
