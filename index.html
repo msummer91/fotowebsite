@@ -1123,7 +1123,34 @@
       display: flex; justify-content: space-between; align-items: center;
       padding: 14px 0; border-bottom: 1px solid #e8e8e6; font-size: 13px;
     }
-    .cb-always { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .cb-always { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #1a1a1a; }
+    .cb-back-btn {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      background: none; border: none; cursor: pointer; color: var(--muted);
+      padding: 0; margin-bottom: 20px; display: inline-block;
+    }
+    .cb-back-btn:hover { color: var(--dark); }
+    .cb-cat-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 16px 0; border-bottom: 1px solid #e8e8e6;
+    }
+    .cb-cat-info { flex: 1; padding-right: 20px; }
+    .cb-cat-name { font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block; }
+    .cb-cat-desc { font-size: 12px; color: #666; line-height: 1.55; }
+    .cb-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px; }
+    .cb-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .cb-switch-slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background: #ccc; border-radius: 24px; transition: background 0.2s;
+    }
+    .cb-switch-slider::before {
+      content: ''; position: absolute;
+      height: 18px; width: 18px; left: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
+    }
+    .cb-switch input:checked + .cb-switch-slider { background: #1a1a1a; }
+    .cb-switch input:checked + .cb-switch-slider::before { transform: translateX(20px); }
+    .cb-switch input:disabled + .cb-switch-slider { background: #1a1a1a; cursor: not-allowed; opacity: 0.85; }
     @media (max-width: 600px) { .cb-panel { padding: 24px 20px 20px; } }
 
     /* ── TOAST ── */
@@ -1842,19 +1869,34 @@
   </div>
   <!-- settings panel -->
   <div class="cb-panel" id="cbSettings" style="display:none">
-    <strong class="cb-label" data-i18n="cookie_settings_title">Cookies und Einstellungen</strong>
-    <p class="cb-text" data-i18n="cookie_settings_body">Nachfolgend finden Sie Informationen zu den Cookies, die wir verwenden. Wir setzen ausschließlich technisch notwendige Cookies für die Zahlungsabwicklung (Stripe) und zur Speicherung Ihrer Spracheinstellung ein. Wir setzen keine Tracking- oder Werbe-Cookies ein.</p>
-    <a href="/privacy-policy.html" class="cb-link" data-i18n="cookie_more">Mehr erfahren</a>
-    <button class="cb-btn cb-btn--dark" onclick="setCookieConsent('all')" data-i18n="cookie_accept">Alle akzeptieren</button>
-    <hr class="cb-divider">
-    <span class="cb-manage-label" data-i18n="cookie_manage">Zustimmungspräferenzen verwalten</span>
-    <div class="cb-row">
-      <span data-i18n="cookie_necessary">Unbedingt notwendige Cookies</span>
-      <span class="cb-always" data-i18n="cookie_always">Immer aktiv</span>
+    <button class="cb-back-btn" onclick="document.getElementById('cbMain').style.display='';document.getElementById('cbSettings').style.display='none'" data-i18n="cookie_back">← Zurück</button>
+    <strong class="cb-label" data-i18n="cookie_settings_title">Einstellungen verwalten</strong>
+    <p class="cb-text" data-i18n="cookie_settings_body">Wähle, welche Cookies du akzeptieren möchtest. Notwendige Cookies sind immer aktiv.</p>
+    <!-- category: essential -->
+    <div class="cb-cat-row">
+      <div class="cb-cat-info">
+        <span class="cb-cat-name" data-i18n="cookie_cat_ess">Notwendige Cookies</span>
+        <span class="cb-cat-desc" data-i18n="cookie_cat_ess_desc">Für die Zahlungsabwicklung (Stripe) und zur Speicherung deiner Spracheinstellung. Können nicht deaktiviert werden.</span>
+      </div>
+      <label class="cb-switch" aria-label="Notwendige Cookies">
+        <input type="checkbox" id="cbToggleEss" checked disabled>
+        <span class="cb-switch-slider"></span>
+      </label>
+    </div>
+    <!-- category: analytics -->
+    <div class="cb-cat-row">
+      <div class="cb-cat-info">
+        <span class="cb-cat-name" data-i18n="cookie_cat_anal">Analyse-Cookies</span>
+        <span class="cb-cat-desc" data-i18n="cookie_cat_anal_desc">Helfen uns zu verstehen, wie Besucher die Website nutzen. Derzeit nicht aktiv.</span>
+      </div>
+      <label class="cb-switch" aria-label="Analyse-Cookies">
+        <input type="checkbox" id="cbToggleAnal">
+        <span class="cb-switch-slider"></span>
+      </label>
     </div>
     <hr class="cb-divider">
-    <button class="cb-btn cb-btn--light" onclick="setCookieConsent('essential')" data-i18n="cookie_essential">Nur erforderliche Cookies</button>
-    <button class="cb-btn cb-btn--dark" onclick="setCookieConsent('all')" data-i18n="cookie_confirm">Auswahl bestätigen</button>
+    <button class="cb-btn cb-btn--dark" onclick="saveCookiePreferences()" data-i18n="cookie_save">Auswahl speichern</button>
+    <button class="cb-btn cb-btn--light" onclick="setCookieConsent('all')" data-i18n="cookie_accept">Alle akzeptieren</button>
   </div>
 </div>
 
@@ -2466,15 +2508,21 @@ const _i18n = {
     footer_versand: 'Shipping', footer_widerruf: 'Returns',
     footer_privacy: 'Privacy Policy', footer_cookies: 'Cookie Settings',
     cookie_title: 'Cookie Notice',
-    cookie_body: 'We use technically necessary cookies for payment processing (Stripe) and to remember your language and currency preferences. We do not use tracking or advertising cookies.',
-    cookie_more: 'Learn more', cookie_essential: 'Essential cookies only', cookie_accept: 'Accept all',
-    cookie_settings: 'Cookies and Settings',
-    cookie_settings_title: 'Cookies and Settings',
-    cookie_settings_body: 'Below you will find information about the cookies we use. We only use technically necessary cookies for payment processing (Stripe) and to remember your language preferences. We do not use tracking or advertising cookies.',
+    cookie_body: 'We use essential cookies for payment processing (Stripe) and to save your language preference. You can manage your preferences below.',
+    cookie_more: 'Learn more', cookie_essential: 'Essential only', cookie_accept: 'Accept all',
+    cookie_settings: 'Manage preferences',
+    cookie_back: '← Back',
+    cookie_settings_title: 'Manage Preferences',
+    cookie_settings_body: 'Choose which cookies you want to accept. Essential cookies are always active.',
     cookie_manage: 'Manage Consent Preferences',
     cookie_necessary: 'Strictly Necessary Cookies',
     cookie_always: 'Always Active',
     cookie_confirm: 'Confirm Selection',
+    cookie_cat_ess: 'Essential Cookies',
+    cookie_cat_ess_desc: 'Required for payment processing (Stripe) and saving your language preference. Cannot be disabled.',
+    cookie_cat_anal: 'Analytics Cookies',
+    cookie_cat_anal_desc: 'Help us understand how visitors use the site. Currently not active.',
+    cookie_save: 'Save my preferences',
   },
   de: {
     nav_about: 'Über uns', nav_contact: 'Kontakt',
@@ -2499,13 +2547,19 @@ const _i18n = {
     cookie_title: 'Cookie-Hinweis',
     cookie_body: 'Wir verwenden technisch notwendige Cookies für die Zahlungsabwicklung (Stripe) und zur Speicherung Ihrer Spracheinstellung. Wir setzen keine Tracking- oder Werbe-Cookies ein.',
     cookie_more: 'Mehr erfahren', cookie_essential: 'Nur erforderliche Cookies', cookie_accept: 'Alle akzeptieren',
-    cookie_settings: 'Cookies und Einstellungen',
-    cookie_settings_title: 'Cookies und Einstellungen',
-    cookie_settings_body: 'Nachfolgend finden Sie Informationen zu den Cookies, die wir verwenden. Wir setzen ausschließlich technisch notwendige Cookies für die Zahlungsabwicklung (Stripe) und zur Speicherung Ihrer Spracheinstellung ein. Wir setzen keine Tracking- oder Werbe-Cookies ein.',
+    cookie_settings: 'Einstellungen verwalten',
+    cookie_back: '← Zurück',
+    cookie_settings_title: 'Einstellungen verwalten',
+    cookie_settings_body: 'Wähle, welche Cookies du akzeptieren möchtest. Notwendige Cookies sind immer aktiv.',
     cookie_manage: 'Zustimmungspräferenzen verwalten',
     cookie_necessary: 'Unbedingt notwendige Cookies',
     cookie_always: 'Immer aktiv',
     cookie_confirm: 'Auswahl bestätigen',
+    cookie_cat_ess: 'Notwendige Cookies',
+    cookie_cat_ess_desc: 'Für die Zahlungsabwicklung (Stripe) und zur Speicherung deiner Spracheinstellung. Können nicht deaktiviert werden.',
+    cookie_cat_anal: 'Analyse-Cookies',
+    cookie_cat_anal_desc: 'Helfen uns zu verstehen, wie Besucher die Website nutzen. Derzeit nicht aktiv.',
+    cookie_save: 'Auswahl speichern',
   }
 };
 function t(key) { return (_i18n[_lang] || _i18n.en)[key] || key; }
@@ -3040,8 +3094,27 @@ loadCart();
     if (b) b.style.display = 'none';
     if (o) o.style.display = 'none';
   }
+  function _getConsent() {
+    try {
+      const raw = localStorage.getItem(CONSENT_KEY);
+      if (!raw) return null;
+      // handle legacy string format
+      if (raw === 'all') return { essential: true, analytics: true };
+      if (raw === 'essential') return { essential: true, analytics: false };
+      return JSON.parse(raw);
+    } catch(e) { return null; }
+  }
   function setCookieConsent(level) {
-    try { localStorage.setItem(CONSENT_KEY, level); } catch(e) {}
+    const consent = level === 'all'
+      ? { essential: true, analytics: true }
+      : { essential: true, analytics: false };
+    try { localStorage.setItem(CONSENT_KEY, JSON.stringify(consent)); } catch(e) {}
+    _hide();
+  }
+  function saveCookiePreferences() {
+    const anal = document.getElementById('cbToggleAnal');
+    const consent = { essential: true, analytics: anal ? anal.checked : false };
+    try { localStorage.setItem(CONSENT_KEY, JSON.stringify(consent)); } catch(e) {}
     _hide();
   }
   function showCookieSettings() { _show(); }
@@ -3050,12 +3123,17 @@ loadCart();
     const s = document.getElementById('cbSettings');
     if (m) m.style.display = 'none';
     if (s) s.style.display = '';
+    // sync toggle to current stored preference
+    const consent = _getConsent();
+    const anal = document.getElementById('cbToggleAnal');
+    if (anal && consent) anal.checked = !!consent.analytics;
   }
   window.setCookieConsent = setCookieConsent;
+  window.saveCookiePreferences = saveCookiePreferences;
   window.showCookieSettings = showCookieSettings;
   window.showCbSettings = showCbSettings;
   try {
-    if (!localStorage.getItem(CONSENT_KEY)) { setTimeout(_show, 800); }
+    if (!_getConsent()) { setTimeout(_show, 800); }
   } catch(e) { _show(); }
 })();
 </script>
