@@ -921,30 +921,52 @@
     .foot-legal a { color: var(--muted); text-decoration: none; }
     .foot-legal a:hover { color: var(--dark); }
     .foot-legal span { color: var(--border); }
+    #cbOverlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 8999; display: none;
+    }
     #cookieBanner {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--dark); color: #fff;
-      z-index: 9000; animation: slideUp 0.4s ease;
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 92%; max-width: 480px;
+      max-height: 88vh; overflow-y: auto;
+      background: #fff; color: #1a1a1a;
+      z-index: 9000; display: none;
     }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    #cookieBannerInner {
-      max-width: 1100px; margin: 0 auto; padding: 20px 40px;
-      display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+    .cb-panel { padding: 32px 32px 24px; }
+    .cb-label {
+      font-family: var(--sans); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      display: block; margin-bottom: 16px;
     }
-    #cookieBannerText { flex: 1; min-width: 260px; }
-    #cookieBannerText strong { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; display: block; margin-bottom: 6px; }
-    #cookieBannerText p { font-size: 12px; line-height: 1.6; color: rgba(255,255,255,0.75); }
-    #cookieBannerText a { color: rgba(255,255,255,0.9); text-decoration: underline; }
-    #cookieBannerBtns { display: flex; gap: 10px; flex-shrink: 0; }
-    #cookieBtnDecline { padding: 10px 20px; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; background: transparent; border: 1px solid rgba(255,255,255,0.35); color: rgba(255,255,255,0.8); cursor: pointer; border-radius: 2px; transition: border-color 0.2s, color 0.2s; }
-    #cookieBtnDecline:hover { border-color: #fff; color: #fff; }
-    #cookieBtnAccept { padding: 10px 24px; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; background: #fff; border: 1px solid #fff; color: var(--dark); cursor: pointer; border-radius: 2px; transition: background 0.2s; }
-    #cookieBtnAccept:hover { background: #eee; }
-    @media (max-width: 600px) {
-      #cookieBannerInner { padding: 16px 20px; gap: 16px; }
-      #cookieBannerBtns { width: 100%; }
-      #cookieBtnDecline, #cookieBtnAccept { flex: 1; text-align: center; }
+    .cb-text { font-size: 13px; line-height: 1.75; color: #333; margin-bottom: 12px; }
+    .cb-link { font-size: 12px; color: #1a1a1a; text-decoration: underline; display: inline-block; margin-bottom: 24px; }
+    .cb-btn {
+      display: block; width: 100%;
+      padding: 15px 20px;
+      font-family: var(--sans); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      cursor: pointer; border: 1.5px solid #1a1a1a;
+      margin-bottom: 10px;
+      transition: background 0.15s, color 0.15s;
     }
+    .cb-btn--dark { background: #1a1a1a; color: #fff; }
+    .cb-btn--dark:hover { background: #333; }
+    .cb-btn--light { background: #fff; color: #1a1a1a; }
+    .cb-btn--light:hover { background: #f5f5f5; }
+    .cb-divider { border: none; border-top: 1px solid #e8e8e6; margin: 22px 0; }
+    .cb-manage-label {
+      font-family: var(--sans); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      margin-bottom: 14px; display: block;
+    }
+    .cb-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid #e8e8e6; font-size: 13px;
+    }
+    .cb-always { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    @media (max-width: 600px) { .cb-panel { padding: 24px 20px 20px; } }
 
     /* ── TOAST ── */
     .toast {
@@ -1601,16 +1623,33 @@
 </footer>
 
 <!-- ── COOKIE CONSENT BANNER ── -->
-<div id="cookieBanner" style="display:none">
-  <div id="cookieBannerInner">
-    <div id="cookieBannerText">
-      <strong data-i18n="cookie_title">Cookie Notice</strong>
-      <p data-i18n="cookie_body">We use technically necessary cookies for payment processing (Stripe) and to remember your preferences. We do not use tracking or advertising cookies. <a href="/privacy-policy.html" data-i18n="cookie_more">Learn more</a></p>
+<div id="cbOverlay"></div>
+<div id="cookieBanner">
+  <!-- main panel -->
+  <div class="cb-panel" id="cbMain">
+    <strong class="cb-label" data-i18n="cookie_title">Cookie-Hinweis</strong>
+    <p class="cb-text" data-i18n="cookie_body">Wir verwenden technisch notwendige Cookies für die Zahlungsabwicklung (Stripe) und zur Speicherung Ihrer Spracheinstellung. Wir setzen keine Tracking- oder Werbe-Cookies ein.</p>
+    <a href="/privacy-policy.html" class="cb-link" data-i18n="cookie_more">Mehr erfahren</a>
+    <button class="cb-btn cb-btn--dark" onclick="setCookieConsent('all')" data-i18n="cookie_accept">Alle akzeptieren</button>
+    <button class="cb-btn cb-btn--light" onclick="setCookieConsent('essential')" data-i18n="cookie_essential">Nur erforderliche Cookies</button>
+    <button class="cb-btn cb-btn--light" onclick="showCbSettings()" data-i18n="cookie_settings">Cookies und Einstellungen</button>
+  </div>
+  <!-- settings panel -->
+  <div class="cb-panel" id="cbSettings" style="display:none">
+    <strong class="cb-label" data-i18n="cookie_settings_title">Cookies und Einstellungen</strong>
+    <p class="cb-text" data-i18n="cookie_settings_body">Nachfolgend finden Sie Informationen zu den Cookies, die wir verwenden. Wir setzen ausschließlich technisch notwendige Cookies für die Zahlungsabwicklung (Stripe) und zur Speicherung Ihrer Spracheinstellung ein. Wir setzen keine Tracking- oder Werbe-Cookies ein.</p>
+    <a href="/privacy-policy.html" class="cb-link" data-i18n="cookie_more">Mehr erfahren</a>
+    <button class="cb-btn cb-btn--dark" onclick="setCookieConsent('all')" data-i18n="cookie_accept">Alle akzeptieren</button>
+    <hr class="cb-divider">
+    <span class="cb-manage-label" data-i18n="cookie_manage">Zustimmungspräferenzen verwalten</span>
+    <div class="cb-row">
+      <span data-i18n="cookie_necessary">Unbedingt notwendige Cookies</span>
+      <span class="cb-always" data-i18n="cookie_always">Immer aktiv</span>
     </div>
-    <div id="cookieBannerBtns">
-      <button id="cookieBtnDecline" onclick="setCookieConsent('essential')" data-i18n="cookie_essential">Essential only</button>
-      <button id="cookieBtnAccept"  onclick="setCookieConsent('all')"       data-i18n="cookie_accept">Accept</button>
-    </div>
+    <hr class="cb-divider">
+    <button class="cb-btn cb-btn--light" onclick="setCookieConsent('essential')" data-i18n="cookie_essential">Nur erforderliche Cookies</button>
+    <button class="cb-btn cb-btn--dark" onclick="setCookieConsent('all')" data-i18n="cookie_confirm">Auswahl bestätigen</button>
+  </div>
   </div>
 </div>
 
@@ -2202,8 +2241,15 @@ const _i18n = {
     frame_on_wall: 'Frame on wall', print_inside: 'Print inside', mount_border: 'Mount border', each_side: 'each side', visible_image: 'Visible image',
     footer_privacy: 'Privacy Policy', footer_cookies: 'Cookie Settings',
     cookie_title: 'Cookie Notice',
-    cookie_body: 'We use technically necessary cookies for payment processing (Stripe) and to remember your preferences. We do not use tracking or advertising cookies.',
-    cookie_more: 'Learn more', cookie_essential: 'Essential only', cookie_accept: 'Accept',
+    cookie_body: 'We use technically necessary cookies for payment processing (Stripe) and to remember your language preferences. We do not use tracking or advertising cookies.',
+    cookie_more: 'Learn more', cookie_essential: 'Essential cookies only', cookie_accept: 'Accept all',
+    cookie_settings: 'Cookies and Settings',
+    cookie_settings_title: 'Cookies and Settings',
+    cookie_settings_body: 'Below you will find information about the cookies we use. We only use technically necessary cookies for payment processing (Stripe) and to remember your language preferences. We do not use tracking or advertising cookies.',
+    cookie_manage: 'Manage Consent Preferences',
+    cookie_necessary: 'Strictly Necessary Cookies',
+    cookie_always: 'Always Active',
+    cookie_confirm: 'Confirm Selection',
   },
   de: {
     nav_about: 'Über uns', nav_contact: 'Kontakt',
@@ -2225,7 +2271,14 @@ const _i18n = {
     footer_privacy: 'Datenschutz', footer_cookies: 'Cookie-Einstellungen',
     cookie_title: 'Cookie-Hinweis',
     cookie_body: 'Wir verwenden technisch notwendige Cookies für die Zahlungsabwicklung (Stripe) und zur Speicherung Ihrer Spracheinstellung. Wir setzen keine Tracking- oder Werbe-Cookies ein.',
-    cookie_more: 'Mehr erfahren', cookie_essential: 'Nur notwendige', cookie_accept: 'Akzeptieren',
+    cookie_more: 'Mehr erfahren', cookie_essential: 'Nur erforderliche Cookies', cookie_accept: 'Alle akzeptieren',
+    cookie_settings: 'Cookies und Einstellungen',
+    cookie_settings_title: 'Cookies und Einstellungen',
+    cookie_settings_body: 'Nachfolgend finden Sie Informationen zu den Cookies, die wir verwenden. Wir setzen ausschließlich technisch notwendige Cookies für die Zahlungsabwicklung (Stripe) und zur Speicherung Ihrer Spracheinstellung ein. Wir setzen keine Tracking- oder Werbe-Cookies ein.',
+    cookie_manage: 'Zustimmungspräferenzen verwalten',
+    cookie_necessary: 'Unbedingt notwendige Cookies',
+    cookie_always: 'Immer aktiv',
+    cookie_confirm: 'Auswahl bestätigen',
   }
 };
 function t(key) { return (_i18n[_lang] || _i18n.en)[key] || key; }
@@ -2728,25 +2781,39 @@ renderWorkGrid();
 (function() {
   document.querySelectorAll('.js-year').forEach(el => el.textContent = new Date().getFullYear());
   const CONSENT_KEY = 'ete_cookie_consent';
+  function _show() {
+    const b = document.getElementById('cookieBanner');
+    const o = document.getElementById('cbOverlay');
+    if (b) b.style.display = '';
+    if (o) o.style.display = '';
+    const m = document.getElementById('cbMain');
+    const s = document.getElementById('cbSettings');
+    if (m) m.style.display = '';
+    if (s) s.style.display = 'none';
+  }
+  function _hide() {
+    const b = document.getElementById('cookieBanner');
+    const o = document.getElementById('cbOverlay');
+    if (b) b.style.display = 'none';
+    if (o) o.style.display = 'none';
+  }
   function setCookieConsent(level) {
     try { localStorage.setItem(CONSENT_KEY, level); } catch(e) {}
-    const b = document.getElementById('cookieBanner');
-    if (b) { b.style.animation = 'slideDown 0.3s ease forwards'; setTimeout(() => b.style.display = 'none', 300); }
+    _hide();
   }
-  function showCookieSettings() {
-    const b = document.getElementById('cookieBanner');
-    if (b) { b.style.display = ''; b.style.animation = 'slideUp 0.4s ease'; }
+  function showCookieSettings() { _show(); }
+  function showCbSettings() {
+    const m = document.getElementById('cbMain');
+    const s = document.getElementById('cbSettings');
+    if (m) m.style.display = 'none';
+    if (s) s.style.display = '';
   }
   window.setCookieConsent = setCookieConsent;
   window.showCookieSettings = showCookieSettings;
+  window.showCbSettings = showCbSettings;
   try {
-    if (!localStorage.getItem(CONSENT_KEY)) {
-      setTimeout(() => { const b = document.getElementById('cookieBanner'); if (b) b.style.display = ''; }, 800);
-    }
-  } catch(e) { const b = document.getElementById('cookieBanner'); if (b) b.style.display = ''; }
-  const s = document.createElement('style');
-  s.textContent = '@keyframes slideDown { to { transform: translateY(100%); } }';
-  document.head.appendChild(s);
+    if (!localStorage.getItem(CONSENT_KEY)) { setTimeout(_show, 800); }
+  } catch(e) { _show(); }
 })();
 </script>
 
