@@ -1754,7 +1754,7 @@
     <div>
       <p class="about-sup" data-i18n="about_sup">About</p>
       <p class="about-p" data-i18n="about_p1">été collectif was born out of the idea to share what we see with our eyes, but all captured through a lens (analog or digital). We photograph the daily hustle, tranquility, from people to nature, mountains to sea, all the beauty this world has to offer.</p>
-      <p class="about-p">If you have questions, drop us a message via <a href="https://instagram.com/etecollectif" target="_blank" rel="noopener" class="link-u">Instagram</a> or <a href="mailto:hello@etecollectif.com" class="link-u">E-Mail</a>.</p>
+      <p class="about-p" data-i18n-html="about_contact">If you have questions, drop us a message via <a href="https://instagram.com/etecollectif" target="_blank" rel="noopener" class="link-u">Instagram</a> or <a href="mailto:hello@etecollectif.com" class="link-u">E-Mail</a>.</p>
     </div>
   </section>
 </main>
@@ -2433,6 +2433,7 @@ const _i18n = {
     nav_about: 'About', nav_contact: 'Contact',
     about_sup: 'About',
     about_p1: 'été collectif was born out of the idea to share what we see with our eyes, but all captured through a lens (analog or digital). We photograph the daily hustle, tranquility, from people to nature, mountains to sea, all the beauty this world has to offer.',
+    about_contact: 'If you have questions, drop us a message via <a href="https://instagram.com/etecollectif" target="_blank" rel="noopener" class="link-u">Instagram</a> or <a href="mailto:hello@etecollectif.com" class="link-u">E-Mail</a>.',
     fmt_print: 'Print — Unframed', fmt_framed: 'Framed',
     paper_hpr: 'Hahnemühle Rag', paper_pap: 'Lustre',
     add_to_cart: 'Add to Shopping Cart',
@@ -2462,6 +2463,7 @@ const _i18n = {
     nav_about: 'Über uns', nav_contact: 'Kontakt',
     about_sup: 'Über uns',
     about_p1: 'été collectif ist aus der Idee entstanden, das zu teilen, was wir täglich mit unseren Augen sehen – festgehalten mit einer Linse (digital oder analog). Wir fotografieren den Alltag, Ruhe, von Menschen bis zur Natur, von Bergen bis zum Meer – Alles, was diese wundervolle und einzigartige Welt zu bieten hat.',
+    about_contact: 'Bei Fragen erreichst du uns gerne über <a href="https://instagram.com/etecollectif" target="_blank" rel="noopener" class="link-u">Instagram</a> oder per <a href="mailto:hello@etecollectif.com" class="link-u">E-Mail</a>.',
     fmt_print: 'Print — Ungerahmt', fmt_framed: 'Gerahmt',
     paper_hpr: 'Hahnemühle Rag', paper_pap: 'Lustre',
     add_to_cart: 'In den Warenkorb',
@@ -2510,6 +2512,11 @@ function applyTranslations() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.dataset.i18n;
     if (_i18n.en[k] !== undefined) el.textContent = t(k);
+  });
+  // Elements with data-i18n-html (supports inline HTML like links)
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const k = el.dataset.i18nHtml;
+    if (_i18n.en[k] !== undefined) el.innerHTML = t(k);
   });
   // Format tabs
   const tabPrint = document.getElementById('tabPrint');
