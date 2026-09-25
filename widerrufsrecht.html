@@ -27,16 +27,7 @@
     z-index: 100;
   }
   .logo a { text-decoration: none; }
-  .logo-text {
-    font-family: var(--serif);
-    font-size: 22px; font-weight: 400; font-style: italic;
-    color: var(--crimson); letter-spacing: 0.02em;
-  }
-  .logo-sub {
-    font-family: var(--sans); font-size: 9px; font-weight: 700;
-    letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--dark); margin-left: 2px;
-  }
+  .logo-img { height: 38px; width: auto; display: block; }
   .back-link {
     font-family: var(--sans); font-size: 11px; font-weight: 600;
     letter-spacing: 0.14em; text-transform: uppercase;
@@ -64,23 +55,6 @@
   p  { margin-bottom: 12px; }
   a  { color: var(--crimson); text-decoration: none; }
   a:hover { text-decoration: underline; }
-
-  .form-box {
-    border: 1px solid var(--border);
-    padding: 24px 28px;
-    margin: 20px 0 12px;
-    font-size: 14px;
-    line-height: 1.8;
-  }
-  .form-box ul {
-    list-style: none;
-    padding: 0;
-  }
-  .form-box ul li {
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .form-box ul li:last-child { border-bottom: none; }
 
   .info-box {
     background: #f9f9f8;
@@ -110,8 +84,7 @@
 <header>
   <div class="logo">
     <a href="/">
-      <span class="logo-text">été</span>
-      <span class="logo-sub">collectif</span>
+      <img src="/logo.png" alt="été collectif" class="logo-img">
     </a>
   </div>
   <a class="back-link" href="javascript:history.back()">← Back</a>
@@ -144,7 +117,7 @@
       Schweiz<br>
       E-Mail: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>
     </p>
-    <p>mittels einer eindeutigen Erklärung (z.B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das unten beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist.</p>
+    <p>mittels einer eindeutigen Erklärung (z.B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.</p>
     <p>Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.</p>
 
     <h3>Folgen des Widerrufs</h3>
@@ -181,7 +154,7 @@
       Switzerland<br>
       Email: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>
     </p>
-    <p>by means of a clear statement (e.g. a letter sent by post or an email) of your decision to withdraw from this contract. You may use the model withdrawal form below, though it is not mandatory.</p>
+    <p>by means of a clear statement (e.g. a letter sent by post or an email) of your decision to withdraw from this contract.</p>
     <p>To meet the withdrawal deadline, it is sufficient for you to send the communication concerning the exercise of the right of withdrawal before the withdrawal period expires.</p>
 
     <h3>Consequences of Withdrawal</h3>

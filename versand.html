@@ -27,16 +27,7 @@
     z-index: 100;
   }
   .logo a { text-decoration: none; }
-  .logo-text {
-    font-family: var(--serif);
-    font-size: 22px; font-weight: 400; font-style: italic;
-    color: var(--crimson); letter-spacing: 0.02em;
-  }
-  .logo-sub {
-    font-family: var(--sans); font-size: 9px; font-weight: 700;
-    letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--dark); margin-left: 2px;
-  }
+  .logo-img { height: 38px; width: auto; display: block; }
   .back-link {
     font-family: var(--sans); font-size: 11px; font-weight: 600;
     letter-spacing: 0.14em; text-transform: uppercase;
@@ -99,8 +90,7 @@
 <header>
   <div class="logo">
     <a href="/">
-      <span class="logo-text">été</span>
-      <span class="logo-sub">collectif</span>
+      <img src="/logo.png" alt="été collectif" class="logo-img">
     </a>
   </div>
   <a class="back-link" href="javascript:history.back()">← Back</a>
