@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Versand – été collectif</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<style>
+  :root {
+    --sans: 'Helvetica Neue', Arial, sans-serif;
+    --serif: Georgia, 'Times New Roman', serif;
+    --dark: #1a1a1a;
+    --muted: #888;
+    --border: #e8e8e6;
+    --crimson: #8b1a1a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--dark); background: #fff; font-size: 15px; line-height: 1.7; }
+
+  header {
+    position: sticky; top: 0;
+    height: 72px;
+    padding: 0 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .logo a { text-decoration: none; }
+  .logo-text {
+    font-family: var(--serif);
+    font-size: 22px; font-weight: 400; font-style: italic;
+    color: var(--crimson); letter-spacing: 0.02em;
+  }
+  .logo-sub {
+    font-family: var(--sans); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--dark); margin-left: 2px;
+  }
+  .back-link {
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--dark); text-decoration: none;
+  }
+  .back-link:hover { color: var(--crimson); }
+
+  main { max-width: 720px; margin: 0 auto; padding: 72px 32px 120px; }
+
+  .lang-toggle {
+    display: flex; gap: 16px; margin-bottom: 48px;
+  }
+  .lang-btn {
+    font-family: var(--sans); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); padding: 0;
+  }
+  .lang-btn.active { color: var(--dark); border-bottom: 1.5px solid var(--dark); padding-bottom: 1px; }
+
+  h1 { font-family: var(--serif); font-size: 32px; font-weight: 300; margin-bottom: 48px; }
+  h2 { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+       text-transform: uppercase; color: var(--muted); margin: 40px 0 12px; }
+  p  { margin-bottom: 12px; }
+  a  { color: var(--crimson); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .shipping-table {
+    width: 100%; border-collapse: collapse; margin: 16px 0 24px;
+    font-size: 14px;
+  }
+  .shipping-table th {
+    text-align: left; font-weight: 700; font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    padding: 8px 12px 8px 0; border-bottom: 1px solid var(--border);
+  }
+  .shipping-table td {
+    padding: 10px 12px 10px 0; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .shipping-table tr:last-child td { border-bottom: none; }
+
+  footer {
+    text-align: center; padding: 40px 32px;
+    font-size: 11px; color: var(--muted); letter-spacing: 0.08em;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--dark); }
+
+  @media (max-width: 600px) {
+    header { padding: 0 20px; }
+    main { padding: 48px 20px 80px; }
+    .shipping-table { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <a href="/">
+      <span class="logo-text">été</span>
+      <span class="logo-sub">collectif</span>
+    </a>
+  </div>
+  <a class="back-link" href="javascript:history.back()">← Back</a>
+</header>
+
+<main>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('de', this)">DE</button>
+    <button class="lang-btn" onclick="setLang('en', this)">EN</button>
+  </div>
+
+  <!-- GERMAN -->
+  <div id="content-de">
+    <h1>Versand</h1>
+
+    <h2>Produktion &amp; Lieferung</h2>
+    <p>Alle Drucke werden auf Bestellung gefertigt – von unserem Produktionspartner Prodigi in professioneller Qualität gedruckt und direkt an dich versendet. Nach Auftragseingang beginnt die Produktion innerhalb von 1–3 Werktagen.</p>
+
+    <h2>Lieferzeiten</h2>
+    <table class="shipping-table">
+      <thead>
+        <tr>
+          <th>Region</th>
+          <th>Produktionszeit</th>
+          <th>Versandzeit</th>
+          <th>Gesamt (ca.)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Schweiz</td>
+          <td>1–3 Werktage</td>
+          <td>3–5 Werktage</td>
+          <td>4–8 Werktage</td>
+        </tr>
+        <tr>
+          <td>Deutschland &amp; Österreich</td>
+          <td>1–3 Werktage</td>
+          <td>3–5 Werktage</td>
+          <td>4–8 Werktage</td>
+        </tr>
+        <tr>
+          <td>Übriges Europa (EU)</td>
+          <td>1–3 Werktage</td>
+          <td>4–7 Werktage</td>
+          <td>5–10 Werktage</td>
+        </tr>
+        <tr>
+          <td>USA &amp; Kanada</td>
+          <td>1–3 Werktage</td>
+          <td>5–10 Werktage</td>
+          <td>6–13 Werktage</td>
+        </tr>
+        <tr>
+          <td>Australien &amp; Neuseeland</td>
+          <td>1–3 Werktage</td>
+          <td>7–14 Werktage</td>
+          <td>8–17 Werktage</td>
+        </tr>
+        <tr>
+          <td>Weltweit (übrige Länder)</td>
+          <td>1–3 Werktage</td>
+          <td>7–20 Werktage</td>
+          <td>8–23 Werktage</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Die Angaben sind Richtwerte. Bei erhöhtem Bestellaufkommen oder äusseren Einflüssen (z.B. Feiertage, Zoll) kann es zu Verzögerungen kommen.</p>
+
+    <h2>Versandkosten</h2>
+    <table class="shipping-table">
+      <thead>
+        <tr>
+          <th>Region</th>
+          <th>Versandkosten</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Schweiz</td>
+          <td>CHF 9.90 / kostenlos ab CHF 100</td>
+        </tr>
+        <tr>
+          <td>Deutschland &amp; Österreich</td>
+          <td>EUR 7.90 / kostenlos ab EUR 80</td>
+        </tr>
+        <tr>
+          <td>Übriges Europa (EU)</td>
+          <td>EUR 9.90 / kostenlos ab EUR 100</td>
+        </tr>
+        <tr>
+          <td>USA &amp; Kanada</td>
+          <td>USD 12.90 / kostenlos ab USD 120</td>
+        </tr>
+        <tr>
+          <td>Australien &amp; Neuseeland</td>
+          <td>AUD 14.90 / kostenlos ab AUD 150</td>
+        </tr>
+        <tr>
+          <td>Weltweit</td>
+          <td>ab EUR 12.90 (abhängig vom Zielland)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Verpackung</h2>
+    <p>Alle Drucke werden sorgfältig verpackt und sicher versandt. Poster werden in stabilen Versandrohren geliefert. Gerahmte Drucke und Box-Frames werden in stabilen Kartonverpackungen mit ausreichend Polstermaterial verschickt.</p>
+
+    <h2>Sendungsverfolgung</h2>
+    <p>Nach dem Versand erhältst du eine Bestätigungs-E-Mail mit deiner Sendungsnummer. Die Lieferung kann damit direkt beim Versanddienstleister verfolgt werden.</p>
+
+    <h2>Zoll &amp; Einfuhrsteuern</h2>
+    <p>Für Lieferungen ausserhalb der EU können Zollgebühren und Einfuhrsteuern anfallen, die vom Empfänger zu tragen sind. Diese sind nicht im Produktpreis enthalten und richten sich nach den Vorschriften des jeweiligen Ziellandes.</p>
+
+    <h2>Beschädigte oder fehlerhafte Lieferung</h2>
+    <p>Sollte dein Druck beschädigt oder fehlerhaft ankommen, melde dich bitte innerhalb von 14 Tagen nach Erhalt unter <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a> mit einem Foto des Problems. Wir kümmern uns um eine schnelle und unkomplizierte Lösung.</p>
+  </div>
+
+  <!-- ENGLISH -->
+  <div id="content-en" style="display:none">
+    <h1>Shipping</h1>
+
+    <h2>Production &amp; Delivery</h2>
+    <p>All prints are made to order – printed by our production partner Prodigi to professional standards and shipped directly to you. Production begins within 1–3 business days of receiving your order.</p>
+
+    <h2>Delivery Times</h2>
+    <table class="shipping-table">
+      <thead>
+        <tr>
+          <th>Region</th>
+          <th>Production</th>
+          <th>Shipping</th>
+          <th>Total (approx.)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Switzerland</td>
+          <td>1–3 business days</td>
+          <td>3–5 business days</td>
+          <td>4–8 business days</td>
+        </tr>
+        <tr>
+          <td>Germany &amp; Austria</td>
+          <td>1–3 business days</td>
+          <td>3–5 business days</td>
+          <td>4–8 business days</td>
+        </tr>
+        <tr>
+          <td>Rest of Europe (EU)</td>
+          <td>1–3 business days</td>
+          <td>4–7 business days</td>
+          <td>5–10 business days</td>
+        </tr>
+        <tr>
+          <td>USA &amp; Canada</td>
+          <td>1–3 business days</td>
+          <td>5–10 business days</td>
+          <td>6–13 business days</td>
+        </tr>
+        <tr>
+          <td>Australia &amp; New Zealand</td>
+          <td>1–3 business days</td>
+          <td>7–14 business days</td>
+          <td>8–17 business days</td>
+        </tr>
+        <tr>
+          <td>Worldwide (other countries)</td>
+          <td>1–3 business days</td>
+          <td>7–20 business days</td>
+          <td>8–23 business days</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>These are approximate timeframes. Delays may occur during peak periods or due to external factors such as public holidays or customs processing.</p>
+
+    <h2>Shipping Costs</h2>
+    <table class="shipping-table">
+      <thead>
+        <tr>
+          <th>Region</th>
+          <th>Shipping Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Switzerland</td>
+          <td>CHF 9.90 / free over CHF 100</td>
+        </tr>
+        <tr>
+          <td>Germany &amp; Austria</td>
+          <td>EUR 7.90 / free over EUR 80</td>
+        </tr>
+        <tr>
+          <td>Rest of Europe (EU)</td>
+          <td>EUR 9.90 / free over EUR 100</td>
+        </tr>
+        <tr>
+          <td>USA &amp; Canada</td>
+          <td>USD 12.90 / free over USD 120</td>
+        </tr>
+        <tr>
+          <td>Australia &amp; New Zealand</td>
+          <td>AUD 14.90 / free over AUD 150</td>
+        </tr>
+        <tr>
+          <td>Worldwide</td>
+          <td>from EUR 12.90 (depending on destination)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Packaging</h2>
+    <p>All prints are carefully packaged to ensure safe delivery. Posters are shipped in sturdy postal tubes. Framed prints and box frames are packed in reinforced cardboard boxes with ample protective material.</p>
+
+    <h2>Order Tracking</h2>
+    <p>Once your order ships, you will receive a confirmation email with your tracking number. You can use this to follow your shipment directly with the courier.</p>
+
+    <h2>Customs &amp; Import Duties</h2>
+    <p>Deliveries outside the EU may be subject to customs duties and import taxes, which are the responsibility of the recipient. These are not included in the product price and are determined by the regulations of the destination country.</p>
+
+    <h2>Damaged or Faulty Delivery</h2>
+    <p>If your print arrives damaged or has a defect, please contact us within 14 days of receipt at <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a> with a photo of the issue. We will find a quick and straightforward solution.</p>
+  </div>
+</main>
+
+<footer>
+  <a href="/versand.html">Versand</a> &nbsp;·&nbsp;
+  <a href="/agb.html">AGB</a> &nbsp;·&nbsp;
+  <a href="/widerrufsrecht.html">Widerrufsrecht</a> &nbsp;·&nbsp;
+  <a href="/privacy-policy.html">Datenschutz</a> &nbsp;·&nbsp;
+  <a href="/impressum.html">Impressum</a> &nbsp;·&nbsp;
+  © <span id="yr"></span> été collectif
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+function setLang(lang, btn) {
+  document.getElementById('content-de').style.display = lang === 'de' ? '' : 'none';
+  document.getElementById('content-en').style.display = lang === 'en' ? '' : 'none';
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

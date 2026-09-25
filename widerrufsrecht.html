@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Widerrufsrecht – été collectif</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<style>
+  :root {
+    --sans: 'Helvetica Neue', Arial, sans-serif;
+    --serif: Georgia, 'Times New Roman', serif;
+    --dark: #1a1a1a;
+    --muted: #888;
+    --border: #e8e8e6;
+    --crimson: #8b1a1a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--dark); background: #fff; font-size: 15px; line-height: 1.7; }
+
+  header {
+    position: sticky; top: 0;
+    height: 72px;
+    padding: 0 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .logo a { text-decoration: none; }
+  .logo-text {
+    font-family: var(--serif);
+    font-size: 22px; font-weight: 400; font-style: italic;
+    color: var(--crimson); letter-spacing: 0.02em;
+  }
+  .logo-sub {
+    font-family: var(--sans); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--dark); margin-left: 2px;
+  }
+  .back-link {
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--dark); text-decoration: none;
+  }
+  .back-link:hover { color: var(--crimson); }
+
+  main { max-width: 720px; margin: 0 auto; padding: 72px 32px 120px; }
+
+  .lang-toggle {
+    display: flex; gap: 16px; margin-bottom: 48px;
+  }
+  .lang-btn {
+    font-family: var(--sans); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); padding: 0;
+  }
+  .lang-btn.active { color: var(--dark); border-bottom: 1.5px solid var(--dark); padding-bottom: 1px; }
+
+  h1 { font-family: var(--serif); font-size: 32px; font-weight: 300; margin-bottom: 48px; }
+  h2 { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+       text-transform: uppercase; color: var(--muted); margin: 40px 0 12px; }
+  h3 { font-family: var(--sans); font-size: 13px; font-weight: 700; margin: 28px 0 8px; }
+  p  { margin-bottom: 12px; }
+  a  { color: var(--crimson); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .form-box {
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+    margin: 20px 0 12px;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .form-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .form-box ul li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .form-box ul li:last-child { border-bottom: none; }
+
+  .info-box {
+    background: #f9f9f8;
+    border-left: 3px solid var(--crimson);
+    padding: 16px 20px;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+
+  footer {
+    text-align: center; padding: 40px 32px;
+    font-size: 11px; color: var(--muted); letter-spacing: 0.08em;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--dark); }
+
+  @media (max-width: 600px) {
+    header { padding: 0 20px; }
+    main { padding: 48px 20px 80px; }
+    .form-box { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <a href="/">
+      <span class="logo-text">été</span>
+      <span class="logo-sub">collectif</span>
+    </a>
+  </div>
+  <a class="back-link" href="javascript:history.back()">← Back</a>
+</header>
+
+<main>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('de', this)">DE</button>
+    <button class="lang-btn" onclick="setLang('en', this)">EN</button>
+  </div>
+
+  <!-- GERMAN -->
+  <div id="content-de">
+    <h1>Widerrufsbelehrung</h1>
+
+    <div class="info-box">
+      <strong>Hinweis für Kunden aus der Schweiz:</strong> In der Schweiz besteht kein gesetzliches Widerrufsrecht beim Online-Kauf. Sollte dein Druck beschädigt oder fehlerhaft sein, melde dich bitte innerhalb von 14 Tagen unter <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a> – wir finden eine Lösung.
+    </div>
+
+    <h2>Widerrufsrecht (für Verbraucher in der EU / EWR)</h2>
+    <p>Verbrauchern im Sinne des Art. 2 Nr. 1 der EU-Verbraucherrechterichtlinie (2011/83/EU) steht ein Widerrufsrecht nach folgenden Maßgaben zu:</p>
+
+    <p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+    <p>Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem Sie oder ein von Ihnen benannter Dritter, der nicht der Beförderer ist, die letzte Ware in Besitz genommen haben bzw. hat.</p>
+    <p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns</p>
+    <p>
+      <strong>été collectif – Markus Sommer</strong><br>
+      Paradeplatz 1<br>
+      8001 Zürich<br>
+      Schweiz<br>
+      E-Mail: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>
+    </p>
+    <p>mittels einer eindeutigen Erklärung (z.B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das unten beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist.</p>
+    <p>Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.</p>
+
+    <h3>Folgen des Widerrufs</h3>
+    <p>Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrages bei uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet.</p>
+    <p>Wir können die Rückzahlung verweigern, bis wir die Waren wieder zurückerhalten haben oder bis Sie den Nachweis erbracht haben, dass Sie die Waren zurückgesandt haben, je nachdem, welches der frühere Zeitpunkt ist.</p>
+    <p>Sie haben die Waren unverzüglich und in jedem Fall spätestens binnen vierzehn Tagen ab dem Tag, an dem Sie uns über den Widerruf dieses Vertrages unterrichten, an uns zurückzusenden oder zu übergeben. Die Frist ist gewahrt, wenn Sie die Waren vor Ablauf der Frist von vierzehn Tagen absenden.</p>
+    <p>Sie tragen die unmittelbaren Kosten der Rücksendung der Waren.</p>
+    <p>Sie müssen für einen etwaigen Wertverlust der Waren nur aufkommen, wenn dieser Wertverlust auf einen zur Prüfung der Beschaffenheit, Eigenschaften und Funktionsweise der Waren nicht notwendigen Umgang mit ihnen zurückzuführen ist.</p>
+
+    <h2>Nichtbestehen des Widerrufsrechts</h2>
+    <p>Das Widerrufsrecht besteht nicht bei Verträgen zur Lieferung von Waren, die nicht vorgefertigt sind und für deren Herstellung eine individuelle Auswahl oder Bestimmung durch den Verbraucher maßgeblich ist oder die eindeutig auf die persönlichen Bedürfnisse des Verbrauchers zugeschnitten sind (Art. 16 lit. c der EU-Verbraucherrechterichtlinie 2011/83/EU).</p>
+    <p>Da alle Drucke von été collectif auf individuelle Bestellung produziert werden, kann das Widerrufsrecht in diesen Fällen ausgeschlossen sein. Bei Fragen wenden Sie sich bitte vor der Bestellung an <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>.</p>
+
+    <h2>Muster-Widerrufsformular</h2>
+    <p>(Wenn Sie den Vertrag widerrufen wollen, füllen Sie bitte dieses Formular aus und senden Sie es zurück.)</p>
+
+    <div class="form-box">
+      <ul>
+        <li><strong>An:</strong> été collectif – Markus Sommer, Paradeplatz 1, 8001 Zürich, Schweiz<br>
+        E-Mail: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a></li>
+        <li>Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über den Kauf der folgenden Waren (*):</li>
+        <li>Bestellt am (*) / erhalten am (*):</li>
+        <li>Name des/der Verbraucher(s):</li>
+        <li>Anschrift des/der Verbraucher(s):</li>
+        <li>Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier):</li>
+        <li>Datum:</li>
+      </ul>
+      <p style="margin-top: 12px; font-size: 12px; color: var(--muted);">(*) Unzutreffendes streichen.</p>
+    </div>
+  </div>
+
+  <!-- ENGLISH -->
+  <div id="content-en" style="display:none">
+    <h1>Right of Withdrawal</h1>
+
+    <div class="info-box">
+      <strong>Note for customers in Switzerland:</strong> Swiss law does not provide a statutory right of withdrawal for online purchases. If your print arrives damaged or defective, please contact us within 14 days at <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a> — we will find a solution.
+    </div>
+
+    <h2>Right of Withdrawal (for consumers in the EU / EEA)</h2>
+    <p>Consumers as defined in Art. 2(1) of the EU Consumer Rights Directive (2011/83/EU) are entitled to a right of withdrawal under the following conditions:</p>
+
+    <p>You have the right to withdraw from this contract within fourteen days without giving any reason.</p>
+    <p>The withdrawal period is fourteen days from the day on which you or a third party named by you, who is not the carrier, took possession of the last goods.</p>
+    <p>To exercise the right of withdrawal, you must inform us:</p>
+    <p>
+      <strong>été collectif – Markus Sommer</strong><br>
+      Paradeplatz 1<br>
+      8001 Zürich<br>
+      Switzerland<br>
+      Email: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>
+    </p>
+    <p>by means of a clear statement (e.g. a letter sent by post or an email) of your decision to withdraw from this contract. You may use the model withdrawal form below, though it is not mandatory.</p>
+    <p>To meet the withdrawal deadline, it is sufficient for you to send the communication concerning the exercise of the right of withdrawal before the withdrawal period expires.</p>
+
+    <h3>Consequences of Withdrawal</h3>
+    <p>If you withdraw from this contract, we shall reimburse you all payments received from you, including the costs of delivery (except for the additional costs arising if you chose a type of delivery other than the least expensive standard delivery offered by us), without undue delay and not later than fourteen days after the day on which we received the communication about your withdrawal. We will use the same means of payment as you used in the original transaction; in any event, you will incur no fees as a result of such reimbursement.</p>
+    <p>We may withhold reimbursement until we have received the goods back or you have supplied evidence of having sent back the goods, whichever is the earliest.</p>
+    <p>You must send back or hand over the goods without undue delay and in any event not later than fourteen days from the day on which you communicate your withdrawal to us. The deadline is met if you send back the goods before the period of fourteen days has expired.</p>
+    <p>You will bear the direct cost of returning the goods.</p>
+    <p>You are only liable for any diminished value of the goods resulting from the handling other than what is necessary to establish the nature, characteristics and functioning of the goods.</p>
+
+    <h2>Exceptions to the Right of Withdrawal</h2>
+    <p>The right of withdrawal does not apply to contracts for the supply of goods that are not prefabricated and for whose production an individual selection or specification by the consumer is decisive, or which are clearly tailored to the personal needs of the consumer (Art. 16(c) of EU Consumer Rights Directive 2011/83/EU).</p>
+    <p>Since all prints by été collectif are produced to individual order, the right of withdrawal may be excluded in these cases. If you have questions, please contact us before ordering at <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>.</p>
+
+    <h2>Model Withdrawal Form</h2>
+    <p>(If you wish to withdraw from the contract, please complete and return this form.)</p>
+
+    <div class="form-box">
+      <ul>
+        <li><strong>To:</strong> été collectif – Markus Sommer, Paradeplatz 1, 8001 Zürich, Switzerland<br>
+        Email: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a></li>
+        <li>I/We (*) hereby give notice that I/we (*) withdraw from my/our (*) contract of sale of the following goods (*):</li>
+        <li>Ordered on (*) / received on (*):</li>
+        <li>Name of consumer(s):</li>
+        <li>Address of consumer(s):</li>
+        <li>Signature of consumer(s) (only if this form is notified on paper):</li>
+        <li>Date:</li>
+      </ul>
+      <p style="margin-top: 12px; font-size: 12px; color: var(--muted);">(*) Delete as appropriate.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <a href="/versand.html">Versand</a> &nbsp;·&nbsp;
+  <a href="/agb.html">AGB</a> &nbsp;·&nbsp;
+  <a href="/widerrufsrecht.html">Widerrufsrecht</a> &nbsp;·&nbsp;
+  <a href="/privacy-policy.html">Datenschutz</a> &nbsp;·&nbsp;
+  <a href="/impressum.html">Impressum</a> &nbsp;·&nbsp;
+  © <span id="yr"></span> été collectif
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+function setLang(lang, btn) {
+  document.getElementById('content-de').style.display = lang === 'de' ? '' : 'none';
+  document.getElementById('content-en').style.display = lang === 'en' ? '' : 'none';
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

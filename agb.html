@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AGB – été collectif</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<style>
+  :root {
+    --sans: 'Helvetica Neue', Arial, sans-serif;
+    --serif: Georgia, 'Times New Roman', serif;
+    --dark: #1a1a1a;
+    --muted: #888;
+    --border: #e8e8e6;
+    --crimson: #8b1a1a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--dark); background: #fff; font-size: 15px; line-height: 1.7; }
+
+  header {
+    position: sticky; top: 0;
+    height: 72px;
+    padding: 0 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .logo a { text-decoration: none; }
+  .logo-text {
+    font-family: var(--serif);
+    font-size: 22px; font-weight: 400; font-style: italic;
+    color: var(--crimson); letter-spacing: 0.02em;
+  }
+  .logo-sub {
+    font-family: var(--sans); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--dark); margin-left: 2px;
+  }
+  .back-link {
+    font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--dark); text-decoration: none;
+  }
+  .back-link:hover { color: var(--crimson); }
+
+  main { max-width: 720px; margin: 0 auto; padding: 72px 32px 120px; }
+
+  .lang-toggle {
+    display: flex; gap: 16px; margin-bottom: 48px;
+  }
+  .lang-btn {
+    font-family: var(--sans); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); padding: 0;
+  }
+  .lang-btn.active { color: var(--dark); border-bottom: 1.5px solid var(--dark); padding-bottom: 1px; }
+
+  h1 { font-family: var(--serif); font-size: 32px; font-weight: 300; margin-bottom: 12px; }
+  .last-updated { font-size: 12px; color: var(--muted); margin-bottom: 48px; }
+  h2 { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+       text-transform: uppercase; color: var(--muted); margin: 40px 0 12px; }
+  p  { margin-bottom: 12px; }
+  a  { color: var(--crimson); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  footer {
+    text-align: center; padding: 40px 32px;
+    font-size: 11px; color: var(--muted); letter-spacing: 0.08em;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--dark); }
+
+  @media (max-width: 600px) {
+    header { padding: 0 20px; }
+    main { padding: 48px 20px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <a href="/">
+      <span class="logo-text">été</span>
+      <span class="logo-sub">collectif</span>
+    </a>
+  </div>
+  <a class="back-link" href="javascript:history.back()">← Back</a>
+</header>
+
+<main>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('de', this)">DE</button>
+    <button class="lang-btn" onclick="setLang('en', this)">EN</button>
+  </div>
+
+  <!-- GERMAN -->
+  <div id="content-de">
+    <h1>Allgemeine Geschäftsbedingungen</h1>
+    <p class="last-updated">Stand: September 2026</p>
+
+    <h2>§ 1 Geltungsbereich &amp; Anbieter</h2>
+    <p>Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Bestellungen, die über den Online-Shop <strong>etecollectif.com</strong> abgeschlossen werden. Anbieter ist:</p>
+    <p>
+      été collectif – Markus Sommer<br>
+      Paradeplatz 1<br>
+      8001 Zürich<br>
+      Schweiz<br>
+      E-Mail: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>
+    </p>
+    <p>Abweichende Bedingungen des Kunden werden nicht anerkannt, es sei denn, wir stimmen ihrer Geltung ausdrücklich schriftlich zu.</p>
+
+    <h2>§ 2 Vertragsschluss</h2>
+    <p>Die Darstellung der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot, sondern eine Aufforderung zur Bestellung (invitatio ad offerendum) dar.</p>
+    <p>Durch Klicken des Buttons „Jetzt kaufen" bzw. „Kostenpflichtig bestellen" gibt der Kunde ein verbindliches Angebot zum Kauf der im Warenkorb befindlichen Waren ab. Die Annahme des Angebots erfolgt durch eine gesonderte Auftragsbestätigung per E-Mail oder durch Auslieferung der Ware.</p>
+
+    <h2>§ 3 Preise</h2>
+    <p>Alle Preise sind Endpreise inklusive der gesetzlich anfallenden Mehrwertsteuer. Für Lieferungen in die Europäische Union gilt die jeweilige lokale Mehrwertsteuer des Ziellandes. Für Lieferungen in die Schweiz und andere Nicht-EU-Länder gelten die lokalen Steuersätze bzw. Zollregelungen.</p>
+    <p>Es gelten die Preise, die zum Zeitpunkt der Bestellung auf der Website ausgewiesen sind. Versandkosten werden zusätzlich berechnet und sind auf der Seite <a href="/versand.html">Versand</a> sowie im Bestellprozess ausgewiesen.</p>
+
+    <h2>§ 4 Zahlung</h2>
+    <p>Die Zahlung erfolgt über die im Bestellprozess angebotenen Zahlungsmethoden (Kreditkarte, TWINT u.a., abgewickelt über Stripe). Der Rechnungsbetrag wird mit Abschluss der Bestellung fällig. Eine Aufrechnung gegen Forderungen des Anbieters ist nur mit unbestrittenen oder rechtskräftig festgestellten Gegenforderungen zulässig.</p>
+
+    <h2>§ 5 Lieferung &amp; Produktion</h2>
+    <p>Alle Produkte werden auf Bestellung gefertigt (Print-on-Demand) und direkt vom Produktionspartner an den Kunden versandt. Informationen zu Lieferzeiten und Versandkosten finden sich auf der Seite <a href="/versand.html">Versand</a>.</p>
+    <p>Lieferungen erfolgen an die im Bestellprozess angegebene Lieferadresse. Der Anbieter übernimmt keine Verantwortung für Lieferverzögerungen, die auf unrichtige oder unvollständige Angaben des Kunden zurückzuführen sind.</p>
+
+    <h2>§ 6 Eigentumsvorbehalt</h2>
+    <p>Die gelieferte Ware bleibt bis zur vollständigen Bezahlung Eigentum von été collectif – Markus Sommer.</p>
+
+    <h2>§ 7 Widerrufsrecht</h2>
+    <p>Verbrauchern innerhalb der Europäischen Union steht unter den gesetzlichen Voraussetzungen ein Widerrufsrecht zu. Da alle Drucke auf individuelle Bestellung gefertigt werden, kann das Widerrufsrecht gemäss Art. 16 lit. c der EU-Verbraucherrechterichtlinie (2011/83/EU) ausgeschlossen sein. Ausführliche Informationen sowie das Muster-Widerrufsformular finden sich auf der Seite <a href="/widerrufsrecht.html">Widerrufsrecht</a>.</p>
+
+    <h2>§ 8 Gewährleistung</h2>
+    <p>Es gelten die gesetzlichen Gewährleistungsrechte. Bei Mängeln der gelieferten Ware ist der Anbieter zunächst zur Nacherfüllung (Nachbesserung oder Ersatzlieferung) berechtigt. Schlägt die Nacherfüllung fehl, kann der Kunde nach seiner Wahl Minderung des Kaufpreises oder Rücktritt vom Vertrag verlangen.</p>
+    <p>Sollte ein Produkt beschädigt oder fehlerhaft ankommen, bitten wir um Kontaktaufnahme innerhalb von 14 Tagen nach Erhalt unter <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>.</p>
+
+    <h2>§ 9 Haftung</h2>
+    <p>Der Anbieter haftet für Vorsatz und grobe Fahrlässigkeit unbeschränkt. Für leichte Fahrlässigkeit haftet der Anbieter nur bei Verletzung wesentlicher Vertragspflichten (Kardinalpflichten) sowie bei Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit. In diesen Fällen ist die Haftung auf den vorhersehbaren, vertragstypischen Schaden begrenzt.</p>
+    <p>Die vorstehenden Haftungsbeschränkungen gelten nicht, soweit Schäden durch die Verletzung einer Garantie oder durch Arglist des Anbieters verursacht wurden.</p>
+
+    <h2>§ 10 Urheberrecht</h2>
+    <p>Alle auf etecollectif.com veröffentlichten Fotografien und Kunstwerke unterliegen dem Urheberrecht von été collectif – Markus Sommer. Der Kauf eines Drucks berechtigt ausschliesslich zur privaten, nicht-kommerziellen Nutzung. Eine Weitergabe, Vervielfältigung oder kommerzielle Nutzung ist ohne ausdrückliche schriftliche Zustimmung nicht gestattet.</p>
+
+    <h2>§ 11 Datenschutz</h2>
+    <p>Informationen zur Verarbeitung personenbezogener Daten finden sich in unserer <a href="/privacy-policy.html">Datenschutzerklärung</a>.</p>
+
+    <h2>§ 12 Streitbeilegung</h2>
+    <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>. Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+
+    <h2>§ 13 Schlussbestimmungen</h2>
+    <p>Es gilt das Recht der Schweiz unter Ausschluss des UN-Kaufrechts (CISG). Gerichtsstand für alle Streitigkeiten mit Kaufleuten, juristischen Personen des öffentlichen Rechts oder öffentlich-rechtlichen Sondervermögen ist Zürich, Schweiz. Zwingende Verbraucherrechte des Aufenthaltslandes des Kunden bleiben unberührt.</p>
+    <p>Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, berührt dies die Gültigkeit der übrigen Bestimmungen nicht.</p>
+  </div>
+
+  <!-- ENGLISH -->
+  <div id="content-en" style="display:none">
+    <h1>Terms &amp; Conditions</h1>
+    <p class="last-updated">Last updated: September 2026</p>
+
+    <h2>§ 1 Scope &amp; Provider</h2>
+    <p>These General Terms and Conditions (T&amp;Cs) apply to all orders placed through the online shop <strong>etecollectif.com</strong>. The provider is:</p>
+    <p>
+      été collectif – Markus Sommer<br>
+      Paradeplatz 1<br>
+      8001 Zürich<br>
+      Switzerland<br>
+      Email: <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>
+    </p>
+    <p>Any terms and conditions of the customer that deviate from these T&amp;Cs shall not be recognised unless we expressly agree to their application in writing.</p>
+
+    <h2>§ 2 Formation of Contract</h2>
+    <p>The presentation of products in the online shop does not constitute a legally binding offer, but rather an invitation to place an order (invitatio ad offerendum).</p>
+    <p>By clicking the "Buy now" or "Place order" button, the customer submits a binding offer to purchase the items in the shopping cart. Acceptance of the offer takes place through a separate order confirmation email or by delivery of the goods.</p>
+
+    <h2>§ 3 Prices</h2>
+    <p>All prices are final prices including the applicable statutory value-added tax. For deliveries within the European Union, the local VAT rate of the destination country applies. For deliveries to Switzerland and other non-EU countries, local tax rates and customs regulations apply.</p>
+    <p>The prices displayed on the website at the time of ordering apply. Shipping costs are charged additionally and are shown on the <a href="/versand.html">Shipping</a> page and during the ordering process.</p>
+
+    <h2>§ 4 Payment</h2>
+    <p>Payment is made via the payment methods offered during the ordering process (credit card, TWINT, etc., processed via Stripe). The invoice amount is due upon completion of the order. Set-off against claims of the provider is only permissible with undisputed or legally established counterclaims.</p>
+
+    <h2>§ 5 Delivery &amp; Production</h2>
+    <p>All products are made to order (print-on-demand) and shipped directly from our production partner to the customer. Information on delivery times and shipping costs can be found on the <a href="/versand.html">Shipping</a> page.</p>
+    <p>Deliveries are made to the delivery address provided during the ordering process. The provider accepts no responsibility for delivery delays resulting from incorrect or incomplete information provided by the customer.</p>
+
+    <h2>§ 6 Retention of Title</h2>
+    <p>The delivered goods remain the property of été collectif – Markus Sommer until full payment has been received.</p>
+
+    <h2>§ 7 Right of Withdrawal</h2>
+    <p>Consumers within the European Union are entitled to a right of withdrawal under the applicable statutory conditions. As all prints are produced to individual order, the right of withdrawal may be excluded pursuant to Art. 16(c) of the EU Consumer Rights Directive (2011/83/EU). Detailed information and the model withdrawal form can be found on the <a href="/widerrufsrecht.html">Right of Withdrawal</a> page.</p>
+
+    <h2>§ 8 Warranty</h2>
+    <p>Statutory warranty rights apply. In the case of defects in the delivered goods, the provider is initially entitled to subsequent performance (repair or replacement). If subsequent performance fails, the customer may at their discretion request a reduction in price or withdraw from the contract.</p>
+    <p>If a product arrives damaged or defective, please contact us within 14 days of receipt at <a href="mailto:hello@etecollectif.com">hello@etecollectif.com</a>.</p>
+
+    <h2>§ 9 Liability</h2>
+    <p>The provider is liable without limitation for intent and gross negligence. For simple negligence, the provider is only liable for breaches of material contractual obligations (cardinal obligations) and for damages resulting from injury to life, body or health. In these cases, liability is limited to the foreseeable, typically occurring damage.</p>
+    <p>The above limitations of liability do not apply insofar as damage was caused by a breach of warranty or by fraudulent concealment on the part of the provider.</p>
+
+    <h2>§ 10 Copyright</h2>
+    <p>All photographs and artworks published on etecollectif.com are protected by the copyright of été collectif – Markus Sommer. The purchase of a print grants the right for private, non-commercial use only. Reproduction, distribution or commercial use is not permitted without express written consent.</p>
+
+    <h2>§ 11 Privacy</h2>
+    <p>Information on the processing of personal data can be found in our <a href="/privacy-policy.html">Privacy Policy</a>.</p>
+
+    <h2>§ 12 Dispute Resolution</h2>
+    <p>The European Commission provides a platform for online dispute resolution (ODR): <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>. We are not willing or obligated to participate in dispute resolution proceedings before a consumer arbitration board.</p>
+
+    <h2>§ 13 Final Provisions</h2>
+    <p>Swiss law applies, excluding the UN Convention on Contracts for the International Sale of Goods (CISG). The place of jurisdiction for all disputes with merchants, legal entities under public law or special funds under public law is Zurich, Switzerland. Mandatory consumer protection rights of the customer's country of residence remain unaffected.</p>
+    <p>Should individual provisions of these T&amp;Cs be or become invalid, this shall not affect the validity of the remaining provisions.</p>
+  </div>
+</main>
+
+<footer>
+  <a href="/versand.html">Versand</a> &nbsp;·&nbsp;
+  <a href="/agb.html">AGB</a> &nbsp;·&nbsp;
+  <a href="/widerrufsrecht.html">Widerrufsrecht</a> &nbsp;·&nbsp;
+  <a href="/privacy-policy.html">Datenschutz</a> &nbsp;·&nbsp;
+  <a href="/impressum.html">Impressum</a> &nbsp;·&nbsp;
+  © <span id="yr"></span> été collectif
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+function setLang(lang, btn) {
+  document.getElementById('content-de').style.display = lang === 'de' ? '' : 'none';
+  document.getElementById('content-en').style.display = lang === 'en' ? '' : 'none';
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
