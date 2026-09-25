@@ -165,7 +165,6 @@
     /* Portrait images: show the full photo (no crop), white letterbox background */
     .g-item.portrait { background: #ffffff; }
     .g-item.portrait img { object-fit: contain; object-position: center center; }
-    .g-item.portrait:hover .g-hover { background: none; }
 
     /* Hover overlay — price only */
     .g-hover {
@@ -1916,7 +1915,22 @@ shuffle(products).forEach(p => {
   function applyFit() {
     if (img.naturalWidth < img.naturalHeight) {
       el.classList.add('portrait');
-      // height set by CSS; object-fit:contain shows full image without cropping
+      // Constrain hover overlay to the actual displayed image area (not the white letterbox)
+      const cw = el.offsetWidth;
+      const ch = el.offsetHeight;
+      const ir = img.naturalWidth / img.naturalHeight;
+      const cr = cw / ch;
+      let dw, dh;
+      if (ir < cr) { dh = ch; dw = ch * ir; }
+      else          { dw = cw; dh = cw / ir; }
+      const hov = el.querySelector('.g-hover');
+      if (hov) {
+        hov.style.left   = ((cw - dw) / 2) + 'px';
+        hov.style.top    = ((ch - dh) / 2) + 'px';
+        hov.style.width  = dw + 'px';
+        hov.style.height = dh + 'px';
+        hov.style.inset  = 'unset';
+      }
     }
   }
   if (img.complete && img.naturalWidth) applyFit();
