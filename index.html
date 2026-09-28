@@ -1957,11 +1957,31 @@ shuffle(products).forEach(p => {
   el.addEventListener('click', () => openModal(p.id));
   gallery.appendChild(el);
   const img = el.querySelector('img');
-  // Per-photo object-position to keep subjects in frame regardless of grid slot
   if (p.pos) img.style.objectPosition = p.pos;
   function applyFit() {
     if (img.naturalWidth < img.naturalHeight) {
       el.classList.add('portrait');
+      const hov = el.querySelector('.g-hover');
+      function positionHover() {
+        const cw = el.offsetWidth, ch = el.offsetHeight;
+        if (!cw || !ch) return;
+        const ir = img.naturalWidth / img.naturalHeight;
+        const cr = cw / ch;
+        let dw, dh;
+        if (ir < cr) { dh = ch; dw = ch * ir; }
+        else          { dw = cw; dh = cw / ir; }
+        if (hov) {
+          hov.style.inset  = 'unset';
+          hov.style.left   = Math.round((cw - dw) / 2) + 'px';
+          hov.style.top    = Math.round((ch - dh) / 2) + 'px';
+          hov.style.width  = Math.round(dw) + 'px';
+          hov.style.height = Math.round(dh) + 'px';
+        }
+      }
+      // double-rAF ensures the CSS grid has finished laying out the element
+      requestAnimationFrame(() => requestAnimationFrame(positionHover));
+      // re-run whenever the container resizes (e.g. window resize)
+      if (window.ResizeObserver) new ResizeObserver(positionHover).observe(el);
     }
   }
   if (img.complete && img.naturalWidth) applyFit();

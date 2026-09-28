@@ -109,8 +109,6 @@ function buildShippingEmail({ name, trackingUrl, trackingNumber, courier, lang, 
           <p style="font-size:13px;color:#666;line-height:1.7;margin:0 0 32px;">
             ${questionLabel}<br>
             <a href="mailto:hello@etecollectif.com" style="color:#8b1a1a;text-decoration:none;">hello@etecollectif.com</a>
-            &nbsp;·&nbsp;
-            <a href="https://instagram.com/etecollectif" style="color:#8b1a1a;text-decoration:none;">@etecollectif</a>
           </p>
         </td>
       </tr>
@@ -118,11 +116,23 @@ function buildShippingEmail({ name, trackingUrl, trackingNumber, courier, lang, 
       <!-- Footer -->
       <tr>
         <td style="padding:24px 40px 36px;border-top:1px solid #e8e8e6;">
-          <p style="font-size:11px;color:#aaa;margin:0 0 6px;">${thanksLabel}</p>
-          <p style="font-size:11px;color:#aaa;margin:0;">
-            été collectif – Markus Sommer · Paradeplatz 1, 8001 Zürich ·
-            <a href="https://etecollectif.com" style="color:#aaa;">etecollectif.com</a>
+          <p style="font-size:11px;color:#aaa;margin:0 0 10px;">${thanksLabel}</p>
+          <p style="font-size:11px;color:#aaa;margin:0 0 10px;">
+            été collectif – Markus Sommer · Paradeplatz 1, 8001 Zürich
           </p>
+          <table cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="padding-right:14px;">
+                <a href="https://etecollectif.com" style="color:#aaa;text-decoration:none;font-size:11px;">etecollectif.com</a>
+              </td>
+              <td>
+                <a href="https://instagram.com/etecollectif" style="text-decoration:none;display:inline-flex;align-items:center;gap:5px;color:#aaa;font-size:11px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#aaa" stroke="none"/></svg>
+                  @etecollectif
+                </a>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
 
