@@ -34,10 +34,12 @@ function buildConfirmationEmail({ name, email, displayItems, shippingCost, merch
   const isDE = lang === 'de';
   const subtotal = displayItems.reduce((s, i) => s + (i.price * i.qty), 0);
   const total = subtotal + (shippingCost || 0);
+  // Show only the human-readable prefix (ete-<timestamp>), not the base64 payload
+  const displayRef = merchantRef.split('-').slice(0, 2).join('-');
 
   const subject = isDE
-    ? `Bestellung bestätigt – été collectif (#${merchantRef})`
-    : `Order confirmed – été collectif (#${merchantRef})`;
+    ? `Bestellung bestätigt – été collectif (#${displayRef})`
+    : `Order confirmed – été collectif (#${displayRef})`;
 
   const greeting = isDE
     ? `Hallo ${name.split(' ')[0]},`
@@ -89,7 +91,7 @@ function buildConfirmationEmail({ name, email, displayItems, shippingCost, merch
 
           <!-- Order ref -->
           <p style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#888;margin:0 0 6px;">${orderLabel}</p>
-          <p style="font-size:14px;color:#1a1a1a;margin:0 0 32px;font-family:monospace;">${merchantRef}</p>
+          <p style="font-size:14px;color:#1a1a1a;margin:0 0 32px;font-family:monospace;">${displayRef}</p>
 
           <!-- Items -->
           <p style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#888;margin:0 0 4px;">${itemsLabel}</p>
