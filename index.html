@@ -1961,6 +1961,7 @@ shuffle(products).forEach(p => {
   function applyFit() {
     if (img.naturalWidth < img.naturalHeight) {
       el.classList.add('portrait');
+      img.style.objectPosition = '50% 50%'; // override per-photo pos — contain centres itself
       const hov = el.querySelector('.g-hover');
       function positionHover() {
         const cw = el.offsetWidth, ch = el.offsetHeight;
