@@ -166,7 +166,7 @@
     .g-item.portrait { background: #ffffff; }
     .g-item.portrait img { object-fit: contain; object-position: center center; }
 
-    /* Hover overlay — price only */
+    /* Hover overlay */
     .g-hover {
       position: absolute;
       inset: 0;
@@ -181,6 +181,12 @@
       background: linear-gradient(to top, rgba(26,25,22,0.58) 0%, transparent 55%);
     }
     .g-item:hover .g-hover { opacity: 1; }
+    /* Portrait images are letterboxed — use a flat tint so text is always readable */
+    .g-item.portrait .g-hover {
+      background: rgba(26,25,22,0.38);
+      justify-content: center;
+      padding-bottom: 0;
+    }
 
     .g-hover-name {
       font-family: var(--serif);
@@ -1956,29 +1962,12 @@ shuffle(products).forEach(p => {
     </div>`;
   el.addEventListener('click', () => openModal(p.id));
   gallery.appendChild(el);
-  // Portrait images: taller container (less zoom) + top-biased crop, no letterboxing
   const img = el.querySelector('img');
   // Per-photo object-position to keep subjects in frame regardless of grid slot
   if (p.pos) img.style.objectPosition = p.pos;
   function applyFit() {
     if (img.naturalWidth < img.naturalHeight) {
       el.classList.add('portrait');
-      // Constrain hover overlay to the actual displayed image area (not the white letterbox)
-      const cw = el.offsetWidth;
-      const ch = el.offsetHeight;
-      const ir = img.naturalWidth / img.naturalHeight;
-      const cr = cw / ch;
-      let dw, dh;
-      if (ir < cr) { dh = ch; dw = ch * ir; }
-      else          { dw = cw; dh = cw / ir; }
-      const hov = el.querySelector('.g-hover');
-      if (hov) {
-        hov.style.left   = ((cw - dw) / 2) + 'px';
-        hov.style.top    = ((ch - dh) / 2) + 'px';
-        hov.style.width  = dw + 'px';
-        hov.style.height = dh + 'px';
-        hov.style.inset  = 'unset';
-      }
     }
   }
   if (img.complete && img.naturalWidth) applyFit();
@@ -3012,16 +3001,26 @@ async function placeOrder() {
       attributes: getOrderAttributes(item),
       assetUrl:   getAssetUrl(item.img)
     }));
+    const displayItems = cart.map(item => ({
+      name:   item.name,
+      detail: item.fmt === 'framed' ? item.frameLabel : (item.paperType === 'pap' ? 'Lustre Photo Paper' : 'Hahnemühle Photo Rag'),
+      size:   item.size,
+      qty:    item.qty,
+      price:  item.priceEur ?? item.price ?? 0
+    }));
     const orderRes = await fetch('/api/create-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         items: orderItems,
+        displayItems,
         recipient: {
           name, email: email || undefined,
           address: { line1, line2: line2 || undefined, townOrCity: city, postalOrZipCode: postal, countryCode: country }
         },
         shippingMethod: shipping,
+        shippingCost:   _shippingCost || 0,
+        lang:           _lang || 'en',
         stripePaymentIntentId: paymentIntent.id
       })
     });
