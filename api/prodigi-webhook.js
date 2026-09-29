@@ -76,7 +76,7 @@ function buildShippingEmail({ name, trackingUrl, trackingNumber, courier, lang, 
       <tr>
         <td style="padding:36px 40px 28px;border-bottom:1px solid #e8e8e6;">
           <a href="https://etecollectif.com" style="text-decoration:none;">
-            <img src="https://etecollectif.com/logo.png" alt="été collectif" height="36" style="display:block;">
+            <img src="https://etecollectif.com/logo-email.png" alt="été collectif" height="36" style="display:block;margin:0 auto;">
           </a>
         </td>
       </tr>

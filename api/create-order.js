@@ -85,7 +85,7 @@ function buildConfirmationEmail({ name, email, displayItems, shippingCost, merch
       <tr>
         <td style="padding:32px 40px 28px;border-bottom:1px solid #e8e8e6;text-align:center;">
           <a href="https://etecollectif.com" style="text-decoration:none;display:inline-block;">
-            <img src="https://etecollectif.com/logo.png" alt="été collectif" height="40" style="display:block;margin:0 auto;">
+            <img src="https://etecollectif.com/logo-email.png" alt="été collectif" height="40" style="display:block;margin:0 auto;">
           </a>
         </td>
       </tr>
