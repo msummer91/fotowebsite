@@ -19,12 +19,19 @@ function formatPrice(eur) {
 function itemsTableHtml(displayItems) {
   return displayItems.map(item => `
     <tr>
-      <td style="padding:12px 0;border-bottom:1px solid #e8e8e6;vertical-align:top;">
-        <div style="font-size:14px;font-weight:600;color:#1a1a1a;">${item.name}</div>
-        <div style="font-size:12px;color:#666;margin-top:3px;">${item.size} · ${item.detail}</div>
-        ${item.qty > 1 ? `<div style="font-size:12px;color:#666;">Qty: ${item.qty}</div>` : ''}
+      <td style="padding:14px 0;border-bottom:1px solid #e8e8e6;vertical-align:top;">
+        <table cellpadding="0" cellspacing="0"><tr>
+          ${item.imgUrl ? `<td style="padding-right:14px;vertical-align:top;">
+            <img src="${item.imgUrl}" alt="${item.name}" width="64" height="64" style="display:block;width:64px;height:64px;object-fit:cover;border:1px solid #e8e8e6;">
+          </td>` : ''}
+          <td style="vertical-align:top;">
+            <div style="font-size:14px;font-weight:600;color:#1a1a1a;">${item.name}</div>
+            <div style="font-size:12px;color:#666;margin-top:3px;">${item.size} · ${item.detail}</div>
+            ${item.qty > 1 ? `<div style="font-size:12px;color:#666;margin-top:2px;">Qty: ${item.qty}</div>` : ''}
+          </td>
+        </tr></table>
       </td>
-      <td style="padding:12px 0 12px 20px;border-bottom:1px solid #e8e8e6;text-align:right;white-space:nowrap;vertical-align:top;font-size:14px;color:#1a1a1a;">
+      <td style="padding:14px 0 14px 20px;border-bottom:1px solid #e8e8e6;text-align:right;white-space:nowrap;vertical-align:top;font-size:14px;color:#1a1a1a;">
         ${formatPrice(item.price * item.qty)}
       </td>
     </tr>`).join('');
@@ -76,9 +83,9 @@ function buildConfirmationEmail({ name, email, displayItems, shippingCost, merch
 
       <!-- Header -->
       <tr>
-        <td style="padding:36px 40px 28px;border-bottom:1px solid #e8e8e6;">
-          <a href="https://etecollectif.com" style="text-decoration:none;">
-            <img src="https://etecollectif.com/logo.png" alt="été collectif" height="36" style="display:block;">
+        <td style="padding:32px 40px 28px;border-bottom:1px solid #e8e8e6;text-align:center;">
+          <a href="https://etecollectif.com" style="text-decoration:none;display:inline-block;">
+            <img src="https://etecollectif.com/logo.png" alt="été collectif" height="40" style="display:block;margin:0 auto;">
           </a>
         </td>
       </tr>

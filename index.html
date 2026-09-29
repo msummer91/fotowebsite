@@ -3021,7 +3021,8 @@ async function placeOrder() {
       detail: item.fmt === 'framed' ? item.frameLabel : (item.paperType === 'pap' ? 'Lustre Photo Paper' : 'Hahnemühle Photo Rag'),
       size:   item.size,
       qty:    item.qty,
-      price:  item.priceEur ?? item.price ?? 0
+      price:  item.priceEur ?? item.price ?? 0,
+      imgUrl: window.location.origin + '/' + item.img.split('/').map(encodeURIComponent).join('/')
     }));
     const orderRes = await fetch('/api/create-order', {
       method: 'POST',
