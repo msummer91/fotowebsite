@@ -202,8 +202,32 @@ module.exports = async function handler(req, res) {
   // Extract tracking info from first shipment
   const shipment = Array.isArray(order.shipments) ? order.shipments[0] : null;
   const trackingNumber = shipment?.tracking?.number || null;
-  const trackingUrl    = shipment?.tracking?.url    || null;
-  const courier        = shipment?.carrier?.name    || shipment?.carrier?.code || null;
+  const courierRaw     = (shipment?.carrier?.name || shipment?.carrier?.code || '').toLowerCase();
+  const courier        = shipment?.carrier?.name || shipment?.carrier?.code || null;
+
+  // Build direct carrier tracking URL instead of Prodigi's generic wrapper
+  function resolveTrackingUrl(number, carrierName) {
+    if (!number) return null;
+    const c = (carrierName || '').toLowerCase();
+    if (c.includes('hermes') || c.includes('myhermes') || c.includes('evri'))
+      return `https://www.myhermes.de/empfangen/sendungsverfolgung/#/sendungsnummer/${number}`;
+    if (c.includes('dhl'))
+      return `https://www.dhl.de/de/privatkunden/pakete-empfangen/verfolgen.html?piececode=${number}`;
+    if (c.includes('dpd'))
+      return `https://tracking.dpd.de/status/de_DE/parcel/${number}`;
+    if (c.includes('ups'))
+      return `https://www.ups.com/track?tracknum=${number}`;
+    if (c.includes('fedex'))
+      return `https://www.fedex.com/fedextrack/?trknbr=${number}`;
+    if (c.includes('royal mail') || c.includes('royalmail'))
+      return `https://www.royalmail.com/track-your-item#/tracking-results/${number}`;
+    if (c.includes('gls'))
+      return `https://gls-group.com/track/${number}`;
+    // Fallback: Prodigi's own URL (better than mailingtechnology)
+    return shipment?.tracking?.url || null;
+  }
+
+  const trackingUrl = resolveTrackingUrl(trackingNumber, courier);
 
   try {
     const { subject, html } = buildShippingEmail({
