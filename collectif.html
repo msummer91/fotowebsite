@@ -1327,6 +1327,12 @@
           <option value="Express">Express</option>
         </select>
       </div>
+      <div class="cf-gap" style="margin-top:4px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:var(--muted);line-height:1.5;">
+          <input type="checkbox" id="cfNewsletter" style="margin-top:2px;accent-color:var(--crimson);flex-shrink:0;">
+          <span>Subscribe to our newsletter for new releases and exclusive offers. / Newsletter abonnieren für neue Werke und Angebote.</span>
+        </label>
+      </div>
       <div class="cf-section-label">Payment</div>
       <div class="stripe-wrap">
         <label class="cf-label">Card Details *</label>
@@ -2772,16 +2778,29 @@ async function placeOrder() {
       attributes: getOrderAttributes(item),
       assetUrl:   getAssetUrl(item.img)
     }));
+    const displayItems = cart.map(item => ({
+      name:   item.name,
+      detail: item.fmt === 'framed' ? item.frameLabel : (item.paperType === 'pap' ? 'Lustre Photo Paper' : 'Hahnemühle Photo Rag'),
+      size:   item.size,
+      qty:    item.qty,
+      price:  item.priceEur ?? item.price ?? 0,
+      imgUrl: window.location.origin + '/' + item.img.split('/').map(encodeURIComponent).join('/')
+    }));
+    const newsletter = document.getElementById('cfNewsletter') ? document.getElementById('cfNewsletter').checked : false;
     const orderRes = await fetch('/api/create-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         items: orderItems,
+        displayItems,
         recipient: {
           name, email: email || undefined,
           address: { line1, line2: line2 || undefined, townOrCity: city, postalOrZipCode: postal, countryCode: country }
         },
         shippingMethod: shipping,
+        shippingCost:   _shippingCost || 0,
+        lang:           _lang || 'en',
+        newsletter,
         stripePaymentIntentId: paymentIntent.id
       })
     });
