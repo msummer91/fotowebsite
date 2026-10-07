@@ -1521,6 +1521,12 @@
           <option value="Express">Express</option>
         </select>
       </div>
+      <div class="cf-gap" style="margin-top:4px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:var(--muted);line-height:1.5;">
+          <input type="checkbox" id="cfNewsletter" style="margin-top:2px;accent-color:var(--crimson);flex-shrink:0;">
+          <span id="cfNewsletterLabel">Subscribe to our newsletter for new releases and exclusive offers. / Newsletter abonnieren für neue Werke und Angebote.</span>
+        </label>
+      </div>
       <div class="cf-section-label">Payment</div>
       <div class="stripe-wrap">
         <label class="cf-label">Card Details *</label>
@@ -2961,14 +2967,15 @@ function getOrderAttributes(item) {
 }
 
 async function placeOrder() {
-  const name     = document.getElementById('cfName').value.trim();
-  const email    = document.getElementById('cfEmail').value.trim();
-  const line1    = document.getElementById('cfLine1').value.trim();
-  const line2    = document.getElementById('cfLine2').value.trim();
-  const city     = document.getElementById('cfCity').value.trim();
-  const postal   = document.getElementById('cfPostal').value.trim();
-  const country  = document.getElementById('cfCountry').value;
-  const shipping = document.getElementById('cfShipping').value;
+  const name       = document.getElementById('cfName').value.trim();
+  const email      = document.getElementById('cfEmail').value.trim();
+  const line1      = document.getElementById('cfLine1').value.trim();
+  const line2      = document.getElementById('cfLine2').value.trim();
+  const city       = document.getElementById('cfCity').value.trim();
+  const postal     = document.getElementById('cfPostal').value.trim();
+  const country    = document.getElementById('cfCountry').value;
+  const shipping   = document.getElementById('cfShipping').value;
+  const newsletter = document.getElementById('cfNewsletter').checked;
 
   if (!name || !email || !line1 || !city || !postal) { toast('Please fill in all required fields'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email address'); return; }
@@ -3037,6 +3044,7 @@ async function placeOrder() {
         shippingMethod: shipping,
         shippingCost:   _shippingCost || 0,
         lang:           _lang || 'en',
+        newsletter,
         stripePaymentIntentId: paymentIntent.id
       })
     });

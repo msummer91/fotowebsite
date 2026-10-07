@@ -188,6 +188,39 @@ async function sendEmail({ to, bcc, subject, html }) {
   }
 }
 
+// ── GOOGLE SHEETS LOGGING ────────────────────────────────────────────────────
+
+async function logToSheets({ merchantRef, name, email, address, items, displayItems, shippingCost, lang, newsletter }) {
+  const webhookUrl = process.env.CUSTOMER_DATA_WEBHOOK_URL;
+  if (!webhookUrl) { console.warn('CUSTOMER_DATA_WEBHOOK_URL not set — skipping sheet log'); return; }
+  const displayRef = merchantRef.split('-').slice(0, 2).join('-');
+  const itemsSummary = Array.isArray(displayItems)
+    ? displayItems.map(i => `${i.name} (${i.size}, ${i.detail}) x${i.qty}`).join(' | ')
+    : '';
+  const total = (Array.isArray(displayItems)
+    ? displayItems.reduce((s, i) => s + (i.price * i.qty), 0)
+    : 0) + (shippingCost || 0);
+  try {
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        timestamp:   new Date().toISOString(),
+        orderRef:    displayRef,
+        name:        name || '',
+        email:       email || '',
+        address:     [address.line1, address.line2, address.townOrCity, address.postalOrZipCode, address.countryCode].filter(Boolean).join(', '),
+        items:       itemsSummary,
+        total:       `€${Number(total).toFixed(2)}`,
+        lang:        lang || 'en',
+        newsletter:  newsletter ? 'Yes' : 'No'
+      })
+    });
+  } catch (e) {
+    console.error('Sheets log error:', e.message);
+  }
+}
+
 // ── MAIN HANDLER ─────────────────────────────────────────────────────────────
 
 module.exports = async function handler(req, res) {
@@ -201,7 +234,7 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Print service not configured' });
   }
 
-  const { items, displayItems, recipient, shippingMethod, shippingCost, lang } = req.body || {};
+  const { items, displayItems, recipient, shippingMethod, shippingCost, lang, newsletter } = req.body || {};
 
   // Basic validation
   if (!Array.isArray(items) || !items.length) {
@@ -288,6 +321,18 @@ module.exports = async function handler(req, res) {
         html
       });
     }
+
+    // Log customer data to Google Sheets
+    await logToSheets({
+      merchantRef,
+      name:         recipient.name,
+      email:        recipient.email || '',
+      address:      recipient.address,
+      displayItems: Array.isArray(displayItems) ? displayItems : [],
+      shippingCost: shippingCost || 0,
+      lang:         lang || 'en',
+      newsletter:   !!newsletter
+    });
 
     return res.status(200).json({
       orderId:           data.id || data.order?.id,
