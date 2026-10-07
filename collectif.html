@@ -1243,26 +1243,26 @@
   <!-- View 1: Cart -->
   <div id="cartMain">
     <div class="cp-head">
-      <span class="cp-title">Your Selection</span>
+      <span class="cp-title" id="cpCartTitle">Your Selection</span>
       <button class="cp-close" onclick="closeCart()">×</button>
     </div>
     <div class="cp-body" id="cpBody">
-      <div class="cp-empty"><p>Nothing yet</p><p>Add a print to begin your collection.</p></div>
+      <div class="cp-empty"><p id="cpEmptyMsg">Nothing yet</p><p id="cpEmptySubMsg">Add a print to begin your collection.</p></div>
     </div>
     <div class="cp-foot">
       <div class="cp-total-row">
-        <span class="cp-total-label">Subtotal</span>
+        <span class="cp-total-label" id="cpSubtotalLabel">Subtotal</span>
         <span class="cp-total-val" id="cpTotal">€0</span>
       </div>
-      <button class="btn-checkout" onclick="showCheckout()">Proceed to Checkout</button>
+      <button class="btn-checkout" id="cpProceedBtn" onclick="showCheckout()">Proceed to Checkout</button>
     </div>
   </div>
 
   <!-- View 2: Shipping form -->
   <div id="checkoutForm">
     <div class="cp-head">
-      <button class="cp-back" onclick="showCart()">← Back</button>
-      <span class="cp-title">Shipping</span>
+      <button class="cp-back" id="cpBackBtn" onclick="showCart()">← Back</button>
+      <span class="cp-title" id="cpShippingTitle">Shipping</span>
       <button class="cp-close" onclick="closeCart()">×</button>
     </div>
     <div class="cp-body">
@@ -1334,7 +1334,7 @@
         </label>
       </div>
       <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:4px 0 12px;">By placing your order you agree that we store your name, email and address to process and ship your order. / Mit deiner Bestellung stimmst du zu, dass wir deine Daten zur Auftragsabwicklung speichern.</p>
-      <div class="cf-section-label">Payment</div>
+      <div class="cf-section-label" id="cpPaymentLabel">Payment</div>
       <div class="stripe-wrap">
         <label class="cf-label">Card Details *</label>
         <div id="stripeCardEl" class="cf-input"></div>
@@ -1343,15 +1343,15 @@
     </div>
     <div class="cp-foot">
       <div class="cp-total-row" style="font-size:12px;opacity:0.7;margin-bottom:2px;">
-        <span class="cp-total-label">Subtotal</span>
+        <span class="cp-total-label" id="cpSubtotalLabel2">Subtotal</span>
         <span id="cpSubtotal2">€0</span>
       </div>
       <div class="cp-total-row" style="font-size:12px;opacity:0.7;margin-bottom:10px;">
-        <span class="cp-total-label">Shipping</span>
+        <span class="cp-total-label" id="cpShippingLabel2">Shipping</span>
         <span id="cpShipping2">—</span>
       </div>
       <div class="cp-total-row">
-        <span class="cp-total-label">Total</span>
+        <span class="cp-total-label" id="cpTotalLabel2">Total</span>
         <span class="cp-total-val" id="cpTotal2">€0</span>
       </div>
       <button class="btn-checkout" id="btnPlaceOrder" onclick="placeOrder()" disabled>Calculating…</button>
@@ -2284,6 +2284,13 @@ const _i18n = {
     cart_title: 'Your selection',
     cart_empty: 'Nothing yet',
     cart_empty_sub: 'Add a print to begin your collection.',
+    cart_subtotal: 'Subtotal',
+    cart_proceed: 'Proceed to Checkout',
+    cart_back: '← Back',
+    cart_shipping_title: 'Shipping',
+    cart_calculating: 'Calculating…',
+    cart_processing: 'Processing…',
+    cart_payment: 'Payment',
     checkout: 'Checkout',
     vat_note: 'VAT included where applicable. Shipping calculated at checkout.',
     lang_label: 'Language', cur_label: 'Currency',
@@ -2320,6 +2327,13 @@ const _i18n = {
     cart_title: 'Deine Auswahl',
     cart_empty: 'Noch nichts',
     cart_empty_sub: 'Füge einen Druck hinzu, um deine Kollektion zu starten.',
+    cart_subtotal: 'Zwischensumme',
+    cart_proceed: 'Zur Kasse',
+    cart_back: '← Zurück',
+    cart_shipping_title: 'Versand',
+    cart_calculating: 'Berechne…',
+    cart_processing: 'Verarbeite…',
+    cart_payment: 'Zahlung',
     checkout: 'Zur Kasse',
     vat_note: 'MwSt. inkl. wo anwendbar. Versand wird beim Checkout berechnet.',
     lang_label: 'Sprache', cur_label: 'Währung',
@@ -2377,6 +2391,30 @@ function applyTranslations() {
   if (pn) pn.textContent = t('price_note')(_fmtP(200));
   document.querySelectorAll('.locale-label-lang').forEach(el => el.textContent = t('lang_label'));
   document.querySelectorAll('.locale-label-cur').forEach(el => el.textContent = t('cur_label'));
+  // Cart panel strings
+  const cpCartTitle = document.getElementById('cpCartTitle');
+  if (cpCartTitle) cpCartTitle.textContent = t('cart_title');
+  const cpSubtotalLabel = document.getElementById('cpSubtotalLabel');
+  if (cpSubtotalLabel) cpSubtotalLabel.textContent = t('cart_subtotal');
+  const cpProceedBtn = document.getElementById('cpProceedBtn');
+  if (cpProceedBtn) cpProceedBtn.textContent = t('cart_proceed');
+  const cpBackBtn = document.getElementById('cpBackBtn');
+  if (cpBackBtn) cpBackBtn.textContent = t('cart_back');
+  const cpShippingTitle = document.getElementById('cpShippingTitle');
+  if (cpShippingTitle) cpShippingTitle.textContent = t('cart_shipping_title');
+  const cpSubtotalLabel2 = document.getElementById('cpSubtotalLabel2');
+  if (cpSubtotalLabel2) cpSubtotalLabel2.textContent = t('cart_subtotal');
+  const cpShippingLabel2 = document.getElementById('cpShippingLabel2');
+  if (cpShippingLabel2) cpShippingLabel2.textContent = t('cart_shipping_title');
+  const cpTotalLabel2 = document.getElementById('cpTotalLabel2');
+  if (cpTotalLabel2) cpTotalLabel2.textContent = 'Total';
+  const cpPaymentLabel = document.getElementById('cpPaymentLabel');
+  if (cpPaymentLabel) cpPaymentLabel.textContent = t('cart_payment');
+  // Update empty state if visible
+  const cpEmptyMsg = document.getElementById('cpEmptyMsg');
+  if (cpEmptyMsg) cpEmptyMsg.textContent = t('cart_empty');
+  const cpEmptySubMsg = document.getElementById('cpEmptySubMsg');
+  if (cpEmptySubMsg) cpEmptySubMsg.textContent = t('cart_empty_sub');
   updateFrameSizeNote();
   refreshCart();
 }
@@ -2504,7 +2542,7 @@ function refreshCart() {
   document.querySelectorAll('.cart-num').forEach(el => { el.textContent = n; el.classList.toggle('on', n > 0); });
   document.getElementById('cpTotal').textContent = _fmtP(tEur);
   const body = document.getElementById('cpBody');
-  if (!cart.length) { body.innerHTML = '<div class="cp-empty"><p>Nothing yet</p><p>Add a print to begin your collection.</p></div>'; return; }
+  if (!cart.length) { body.innerHTML = `<div class="cp-empty"><p id="cpEmptyMsg">${t('cart_empty')}</p><p id="cpEmptySubMsg">${t('cart_empty_sub')}</p></div>`; return; }
   body.innerHTML = cart.map(i => {
     const imgSz   = i.fmt === 'framed' ? BOX_IMAGE_SIZES[i.size] : null;
     const outerSz = i.fmt === 'framed' ? BOX_OUTER_SIZES[i.size] : null;
@@ -2636,7 +2674,7 @@ function showCheckout() {
   document.getElementById('cpSubtotal2').textContent = _fmtP(subtotal);
   document.getElementById('cpShipping2').textContent = '—';
   document.getElementById('cpTotal2').textContent = _fmtP(subtotal);
-  document.getElementById('btnPlaceOrder').textContent = 'Calculating…';
+  document.getElementById('btnPlaceOrder').textContent = t('cart_calculating');
   document.getElementById('btnPlaceOrder').disabled = true;
   document.getElementById('cardError').style.display = 'none';
   if (!_cardMounted && _cardEl) { _cardEl.mount('#stripeCardEl'); _cardMounted = true; }
@@ -2669,7 +2707,7 @@ async function fetchShippingQuote() {
   }
 
   // Fetch live Prodigi quote for all other cases
-  btn.textContent = 'Calculating…'; btn.disabled = true;
+  btn.textContent = t('cart_calculating'); btn.disabled = true;
   shipEl.textContent = '…';
 
   try {
@@ -2742,7 +2780,7 @@ async function placeOrder() {
   const totalLocal   = _stripeAmt(totalBase);  // convert CHF → visitor's currency for Stripe
   const btn          = document.getElementById('btnPlaceOrder');
   const reset        = () => { btn.textContent = 'Pay ' + _fmtAmt(totalBase); btn.disabled = false; btn.onclick = placeOrder; };
-  btn.textContent = 'Processing…'; btn.disabled = true;
+  btn.textContent = t('cart_processing'); btn.disabled = true;
   document.getElementById('cardError').style.display = 'none';
 
   try {

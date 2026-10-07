@@ -211,12 +211,18 @@ async function logToSheets({ merchantRef, name, email, address, items, displayIt
     lang:        lang || 'en',
     newsletter:  newsletter ? 'Yes' : 'No'
   };
-  // Google Apps Script Web Apps redirect POST requests — send as GET with query params instead
+  // Google Apps Script Web Apps redirect GET requests — follow redirects
   try {
     const url = new URL(webhookUrl);
     Object.entries(payload).forEach(([k, v]) => url.searchParams.set(k, v));
+    console.log('Sheets log: sending to', url.toString().substring(0, 80) + '...');
     const res = await fetch(url.toString(), { method: 'GET', redirect: 'follow' });
-    if (!res.ok) console.error('Sheets log HTTP error:', res.status);
+    const text = await res.text().catch(() => '');
+    if (!res.ok) {
+      console.error('Sheets log HTTP error:', res.status, text.substring(0, 200));
+    } else {
+      console.log('Sheets log success:', res.status, text.substring(0, 100));
+    }
   } catch (e) {
     console.error('Sheets log error:', e.message);
   }
