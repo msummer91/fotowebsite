@@ -200,22 +200,23 @@ async function logToSheets({ merchantRef, name, email, address, items, displayIt
   const total = (Array.isArray(displayItems)
     ? displayItems.reduce((s, i) => s + (i.price * i.qty), 0)
     : 0) + (shippingCost || 0);
+  const payload = {
+    timestamp:   new Date().toISOString(),
+    orderRef:    displayRef,
+    name:        name || '',
+    email:       email || '',
+    address:     [address.line1, address.line2, address.townOrCity, address.postalOrZipCode, address.countryCode].filter(Boolean).join(', '),
+    items:       itemsSummary,
+    total:       `€${Number(total).toFixed(2)}`,
+    lang:        lang || 'en',
+    newsletter:  newsletter ? 'Yes' : 'No'
+  };
+  // Google Apps Script Web Apps redirect POST requests — send as GET with query params instead
   try {
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        timestamp:   new Date().toISOString(),
-        orderRef:    displayRef,
-        name:        name || '',
-        email:       email || '',
-        address:     [address.line1, address.line2, address.townOrCity, address.postalOrZipCode, address.countryCode].filter(Boolean).join(', '),
-        items:       itemsSummary,
-        total:       `€${Number(total).toFixed(2)}`,
-        lang:        lang || 'en',
-        newsletter:  newsletter ? 'Yes' : 'No'
-      })
-    });
+    const url = new URL(webhookUrl);
+    Object.entries(payload).forEach(([k, v]) => url.searchParams.set(k, v));
+    const res = await fetch(url.toString(), { method: 'GET', redirect: 'follow' });
+    if (!res.ok) console.error('Sheets log HTTP error:', res.status);
   } catch (e) {
     console.error('Sheets log error:', e.message);
   }
