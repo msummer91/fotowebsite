@@ -236,6 +236,11 @@ module.exports = async function handler(req, res) {
 
   const { items, displayItems, recipient, shippingMethod, shippingCost, lang, newsletter } = req.body || {};
 
+  // Debug logging — remove once displayItems issue is resolved
+  console.log('DEBUG displayItems:', JSON.stringify(displayItems));
+  console.log('DEBUG items count:', Array.isArray(items) ? items.length : 'not array');
+  console.log('DEBUG shippingCost:', shippingCost);
+
   // Basic validation
   if (!Array.isArray(items) || !items.length) {
     return res.status(400).json({ error: 'No items in order' });
