@@ -2291,6 +2291,7 @@ const _i18n = {
     cart_calculating: 'Calculating…',
     cart_processing: 'Processing…',
     cart_payment: 'Payment',
+    cart_remove: 'Remove',
     checkout: 'Checkout',
     vat_note: 'VAT included where applicable. Shipping calculated at checkout.',
     lang_label: 'Language', cur_label: 'Currency',
@@ -2334,6 +2335,7 @@ const _i18n = {
     cart_calculating: 'Berechne…',
     cart_processing: 'Verarbeite…',
     cart_payment: 'Zahlung',
+    cart_remove: 'Entfernen',
     checkout: 'Zur Kasse',
     vat_note: 'MwSt. inkl. wo anwendbar. Versand wird beim Checkout berechnet.',
     lang_label: 'Sprache', cur_label: 'Währung',
@@ -2557,7 +2559,7 @@ function refreshCart() {
       <div>
         <a class="cp-item-name" href="/collectif.html?open=${i.id}">${i.name}</a>
         <div class="cp-item-meta">${sizeLine}<br>${label} · Qty ${i.qty}</div>
-        <button class="cp-item-rm" onclick="removeItem('${i.key}')">Remove</button>
+        <button class="cp-item-rm" onclick="removeItem('${i.key}')">${t('cart_remove')}</button>
       </div>
       <div class="cp-item-price">${_fmtP(itemEur)}</div>
     </div>`;
