@@ -1267,15 +1267,15 @@
     </div>
     <div class="cp-body">
       <div class="cf-gap">
-        <label class="cf-label">Full Name *</label>
+        <label class="cf-label" id="cfLabelName">Full Name *</label>
         <input class="cf-input" id="cfName" type="text" autocomplete="name" placeholder="Anna Müller" />
       </div>
       <div class="cf-gap">
-        <label class="cf-label">Email *</label>
+        <label class="cf-label" id="cfLabelEmail">Email *</label>
         <input class="cf-input" id="cfEmail" type="email" autocomplete="email" placeholder="anna@example.com" />
       </div>
       <div class="cf-gap">
-        <label class="cf-label">Address *</label>
+        <label class="cf-label" id="cfLabelAddress">Address *</label>
         <input class="cf-input" id="cfLine1" type="text" autocomplete="address-line1" placeholder="Street and number" />
       </div>
       <div class="cf-gap">
@@ -1283,16 +1283,16 @@
       </div>
       <div class="cf-row cf-gap">
         <div>
-          <label class="cf-label">City *</label>
+          <label class="cf-label" id="cfLabelCity">City *</label>
           <input class="cf-input" id="cfCity" type="text" autocomplete="address-level2" />
         </div>
         <div>
-          <label class="cf-label">Post Code *</label>
+          <label class="cf-label" id="cfLabelPostcode">Post Code *</label>
           <input class="cf-input" id="cfPostal" type="text" autocomplete="postal-code" />
         </div>
       </div>
       <div class="cf-gap">
-        <label class="cf-label">Country</label>
+        <label class="cf-label" id="cfLabelCountry">Country</label>
         <select class="cf-input" id="cfCountry" autocomplete="country">
           <option value="DE">Germany</option>
           <option value="CH">Switzerland</option>
@@ -1321,7 +1321,7 @@
         </select>
       </div>
       <div class="cf-gap">
-        <label class="cf-label">Shipping</label>
+        <label class="cf-label" id="cfLabelShipping">Shipping</label>
         <select class="cf-input" id="cfShipping">
           <option value="Standard">Standard</option>
           <option value="Express">Express</option>
@@ -1336,7 +1336,7 @@
       <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:4px 0 12px;">By placing your order you agree that we store your name, email and address to process and ship your order. / Mit deiner Bestellung stimmst du zu, dass wir deine Daten zur Auftragsabwicklung speichern.</p>
       <div class="cf-section-label" id="cpPaymentLabel">Payment</div>
       <div class="stripe-wrap">
-        <label class="cf-label">Card Details *</label>
+        <label class="cf-label" id="cfLabelCard">Card Details *</label>
         <div id="stripeCardEl" class="cf-input"></div>
         <div id="cardError"></div>
       </div>
@@ -2292,6 +2292,11 @@ const _i18n = {
     cart_processing: 'Processing…',
     cart_payment: 'Payment',
     cart_remove: 'Remove',
+    cf_name: 'Full Name *', cf_email: 'Email *', cf_address: 'Address *',
+    cf_city: 'City *', cf_postcode: 'Post Code *', cf_country: 'Country',
+    cf_shipping: 'Shipping', cf_card: 'Card Details *',
+    cf_street_ph: 'Street and number', cf_apt_ph: 'Apartment, suite (optional)',
+    cf_pay: 'Pay',
     checkout: 'Checkout',
     vat_note: 'VAT included where applicable. Shipping calculated at checkout.',
     lang_label: 'Language', cur_label: 'Currency',
@@ -2336,6 +2341,11 @@ const _i18n = {
     cart_processing: 'Verarbeite…',
     cart_payment: 'Zahlung',
     cart_remove: 'Entfernen',
+    cf_name: 'Vollständiger Name *', cf_email: 'E-Mail *', cf_address: 'Adresse *',
+    cf_city: 'Stadt *', cf_postcode: 'Postleitzahl *', cf_country: 'Land',
+    cf_shipping: 'Versandart', cf_card: 'Kartendaten *',
+    cf_street_ph: 'Straße und Hausnummer', cf_apt_ph: 'Wohnung, Etage (optional)',
+    cf_pay: 'Bezahlen',
     checkout: 'Zur Kasse',
     vat_note: 'MwSt. inkl. wo anwendbar. Versand wird beim Checkout berechnet.',
     lang_label: 'Sprache', cur_label: 'Währung',
@@ -2412,6 +2422,21 @@ function applyTranslations() {
   if (cpTotalLabel2) cpTotalLabel2.textContent = 'Total';
   const cpPaymentLabel = document.getElementById('cpPaymentLabel');
   if (cpPaymentLabel) cpPaymentLabel.textContent = t('cart_payment');
+  // Checkout form labels
+  const _lbl = (id, key) => { const el = document.getElementById(id); if (el) el.textContent = t(key); };
+  _lbl('cfLabelName',     'cf_name');
+  _lbl('cfLabelEmail',    'cf_email');
+  _lbl('cfLabelAddress',  'cf_address');
+  _lbl('cfLabelCity',     'cf_city');
+  _lbl('cfLabelPostcode', 'cf_postcode');
+  _lbl('cfLabelCountry',  'cf_country');
+  _lbl('cfLabelShipping', 'cf_shipping');
+  _lbl('cfLabelCard',     'cf_card');
+  // Placeholders
+  const cfLine1 = document.getElementById('cfLine1');
+  if (cfLine1) cfLine1.placeholder = t('cf_street_ph');
+  const cfLine2 = document.getElementById('cfLine2');
+  if (cfLine2) cfLine2.placeholder = t('cf_apt_ph');
   // Update empty state if visible
   const cpEmptyMsg = document.getElementById('cpEmptyMsg');
   if (cpEmptyMsg) cpEmptyMsg.textContent = t('cart_empty');
@@ -2697,7 +2722,7 @@ async function fetchShippingQuote() {
     const grandChf = Math.round((subtotal + cost) * 100) / 100;
     shipEl.textContent  = _fmtAmt(cost);
     totalEl.textContent = _fmtAmt(grandChf);
-    btn.textContent     = 'Pay ' + _fmtAmt(grandChf);
+    btn.textContent     = t('cf_pay') + ' ' + _fmtAmt(grandChf);
     btn.disabled        = false;
     btn.onclick         = placeOrder;
   }
@@ -2781,7 +2806,7 @@ async function placeOrder() {
   const totalBase    = Math.round((subtotalBase + _shippingCost) * 100) / 100;
   const totalLocal   = _stripeAmt(totalBase);  // convert CHF → visitor's currency for Stripe
   const btn          = document.getElementById('btnPlaceOrder');
-  const reset        = () => { btn.textContent = 'Pay ' + _fmtAmt(totalBase); btn.disabled = false; btn.onclick = placeOrder; };
+  const reset        = () => { btn.textContent = t('cf_pay') + ' ' + _fmtAmt(totalBase); btn.disabled = false; btn.onclick = placeOrder; };
   btn.textContent = t('cart_processing'); btn.disabled = true;
   document.getElementById('cardError').style.display = 'none';
 
